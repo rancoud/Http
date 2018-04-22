@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ruleset name="Http">
+    <description>Http</description>
+
+    <arg name="colors"/>
+    <arg value="p"/>
+
+    <file>src</file>
+    <exclude-pattern>*/src/Psr/*</exclude-pattern>
+
+    <rule ref="PSR2"></rule>
+
+</ruleset>
