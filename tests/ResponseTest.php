@@ -247,6 +247,96 @@ class ResponseTest extends TestCase
         ];
     }
 
+    public function testHasHeaderMustHaveCorrectType()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Header name must be a string');
+
+        $r = new Response();
+        $this->assertSame($r, $r->hasHeader(null));
+    }
+
+    public function testGetHeaderMustHaveCorrectType()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Header name must be a string');
+
+        $r = new Response();
+        $this->assertSame($r, $r->getHeader(null));
+    }
+
+    public function testGetHeaderLineMustHaveCorrectType()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Header name must be a string');
+
+        $r = new Response();
+        $this->assertSame($r, $r->getHeaderLine(null));
+    }
+
+    public function testWithHeaderNameMustHaveCorrectType()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Header name must be non-empty string');
+
+        $r = new Response();
+        $this->assertSame($r, $r->withHeader('', ''));
+    }
+
+    public function testWithHeaderValueArrayMustHaveCorrectType()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Header values must be non-empty strings');
+
+        $r = new Response();
+        $this->assertSame($r, $r->withHeader('aze', []));
+    }
+
+    public function testWithHeaderValueStringMustHaveCorrectType()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Header values must be non-empty strings');
+
+        $r = new Response();
+        $this->assertSame($r, $r->withHeader('aze', ''));
+    }
+
+    public function testWithAddedHeaderNameMustHaveCorrectType()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Header name must be non-empty string');
+
+        $r = new Response();
+        $this->assertSame($r, $r->withAddedHeader('', ''));
+    }
+
+    public function testWithAddedHeaderValueArrayMustHaveCorrectType()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Header values must be non-empty strings');
+
+        $r = new Response();
+        $this->assertSame($r, $r->withAddedHeader('aze', []));
+    }
+
+    public function testWithAddedHeaderValueStringMustHaveCorrectType()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Header values must be non-empty strings');
+
+        $r = new Response();
+        $this->assertSame($r, $r->withAddedHeader('aze', ''));
+    }
+
+    public function testWithoutHeaderNameMustHaveCorrectType()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Header name must be non-empty string');
+
+        $r = new Response();
+        $this->assertSame($r, $r->withoutHeader(''));
+    }
+
     /**
      * @dataProvider trimmedHeaderValues
      */
@@ -255,5 +345,23 @@ class ResponseTest extends TestCase
         $this->assertSame(['OWS' => ['Foo']], $r->getHeaders());
         $this->assertSame('Foo', $r->getHeaderLine('OWS'));
         $this->assertSame(['Foo'], $r->getHeader('OWS'));
+    }
+
+    public function testWithStatusCodeMustHaveCorrectType()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Status code has to be an integer');
+
+        $r = new Response();
+        $r->withStatus([]);
+    }
+
+    public function testWithStatusReasonPhraseMustHaveCorrectType()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Status code has to be an integer between 100 and 599');
+
+        $r = new Response();
+        $r->withStatus(9, []);
     }
 }

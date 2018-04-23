@@ -139,6 +139,22 @@ class UriTest extends TestCase
         (new Uri())->withScheme([]);
     }
 
+    public function testUserInfoUserMustHaveCorrectType()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('User must be a string');
+
+        (new Uri())->withUserInfo([]);
+    }
+
+    public function testUserInfoPasswordMustHaveCorrectType()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Password must be a string or NULL');
+
+        (new Uri())->withUserInfo('', []);
+    }
+
     public function testHostMustHaveCorrectType()
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -478,6 +494,19 @@ class UriTest extends TestCase
             '\Tests\Rancoud\Psr7\ExtendingClassTest',
             new ExtendingClassTest('http://h:9/')
         );
+    }
+
+    public function testReturnCurrentInstance()
+    {
+        $uri = new Uri();
+
+        $this->assertSame($uri, $uri->withScheme(''));
+        $this->assertSame($uri, $uri->withUserInfo(''));
+        $this->assertSame($uri, $uri->withHost(''));
+        $this->assertSame($uri, $uri->withPort(null));
+        $this->assertSame($uri, $uri->withPath(''));
+        $this->assertSame($uri, $uri->withQuery(''));
+        $this->assertSame($uri, $uri->withFragment(''));
     }
 }
 

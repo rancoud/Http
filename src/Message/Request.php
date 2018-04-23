@@ -228,7 +228,7 @@ class Request implements RequestInterface
         }
 
         if (in_array($method, self::$methods, true) === false) {
-            throw new InvalidArgumentException('Method is invalid: ' . $method);
+            throw new InvalidArgumentException(sprintf('Method %s is invalid', $method));
         }
     }
 

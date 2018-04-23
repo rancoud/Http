@@ -182,7 +182,7 @@ class Uri implements UriInterface
         }
 
         $info = $user;
-        if ($password !== '') {
+        if ($password !== null && mb_strlen($password) > 0) {
             $info .= ':' . $password;
         }
 

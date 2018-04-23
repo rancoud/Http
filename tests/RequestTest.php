@@ -183,4 +183,38 @@ class RequestTest extends TestCase
         $r = $r->withUri(new Uri('http://foo.com:8125/bar'));
         $this->assertEquals('foo.com:8125', $r->getHeaderLine('host'));
     }
+
+    public function testWithMethod()
+    {
+        $r = new Request('GET', 'http://foo.com:8124/bar');
+        $r = $r->withMethod('PATCH');
+        $this->assertEquals('PATCH', $r->getMethod());
+    }
+
+    public function testWithUriPreserveHostMustHaveCorrectType()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Preserve Host must be a boolean');
+
+        $r = new Request('GET', 'http://foo.com:8124/bar');
+        $r->withUri(new Uri(), null);
+    }
+
+    public function testWithMethodMustHaveCorrectType()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Method must be a string');
+
+        $r = new Request('GET', 'http://foo.com:8124/bar');
+        $r->withMethod(null);
+    }
+
+    public function testWithMethodMustBeValidMethod()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Method NULL_METHOD is invalid');
+
+        $r = new Request('GET', 'http://foo.com:8124/bar');
+        $r->withMethod('NULL_METHOD');
+    }
 }
