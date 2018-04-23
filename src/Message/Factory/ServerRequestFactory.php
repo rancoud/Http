@@ -101,7 +101,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
             $headers = getallheaders();
         }
 
-        return $this->createServerRequestFromArrays($_SERVER, $headers, $_COOKIE, $_GET, $_POST, $_FILES);
+        return $this->createServerRequestFromArrays($server, $headers, $_COOKIE, $_GET, $_POST, $_FILES);
     }
 
     /**
