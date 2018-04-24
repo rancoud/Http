@@ -156,4 +156,79 @@ class StreamTest extends TestCase
         $this->assertNull($stream->getSize());
         $this->assertEmpty($stream->getMetadata());
     }
+
+    public function testSeekRaiseExceptionOffset()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Offset must be a int');
+
+        $handle = fopen('php://temp', 'w+');
+        $stream = Stream::createFromResource($handle);
+        $stream->seek('string');
+    }
+
+    public function testSeekRaiseExceptionWhence()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Whence must be a int');
+
+        $handle = fopen('php://temp', 'w+');
+        $stream = Stream::createFromResource($handle);
+        $stream->seek(1, 'string');
+    }
+
+    public function testSeekRaiseExceptionUnableToSeek()
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Unable to seek to stream position 1 with whence 90909090');
+
+        $handle = fopen('php://temp', 'w+');
+        $stream = Stream::createFromResource($handle);
+        $stream->seek(1, 90909090);
+    }
+
+    public function testWriteRaiseExceptionData()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Data must be a string');
+
+        $handle = fopen('php://temp', 'w+');
+        $stream = Stream::createFromResource($handle);
+        $stream->write(0);
+    }
+
+    public function testReadRaiseExceptionLength()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Length must be a int');
+
+        $handle = fopen('php://temp', 'w+');
+        $stream = Stream::createFromResource($handle);
+        $stream->read('string');
+    }
+
+    public function testGetMetadataRaiseExceptionKey()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Key must be a string or NULL');
+
+        $handle = fopen('php://temp', 'w+');
+        $stream = Stream::createFromResource($handle);
+        $stream->getMetadata(45);
+    }
+
+    public function testGetMetadataKeyNonExist()
+    {
+        $handle = fopen('php://temp', 'w+');
+        $stream = Stream::createFromResource($handle);
+        $this->assertNull($stream->getMetadata('KeyNonExist'));
+    }
+
+    public function testCreateFromResourceRaiseExceptionResource()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Stream must be a resource');
+
+        Stream::createFromResource('string');
+    }
 }
