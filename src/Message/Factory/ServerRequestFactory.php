@@ -97,8 +97,10 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         }
 
         $headers = [];
-        if (function_exists('getallheaders')) {
+        if (function_exists('\getallheaders')) {
             $headers = getallheaders();
+        } else {
+            $headers = $this->getAllHeaders();
         }
 
         return $this->createServerRequestFromArrays($server, $headers, $_COOKIE, $_GET, $_POST, $_FILES);
@@ -206,5 +208,24 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         }
 
         return $normalizedFiles;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getAllHeaders(): array
+    {
+        $headers = [];
+
+        foreach ($_SERVER as $name => $value) {
+            if (mb_substr($name, 0, 5) === 'HTTP_') {
+                $treatedName = mb_substr($name, 5);
+                $treatedName = ucwords(mb_strtolower(str_replace('_', ' ', $treatedName)));
+                $treatedName = str_replace(' ', '-', $treatedName);
+                $headers[$treatedName] = $value;
+            }
+        }
+
+        return $headers;
     }
 }

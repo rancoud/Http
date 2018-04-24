@@ -63,6 +63,14 @@ class FactoryTest extends TestCase
         $this->assertEquals('GET', $r->getMethod());
     }
 
+    /** @runInSeparateProcess  */
+    public function testCreateServerRequestFromGlobalsFakeNginx()
+    {
+        $_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'en-gb,en;q=0.5';
+        $r = (new ServerRequestFactory())->createServerRequestFromGlobals();
+        $this->assertEquals('GET', $r->getMethod());
+    }
+    
     public function testCreateUri()
     {
         $r = (new UriFactory())->createUri('/rty/');
