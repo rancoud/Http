@@ -6,6 +6,8 @@ use Psr\Http\Message\StreamInterface;
 use Rancoud\Http\Message\Factory\MessageFactory;
 use PHPUnit\Framework\TestCase;
 use Rancoud\Http\Message\Factory\ServerRequestFactory;
+use Rancoud\Http\Message\Factory\StreamFactory;
+use Rancoud\Http\Message\Factory\UploadedFileFactory;
 use Rancoud\Http\Message\Factory\UriFactory;
 use Rancoud\Http\Message\Uri;
 
@@ -75,6 +77,7 @@ class FactoryTest extends TestCase
     {
         $r = (new UriFactory())->createUri('/rty/');
         $this->assertEquals('/rty/', $r->getPath());
+        
         $r = (new UriFactory())->createUri(new Uri('/aze/'));
         $this->assertEquals('/aze/', $r->getPath());
     }
@@ -115,5 +118,41 @@ class FactoryTest extends TestCase
 
         $r = (new UriFactory())->createUriFromArray($server);
         $this->assertEquals('http', $r->getScheme());
+    }
+
+    public function testCreateStream()
+    {
+        $s = (new StreamFactory())->createStream(null);
+        $this->assertEquals('', $s->getContents());
+
+        $s = (new StreamFactory())->createStream(fopen(__FILE__, 'r'));
+        $this->assertEquals(__FILE__, $s->getMetadata()['uri']);
+    }
+
+    public function testCreateStreamFromFile()
+    {
+        $s = (new StreamFactory())->createStreamFromFile(__FILE__);
+        $this->assertEquals(__FILE__, $s->getMetadata()['uri']);
+    }
+
+    public function testCreateStreamFromResource()
+    {
+        $s = (new StreamFactory())->createStreamFromResource(fopen(__FILE__, 'r'));
+        $this->assertEquals(__FILE__, $s->getMetadata()['uri']);
+    }
+
+    public function testCopyToStream()
+    {
+        $source = (new StreamFactory())->createStreamFromFile(__FILE__);
+        $dest = (new StreamFactory())->createStreamFromFile(tempnam(sys_get_temp_dir(), 'copy_to_stream'), 'w+');
+
+        (new StreamFactory())->copyToStream($source, $dest, $source->getSize());
+        $this->assertFileEquals(__FILE__, $dest->getMetadata()['uri']);
+    }
+
+    public function testCreateUploadedFile()
+    {
+        $u = (new UploadedFileFactory())->createUploadedFile('blabla');
+        $this->assertEquals('blabla', file_get_contents($u->getStream()->getMetadata()['uri']));
     }
 }
