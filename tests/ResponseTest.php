@@ -286,7 +286,7 @@ class ResponseTest extends TestCase
     public function testWithHeaderValueArrayMustHaveCorrectType()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Header values must be non-empty strings');
+        $this->expectExceptionMessage('Header values must be strings');
 
         $r = new Response();
         $this->assertSame($r, $r->withHeader('aze', []));
@@ -295,10 +295,10 @@ class ResponseTest extends TestCase
     public function testWithHeaderValueStringMustHaveCorrectType()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Header values must be non-empty strings');
+        $this->expectExceptionMessage('Header values must be strings');
 
         $r = new Response();
-        $this->assertSame($r, $r->withHeader('aze', ''));
+        $this->assertSame($r, $r->withHeader('aze', [null]));
     }
 
     public function testWithAddedHeaderNameMustHaveCorrectType()
@@ -313,7 +313,7 @@ class ResponseTest extends TestCase
     public function testWithAddedHeaderValueArrayMustHaveCorrectType()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Header values must be non-empty strings');
+        $this->expectExceptionMessage('Header values must be strings');
 
         $r = new Response();
         $this->assertSame($r, $r->withAddedHeader('aze', []));
@@ -322,10 +322,10 @@ class ResponseTest extends TestCase
     public function testWithAddedHeaderValueStringMustHaveCorrectType()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Header values must be non-empty strings');
+        $this->expectExceptionMessage('Header values must be strings');
 
         $r = new Response();
-        $this->assertSame($r, $r->withAddedHeader('aze', ''));
+        $this->assertSame($r, $r->withAddedHeader('aze', [null]));
     }
 
     public function testWithoutHeaderNameMustHaveCorrectType()

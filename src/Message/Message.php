@@ -135,12 +135,12 @@ trait Message
         if (is_array($value) === false) {
             $value = [$value];
         } elseif (count($value) <= 0) {
-            throw new InvalidArgumentException('Header values must be non-empty strings');
+            throw new InvalidArgumentException('Header values must be strings');
         }
 
         foreach ($value as $v) {
-            if (is_string($v) === false || mb_strlen($v) <= 0) {
-                throw new InvalidArgumentException('Header values must be non-empty strings');
+            if (is_string($v) === false) {
+                throw new InvalidArgumentException('Header values must be strings');
             }
         }
 
@@ -176,12 +176,12 @@ trait Message
         } elseif (count($value) > 0) {
             $value = array_values($value);
         } else {
-            throw new InvalidArgumentException('Header values must be non-empty strings');
+            throw new InvalidArgumentException('Header values must be strings');
         }
 
         foreach ($value as $v) {
-            if (is_string($v) === false || mb_strlen($v) <= 0) {
-                throw new InvalidArgumentException('Header values must be non-empty strings');
+            if (is_string($v) === false) {
+                throw new InvalidArgumentException('Header values must be strings');
             }
         }
 
@@ -229,6 +229,7 @@ trait Message
 
     /**
      * @throws InvalidArgumentException
+     * @throws \RuntimeException
      *
      * @return StreamInterface
      */

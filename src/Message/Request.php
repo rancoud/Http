@@ -90,6 +90,7 @@ class Request implements RequestInterface
      * @param string $version
      *
      * @throws InvalidArgumentException
+     * @throws \RuntimeException
      */
     public function __construct(
         $method,

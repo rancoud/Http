@@ -118,6 +118,7 @@ class Response implements ResponseInterface
      * @param null   $reason
      *
      * @throws InvalidArgumentException
+     * @throws \RuntimeException
      */
     public function __construct(
         int $status = 200,

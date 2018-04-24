@@ -42,6 +42,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      * @param array  $serverParams
      *
      * @throws InvalidArgumentException
+     * @throws \RuntimeException
      */
     public function __construct(
         $method,
