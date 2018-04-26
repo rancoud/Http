@@ -13,7 +13,7 @@
     "autoload": {
         "psr-4": {
             "Rancoud\\Http\\": "src",
-            "Psr\\Http\\Message\\": "src/Psr"
+            "Psr\\Http\\": "src/Psr"
         }
     },
     "require": {
