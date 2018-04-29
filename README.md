@@ -4,34 +4,12 @@
 
 Based on [Nyholm](https://github.com/nyholm) works from the psr7 repository [https://github.com/nyholm/psr7](https://github.com/nyholm/psr7)
 
-Http.  
+Http with PSR 7 15 17 18.  
 
 ## Installation
 ```php
 composer require rancoud/http
 ```
-
-## How to use it?
-```php
-
-```
-
-## Http Constructor
-### Settings
-#### Mandatory
-| Parameter | Type | Description |
-| --- | --- | --- |
-|  |  |  |
-
-#### Optionnals
-| Parameter | Type | Default value | Description |
-| --- | --- | --- | --- |
-|  |  |  |  |
-
-## Http Methods
-### General Commands  
-* method(name: type, [optionnal: type = defalut]):outputType  
-
 
 ## How to Dev
 `./run_all_commands.sh` for php-cs-fixer and phpunit and coverage  

@@ -6,6 +6,9 @@ use Rancoud\Http\Message\Response;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\StreamInterface;
 
+/**
+ * @backupGlobals disabled
+ */
 class ResponseTest extends TestCase
 {
     public function testDefaultConstructor()
@@ -103,7 +106,7 @@ class ResponseTest extends TestCase
     public function testRaiseExceptionConstructWithProtocolVersion()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Protocol Version must be 1.0 or 1.1');
+        $this->expectExceptionMessage('Protocol Version must be 0.9 or 1.0 or 1.1 or 2');
 
         $r = new Response(200, [], null, '1000');
     }
@@ -363,5 +366,35 @@ class ResponseTest extends TestCase
 
         $r = new Response();
         $r->withStatus(9, []);
+    }
+
+    /**
+     * @runInSeparateProcess
+     */
+    public function testSend()
+    {
+        $r = new Response(
+            200,
+            [
+                'Content-Type' => 'text/plain;charset=UTF-8',
+                'customName' => 'mykey',
+                'empty' => ''
+            ],
+            $body = uniqid(true),
+            $version = '2'
+        );
+        $infos = $this->captureSend($r);
+        $this->assertSame('Content-Type: text/plain;charset=UTF-8', $infos['headers'][0]);
+        $this->assertSame('customName: mykey', $infos['headers'][1]);
+        $this->assertSame('empty:', $infos['headers'][2]);
+        $this->assertSame($body, $infos['body']);
+    }
+    
+    private function captureSend(Response $response)
+    {
+        ob_start();
+        $response->send();
+        $output = ob_get_clean();
+        return ['headers' => xdebug_get_headers(), 'body' => $output];
     }
 }

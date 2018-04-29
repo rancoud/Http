@@ -304,8 +304,8 @@ trait Message
      */
     protected function validateProtocolVersion(string $protocolVersion): string
     {
-        if (in_array($protocolVersion, ['1.0', '1.1'], true) === false) {
-            throw new InvalidArgumentException('Protocol Version must be 1.0 or 1.1');
+        if (in_array($protocolVersion, ['0.9', '1.0', '1.1', '2'], true) === false) {
+            throw new InvalidArgumentException('Protocol Version must be 0.9 or 1.0 or 1.1 or 2');
         }
 
         return $protocolVersion;

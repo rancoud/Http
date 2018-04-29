@@ -187,4 +187,36 @@ class Response implements ResponseInterface
     {
         return $this->reasonPhrase;
     }
+
+    /**
+     * @throws InvalidArgumentException
+     * @throws \RuntimeException
+     */
+    public function send()
+    {
+        $httpLine = sprintf(
+            'HTTP/%s %s %s',
+            $this->getProtocolVersion(),
+            $this->getStatusCode(),
+            $this->getReasonPhrase()
+        );
+
+        header($httpLine, true, $this->getStatusCode());
+
+        foreach ($this->getHeaders() as $name => $values) {
+            foreach ($values as $value) {
+                header("$name: $value", false);
+            }
+        }
+
+        $stream = $this->getBody();
+
+        if ($stream->isSeekable()) {
+            $stream->rewind();
+        }
+
+        while (!$stream->eof()) {
+            echo $stream->read(1024 * 8);
+        }
+    }
 }
