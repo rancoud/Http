@@ -71,7 +71,7 @@ trait Message
      */
     public function hasHeader($name): bool
     {
-        if (is_string($name) === false) {
+        if (!is_string($name)) {
             throw new InvalidArgumentException('Header name must be a string');
         }
 
@@ -87,13 +87,13 @@ trait Message
      */
     public function getHeader($name): array
     {
-        if (is_string($name) === false) {
+        if (!is_string($name)) {
             throw new InvalidArgumentException('Header name must be a string');
         }
 
         $name = mb_strtolower($name);
 
-        if (array_key_exists($name, $this->headerNames) === false) {
+        if (!array_key_exists($name, $this->headerNames)) {
             return [];
         }
 
@@ -111,7 +111,7 @@ trait Message
      */
     public function getHeaderLine($name): string
     {
-        if (is_string($name) === false) {
+        if (!is_string($name)) {
             throw new InvalidArgumentException('Header name must be a string');
         }
 
@@ -128,18 +128,18 @@ trait Message
      */
     public function withHeader($name, $value): self
     {
-        if (is_string($name) === false || mb_strlen($name) <= 0) {
+        if (!is_string($name) || mb_strlen($name) <= 0) {
             throw new InvalidArgumentException('Header name must be non-empty string');
         }
 
-        if (is_array($value) === false) {
+        if (!is_array($value)) {
             $value = [$value];
         } elseif (count($value) <= 0) {
             throw new InvalidArgumentException('Header values must be strings');
         }
 
         foreach ($value as $v) {
-            if (is_string($v) === false) {
+            if (!is_string($v)) {
                 throw new InvalidArgumentException('Header values must be strings');
             }
         }
@@ -167,11 +167,11 @@ trait Message
      */
     public function withAddedHeader($name, $value): self
     {
-        if (is_string($name) === false || mb_strlen($name) <= 0) {
+        if (!is_string($name) || mb_strlen($name) <= 0) {
             throw new InvalidArgumentException('Header name must be non-empty string');
         }
 
-        if (is_array($value) === false) {
+        if (!is_array($value)) {
             $value = [$value];
         } elseif (count($value) > 0) {
             $value = array_values($value);
@@ -180,7 +180,7 @@ trait Message
         }
 
         foreach ($value as $v) {
-            if (is_string($v) === false) {
+            if (!is_string($v)) {
                 throw new InvalidArgumentException('Header values must be strings');
             }
         }
@@ -209,13 +209,13 @@ trait Message
      */
     public function withoutHeader($name): self
     {
-        if (is_string($name) === false || mb_strlen($name) <= 0) {
+        if (!is_string($name) || mb_strlen($name) <= 0) {
             throw new InvalidArgumentException('Header name must be non-empty string');
         }
 
         $normalized = mb_strtolower($name);
 
-        if (array_key_exists($normalized, $this->headerNames) === false) {
+        if (!array_key_exists($normalized, $this->headerNames)) {
             return $this;
         }
 
@@ -267,13 +267,13 @@ trait Message
         $this->headerNames = $this->headers = [];
 
         foreach ($headers as $header => $value) {
-            if (is_array($value) === false) {
+            if (!is_array($value)) {
                 $value = [$value];
             }
 
             $value = $this->trimHeaderValues($value);
             $normalized = mb_strtolower($header);
-            if (array_key_exists($normalized, $this->headerNames) === true) {
+            if (array_key_exists($normalized, $this->headerNames)) {
                 $header = $this->headerNames[$normalized];
                 $this->headers[$header] = array_merge($this->headers[$header], $value);
             } else {
@@ -304,7 +304,7 @@ trait Message
      */
     protected function validateProtocolVersion(string $protocolVersion): string
     {
-        if (in_array($protocolVersion, ['0.9', '1.0', '1.1', '2'], true) === false) {
+        if (!in_array($protocolVersion, ['0.9', '1.0', '1.1', '2'], true)) {
             throw new InvalidArgumentException('Protocol Version must be 0.9 or 1.0 or 1.1 or 2');
         }
 

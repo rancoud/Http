@@ -16,7 +16,7 @@ class Request implements RequestInterface
 {
     use Message;
 
-    protected static $methods = [
+    public static $methods = [
         'ACL',
         'BASELINE-CONTROL',
         'BCOPY',
@@ -108,7 +108,7 @@ class Request implements RequestInterface
         $this->setHeaders($headers);
         $this->protocol = $this->validateProtocolVersion($version);
 
-        if ($this->hasHeader('Host') === false) {
+        if (!$this->hasHeader('Host')) {
             $this->updateHostFromUri();
         }
 
@@ -199,7 +199,7 @@ class Request implements RequestInterface
      */
     public function withUri(UriInterface $uri, $preserveHost = false): self
     {
-        if (is_bool($preserveHost) === false) {
+        if (!is_bool($preserveHost)) {
             throw new InvalidArgumentException('Preserve Host must be a boolean');
         }
 
@@ -210,7 +210,7 @@ class Request implements RequestInterface
         $new = clone $this;
         $new->uri = $uri;
 
-        if ($preserveHost === false || $this->hasHeader('Host') === false) {
+        if (!$preserveHost || !$this->hasHeader('Host')) {
             $new->updateHostFromUri();
         }
 
@@ -224,11 +224,11 @@ class Request implements RequestInterface
      */
     protected function filterMethod($method): void
     {
-        if (is_string($method) === false) {
+        if (!is_string($method)) {
             throw new InvalidArgumentException('Method must be a string');
         }
 
-        if (in_array($method, self::$methods, true) === false) {
+        if (!in_array($method, self::$methods, true)) {
             throw new InvalidArgumentException(sprintf('Method %s is invalid', $method));
         }
     }
@@ -246,7 +246,7 @@ class Request implements RequestInterface
             $host .= ':' . $port;
         }
 
-        if (array_key_exists('host', $this->headerNames) === true) {
+        if (array_key_exists('host', $this->headerNames)) {
             $header = $this->headerNames['host'];
         } else {
             $header = 'Host';

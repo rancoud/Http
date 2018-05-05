@@ -173,11 +173,11 @@ class Uri implements UriInterface
      */
     public function withUserInfo($user, $password = null): self
     {
-        if (is_string($user) === false) {
+        if (!is_string($user)) {
             throw new InvalidArgumentException('User must be a string');
         }
 
-        if ($this->isStringOrNull($password) === false) {
+        if (!$this->isStringOrNull($password)) {
             throw new InvalidArgumentException('Password must be a string or NULL');
         }
 
@@ -330,35 +330,35 @@ class Uri implements UriInterface
         $this->query = '';
         $this->fragment = '';
 
-        if (array_key_exists('scheme', $parts) === true) {
+        if (array_key_exists('scheme', $parts)) {
             $this->scheme = $this->filterScheme($parts['scheme']);
         }
 
-        if (array_key_exists('user', $parts) === true) {
+        if (array_key_exists('user', $parts)) {
             $this->userInfo = $parts['user'];
         }
 
-        if (array_key_exists('host', $parts) === true) {
+        if (array_key_exists('host', $parts)) {
             $this->host = $this->filterHost($parts['host']);
         }
 
-        if (array_key_exists('port', $parts) === true) {
+        if (array_key_exists('port', $parts)) {
             $this->port = $this->filterPort($parts['port']);
         }
 
-        if (array_key_exists('path', $parts) === true) {
+        if (array_key_exists('path', $parts)) {
             $this->path = $this->filterPath($parts['path']);
         }
 
-        if (array_key_exists('query', $parts) === true) {
+        if (array_key_exists('query', $parts)) {
             $this->query = $this->filterQueryAndFragment($parts['query']);
         }
 
-        if (array_key_exists('fragment', $parts) === true) {
+        if (array_key_exists('fragment', $parts)) {
             $this->fragment = $this->filterQueryAndFragment($parts['fragment']);
         }
 
-        if (array_key_exists('pass', $parts) === true) {
+        if (array_key_exists('pass', $parts)) {
             $this->userInfo .= ':' . $parts['pass'];
         }
     }
@@ -393,7 +393,7 @@ class Uri implements UriInterface
                 if ($authority !== '') {
                     $path = '/' . $path;
                 }
-            } elseif (isset($path[1]) === true && $path[1] === '/') {
+            } elseif (isset($path[1]) && $path[1] === '/') {
                 if ($authority === '') {
                     $path = '/' . ltrim($path, '/');
                 }
@@ -421,7 +421,7 @@ class Uri implements UriInterface
      */
     protected static function isNonStandardPort(string $scheme, int $port): bool
     {
-        if (array_key_exists($scheme, self::$schemes) === false) {
+        if (!array_key_exists($scheme, self::$schemes)) {
             return true;
         }
 
@@ -441,7 +441,7 @@ class Uri implements UriInterface
      */
     protected function filterScheme($scheme): string
     {
-        if (is_string($scheme) === false) {
+        if (!is_string($scheme)) {
             throw new InvalidArgumentException('Scheme must be a string');
         }
 
@@ -457,7 +457,7 @@ class Uri implements UriInterface
      */
     protected function filterHost($host): string
     {
-        if (is_string($host) === false) {
+        if (!is_string($host)) {
             throw new InvalidArgumentException('Host must be a string');
         }
 
@@ -482,7 +482,7 @@ class Uri implements UriInterface
             throw new InvalidArgumentException(sprintf('Invalid port: %d. Must be between 1 and 65535', $port));
         }
 
-        if (self::isNonStandardPort($this->scheme, $port) === false) {
+        if (!self::isNonStandardPort($this->scheme, $port)) {
             return null;
         }
 
@@ -498,7 +498,7 @@ class Uri implements UriInterface
      */
     protected function filterPath($path): string
     {
-        if (is_string($path) === false) {
+        if (!is_string($path)) {
             throw new InvalidArgumentException('Path must be a string');
         }
 
@@ -518,7 +518,7 @@ class Uri implements UriInterface
      */
     protected function filterQueryAndFragment($str): string
     {
-        if (is_string($str) === false) {
+        if (!is_string($str)) {
             throw new InvalidArgumentException('Query and fragment must be a string');
         }
 

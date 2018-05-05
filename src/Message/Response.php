@@ -16,7 +16,7 @@ class Response implements ResponseInterface
     use Message;
 
     /** @var array */
-    protected static $phrases = [
+    public static $phrases = [
         100 => 'Continue',
         101 => 'Switching Protocols',
         102 => 'Processing',
@@ -134,7 +134,7 @@ class Response implements ResponseInterface
         }
 
         $this->setHeaders($headers);
-        if ($reason === null && array_key_exists($this->statusCode, self::$phrases) === true) {
+        if ($reason === null && array_key_exists($this->statusCode, self::$phrases)) {
             $this->reasonPhrase = self::$phrases[$status];
         } else {
             $this->reasonPhrase = (string) $reason;
@@ -161,18 +161,18 @@ class Response implements ResponseInterface
      */
     public function withStatus($code, $reasonPhrase = ''): self
     {
-        if (is_int($code) === false && is_string($code) === false) {
+        if (!is_int($code) && !is_string($code)) {
             throw new InvalidArgumentException('Status code has to be an integer');
         }
 
         $code = (int) $code;
-        if (array_key_exists($code, self::$phrases) === false) {
+        if (!array_key_exists($code, self::$phrases)) {
             throw new InvalidArgumentException('Status code has to be an integer between 100 and 599');
         }
 
         $new = clone $this;
         $new->statusCode = (int) $code;
-        if ($reasonPhrase === '' && array_key_exists($new->statusCode, self::$phrases) === true) {
+        if ($reasonPhrase === '' && array_key_exists($new->statusCode, self::$phrases)) {
             $reasonPhrase = self::$phrases[$new->statusCode];
         }
         $new->reasonPhrase = $reasonPhrase;

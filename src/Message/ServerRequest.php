@@ -171,11 +171,11 @@ class ServerRequest extends Request implements ServerRequestInterface
      */
     public function getAttribute($name, $default = null)
     {
-        if (is_string($name) === false) {
+        if (!is_string($name)) {
             throw new InvalidArgumentException('Name must be a string');
         }
 
-        if (array_key_exists($name, $this->attributes) === false) {
+        if (!array_key_exists($name, $this->attributes)) {
             return $default;
         }
 
@@ -192,7 +192,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      */
     public function withAttribute($name, $value): self
     {
-        if (is_string($name) === false) {
+        if (!is_string($name)) {
             throw new InvalidArgumentException('Name must be a string');
         }
 
@@ -211,11 +211,11 @@ class ServerRequest extends Request implements ServerRequestInterface
      */
     public function withoutAttribute($name): self
     {
-        if (is_string($name) === false) {
+        if (!is_string($name)) {
             throw new InvalidArgumentException('Name must be a string');
         }
 
-        if (array_key_exists($name, $this->attributes) === false) {
+        if (!array_key_exists($name, $this->attributes)) {
             return $this;
         }
 
@@ -232,7 +232,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      */
     protected function validateData($data): void
     {
-        if (is_array($data) === false && is_object($data) === false && $data !== null) {
+        if (!is_array($data) && !is_object($data) && $data !== null) {
             throw new InvalidArgumentException('First parameter to withParsedBody MUST be object, array or null');
         }
     }

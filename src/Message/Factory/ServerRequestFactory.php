@@ -71,7 +71,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         $uri = $this->getUriFromEnvironmentWithHTTP($server);
 
         $protocol = '1.1';
-        if (array_key_exists('SERVER_PROTOCOL', $server) === true) {
+        if (array_key_exists('SERVER_PROTOCOL', $server)) {
             $protocol = str_replace('HTTP/', '', $server['SERVER_PROTOCOL']);
         }
 
@@ -92,7 +92,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
     public function createServerRequestFromGlobals(): ServerRequestInterface
     {
         $server = $_SERVER;
-        if (array_key_exists('REQUEST_METHOD', $server) === false) {
+        if (!array_key_exists('REQUEST_METHOD', $server)) {
             $server['REQUEST_METHOD'] = 'GET';
         }
 
@@ -115,7 +115,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
      */
     protected function getMethodFromEnvironment(array $environment): string
     {
-        if (array_key_exists('REQUEST_METHOD', $environment) === false) {
+        if (!array_key_exists('REQUEST_METHOD', $environment)) {
             throw new InvalidArgumentException('Cannot determine HTTP method');
         }
 
@@ -153,9 +153,9 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         foreach ($files as $key => $value) {
             if ($value instanceof UploadedFileInterface) {
                 $normalized[$key] = $value;
-            } elseif (is_array($value) === true && array_key_exists('tmp_name', $value) === true) {
+            } elseif (is_array($value) && array_key_exists('tmp_name', $value)) {
                 $normalized[$key] = self::createUploadedFileFromSpec($value);
-            } elseif (is_array($value) === true) {
+            } elseif (is_array($value)) {
                 $normalized[$key] = self::normalizeFiles($value);
 
                 continue;
@@ -174,7 +174,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
      */
     protected static function createUploadedFileFromSpec(array $value)
     {
-        if (is_array($value['tmp_name']) === true) {
+        if (is_array($value['tmp_name'])) {
             return self::normalizeNestedFileSpec($value);
         }
 

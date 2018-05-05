@@ -105,7 +105,7 @@ class UploadedFile implements UploadedFileInterface
     {
         $this->validateActive();
 
-        if ($this->isStringNotEmpty($targetPath) === false) {
+        if (!$this->isStringNotEmpty($targetPath)) {
             throw new InvalidArgumentException('Invalid path provided for move operation; must be a non-empty string');
         }
 
@@ -129,7 +129,7 @@ class UploadedFile implements UploadedFileInterface
             $this->moved = true;
         }
 
-        if ($this->moved === false) {
+        if (!$this->moved) {
             throw new RuntimeException(sprintf('Uploaded file could not be moved to %s', $targetPath));
         }
     }
@@ -173,9 +173,9 @@ class UploadedFile implements UploadedFileInterface
      */
     protected function setStreamOrFile($streamOrFile): void
     {
-        if (is_string($streamOrFile) === true) {
+        if (is_string($streamOrFile)) {
             $this->file = $streamOrFile;
-        } elseif (is_resource($streamOrFile) === true) {
+        } elseif (is_resource($streamOrFile)) {
             $this->stream = Stream::createFromResource($streamOrFile);
         } elseif ($streamOrFile instanceof StreamInterface) {
             $this->stream = $streamOrFile;
@@ -191,11 +191,11 @@ class UploadedFile implements UploadedFileInterface
      */
     protected function setError($error): void
     {
-        if (is_int($error) === false) {
+        if (!is_int($error)) {
             throw new InvalidArgumentException('Upload file error status must be an integer');
         }
 
-        if (in_array($error, self::$errors, true) === false) {
+        if (!in_array($error, self::$errors, true)) {
             throw new InvalidArgumentException('Invalid error status for UploadedFile');
         }
 
@@ -209,7 +209,7 @@ class UploadedFile implements UploadedFileInterface
      */
     protected function setSize($size): void
     {
-        if (is_int($size) === false) {
+        if (!is_int($size)) {
             throw new InvalidArgumentException('Upload file size must be an integer');
         }
 
@@ -243,7 +243,7 @@ class UploadedFile implements UploadedFileInterface
      */
     protected function setClientFilename($clientFilename): void
     {
-        if ($this->isStringOrNull($clientFilename) === false) {
+        if (!$this->isStringOrNull($clientFilename)) {
             throw new InvalidArgumentException('Upload file client filename must be a string or null');
         }
 
@@ -257,7 +257,7 @@ class UploadedFile implements UploadedFileInterface
      */
     protected function setClientMediaType($clientMediaType): void
     {
-        if ($this->isStringOrNull($clientMediaType) === false) {
+        if (!$this->isStringOrNull($clientMediaType)) {
             throw new InvalidArgumentException('Upload file client media type must be a string or null');
         }
 
@@ -277,11 +277,11 @@ class UploadedFile implements UploadedFileInterface
      */
     protected function validateActive(): void
     {
-        if ($this->isOk() === false) {
+        if (!$this->isOk()) {
             throw new RuntimeException('Cannot retrieve stream due to upload error');
         }
 
-        if ($this->moved === true) {
+        if ($this->moved) {
             throw new RuntimeException('Cannot retrieve stream after it has already been moved');
         }
     }

@@ -39,9 +39,9 @@ class UriFactory implements UriFactoryInterface
     {
         $uri = new Uri('');
 
-        if (array_key_exists('REQUEST_SCHEME', $server) === true) {
+        if (array_key_exists('REQUEST_SCHEME', $server)) {
             $uri = $uri->withScheme($server['REQUEST_SCHEME']);
-        } elseif (array_key_exists('HTTPS', $server) === true) {
+        } elseif (array_key_exists('HTTPS', $server)) {
             if ($server['HTTPS'] === 'on') {
                 $uri = $uri->withScheme('https');
             } else {
@@ -49,22 +49,22 @@ class UriFactory implements UriFactoryInterface
             }
         }
 
-        if (array_key_exists('HTTP_HOST', $server) === true) {
+        if (array_key_exists('HTTP_HOST', $server)) {
             $uri = $uri->withHost($server['HTTP_HOST']);
-        } elseif (array_key_exists('SERVER_NAME', $server) === true) {
+        } elseif (array_key_exists('SERVER_NAME', $server)) {
             $uri = $uri->withHost($server['SERVER_NAME']);
         }
 
-        if (array_key_exists('SERVER_PORT', $server) === true) {
+        if (array_key_exists('SERVER_PORT', $server)) {
             $uri = $uri->withPort($server['SERVER_PORT']);
         }
 
-        if (array_key_exists('REQUEST_URI', $server) === true) {
+        if (array_key_exists('REQUEST_URI', $server)) {
             $parts = explode('?', $server['REQUEST_URI']);
             $uri = $uri->withPath($parts[0]);
         }
 
-        if (array_key_exists('QUERY_STRING', $server) === true) {
+        if (array_key_exists('QUERY_STRING', $server)) {
             $uri = $uri->withQuery($server['QUERY_STRING']);
         }
 

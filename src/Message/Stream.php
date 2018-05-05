@@ -54,7 +54,7 @@ class Stream implements StreamInterface
     public function __toString(): string
     {
         try {
-            if ($this->isSeekable() === true) {
+            if ($this->isSeekable()) {
                 $this->seek(0);
             }
 
@@ -66,8 +66,8 @@ class Stream implements StreamInterface
 
     public function close(): void
     {
-        if (isset($this->stream) === true) {
-            if (is_resource($this->stream) === true) {
+        if (isset($this->stream)) {
+            if (is_resource($this->stream)) {
                 fclose($this->stream);
             }
             $this->detach();
@@ -79,7 +79,7 @@ class Stream implements StreamInterface
      */
     public function detach()
     {
-        if (isset($this->stream) === false) {
+        if (!isset($this->stream)) {
             return null;
         }
 
@@ -100,7 +100,7 @@ class Stream implements StreamInterface
             return $this->size;
         }
 
-        if (isset($this->stream) === false) {
+        if (!isset($this->stream)) {
             return null;
         }
 
@@ -159,15 +159,15 @@ class Stream implements StreamInterface
      */
     public function seek($offset, $whence = SEEK_SET): void
     {
-        if (is_int($offset) === false) {
+        if (!is_int($offset)) {
             throw new InvalidArgumentException('Offset must be a int');
         }
 
-        if (is_int($whence) === false) {
+        if (!is_int($whence)) {
             throw new InvalidArgumentException('Whence must be a int');
         }
 
-        if ($this->seekable === false) {
+        if (!$this->seekable) {
             throw new RuntimeException('Stream is not seekable');
         } elseif (fseek($this->stream, $offset, $whence) === -1) {
             $whenceStr = var_export($whence, true);
@@ -203,11 +203,11 @@ class Stream implements StreamInterface
      */
     public function write($string)
     {
-        if (is_string($string) === false) {
+        if (!is_string($string)) {
             throw new InvalidArgumentException('Data must be a string');
         }
 
-        if ($this->writable === false) {
+        if (!$this->writable) {
             throw new RuntimeException('Cannot write to a non-writable stream');
         }
 
@@ -239,11 +239,11 @@ class Stream implements StreamInterface
      */
     public function read($length): string
     {
-        if (is_int($length) === false) {
+        if (!is_int($length)) {
             throw new InvalidArgumentException('Length must be a int');
         }
 
-        if ($this->readable === false) {
+        if (!$this->readable) {
             throw new RuntimeException('Cannot read from non-readable stream');
         }
 
@@ -279,11 +279,11 @@ class Stream implements StreamInterface
      */
     public function getMetadata($key = null)
     {
-        if ($this->isStringOrNull($key) === false) {
+        if (!$this->isStringOrNull($key)) {
             throw new InvalidArgumentException('Key must be a string or NULL');
         }
 
-        if (isset($this->stream) === false) {
+        if (!isset($this->stream)) {
             if ($key) {
                 return null;
             }
@@ -295,7 +295,7 @@ class Stream implements StreamInterface
 
         $meta = stream_get_meta_data($this->stream);
 
-        if (array_key_exists($key, $meta) === false) {
+        if (!array_key_exists($key, $meta)) {
             return null;
         }
 
@@ -311,7 +311,7 @@ class Stream implements StreamInterface
      */
     public static function createFromResource($resource): self
     {
-        if (is_resource($resource) === false) {
+        if (!is_resource($resource)) {
             throw new InvalidArgumentException('Stream must be a resource');
         }
 
