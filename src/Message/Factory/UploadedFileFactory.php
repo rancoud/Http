@@ -28,10 +28,10 @@ class UploadedFileFactory implements UploadedFileFactoryInterface
         $clientFilename = null,
         $clientMediaType = null
     ): UploadedFile {
-        if (is_string($file)) {
+        if (\is_string($file)) {
             $content = $file;
             $filename = sys_get_temp_dir() . '/' . uniqid('uploaded_file', true);
-            $file = fopen($filename, 'w+');
+            $file = fopen($filename, 'w+b');
             fwrite($file, $content);
         }
 

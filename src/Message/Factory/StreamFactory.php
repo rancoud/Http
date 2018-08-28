@@ -31,7 +31,7 @@ class StreamFactory implements StreamFactoryInterface
             return $body;
         }
 
-        if (gettype($body) === 'resource') {
+        if (\gettype($body) === 'resource') {
             return Stream::createFromResource($body);
         }
 

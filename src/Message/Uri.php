@@ -173,7 +173,7 @@ class Uri implements UriInterface
      */
     public function withUserInfo($user, $password = null): self
     {
-        if (!is_string($user)) {
+        if (!\is_string($user)) {
             throw new InvalidArgumentException('User must be a string');
         }
 
@@ -441,7 +441,7 @@ class Uri implements UriInterface
      */
     protected function filterScheme($scheme): string
     {
-        if (!is_string($scheme)) {
+        if (!\is_string($scheme)) {
             throw new InvalidArgumentException('Scheme must be a string');
         }
 
@@ -457,7 +457,7 @@ class Uri implements UriInterface
      */
     protected function filterHost($host): string
     {
-        if (!is_string($host)) {
+        if (!\is_string($host)) {
             throw new InvalidArgumentException('Host must be a string');
         }
 
@@ -498,7 +498,7 @@ class Uri implements UriInterface
      */
     protected function filterPath($path): string
     {
-        if (!is_string($path)) {
+        if (!\is_string($path)) {
             throw new InvalidArgumentException('Path must be a string');
         }
 
@@ -518,7 +518,7 @@ class Uri implements UriInterface
      */
     protected function filterQueryAndFragment($str): string
     {
-        if (!is_string($str)) {
+        if (!\is_string($str)) {
             throw new InvalidArgumentException('Query and fragment must be a string');
         }
 
@@ -546,7 +546,7 @@ class Uri implements UriInterface
      */
     protected function isStringOrNull($param): bool
     {
-        return in_array(gettype($param), ['string', 'NULL'], true);
+        return \in_array(\gettype($param), ['string', 'NULL'], true);
     }
 
     /**

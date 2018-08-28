@@ -97,7 +97,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         }
 
         $headers = [];
-        if (function_exists('\getallheaders')) {
+        if (\function_exists('\getallheaders')) {
             $headers = getallheaders();
         } else {
             $headers = $this->getAllHeaders();
@@ -153,9 +153,9 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         foreach ($files as $key => $value) {
             if ($value instanceof UploadedFileInterface) {
                 $normalized[$key] = $value;
-            } elseif (is_array($value) && array_key_exists('tmp_name', $value)) {
+            } elseif (\is_array($value) && array_key_exists('tmp_name', $value)) {
                 $normalized[$key] = self::createUploadedFileFromSpec($value);
-            } elseif (is_array($value)) {
+            } elseif (\is_array($value)) {
                 $normalized[$key] = self::normalizeFiles($value);
 
                 continue;
@@ -174,7 +174,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
      */
     protected static function createUploadedFileFromSpec(array $value)
     {
-        if (is_array($value['tmp_name'])) {
+        if (\is_array($value['tmp_name'])) {
             return self::normalizeNestedFileSpec($value);
         }
 

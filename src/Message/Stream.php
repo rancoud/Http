@@ -67,7 +67,7 @@ class Stream implements StreamInterface
     public function close(): void
     {
         if (isset($this->stream)) {
-            if (is_resource($this->stream)) {
+            if (\is_resource($this->stream)) {
                 fclose($this->stream);
             }
             $this->detach();
@@ -109,7 +109,7 @@ class Stream implements StreamInterface
         }
 
         $stats = fstat($this->stream);
-        if (is_array($stats) && array_key_exists('size', $stats)) {
+        if (\is_array($stats) && array_key_exists('size', $stats)) {
             $this->size = $stats['size'];
 
             return $this->size;
@@ -159,11 +159,11 @@ class Stream implements StreamInterface
      */
     public function seek($offset, $whence = SEEK_SET): void
     {
-        if (!is_int($offset)) {
+        if (!\is_int($offset)) {
             throw new InvalidArgumentException('Offset must be a int');
         }
 
-        if (!is_int($whence)) {
+        if (!\is_int($whence)) {
             throw new InvalidArgumentException('Whence must be a int');
         }
 
@@ -203,7 +203,7 @@ class Stream implements StreamInterface
      */
     public function write($string)
     {
-        if (!is_string($string)) {
+        if (!\is_string($string)) {
             throw new InvalidArgumentException('Data must be a string');
         }
 
@@ -239,7 +239,7 @@ class Stream implements StreamInterface
      */
     public function read($length): string
     {
-        if (!is_int($length)) {
+        if (!\is_int($length)) {
             throw new InvalidArgumentException('Length must be a int');
         }
 
@@ -311,7 +311,7 @@ class Stream implements StreamInterface
      */
     public static function createFromResource($resource): self
     {
-        if (!is_resource($resource)) {
+        if (!\is_resource($resource)) {
             throw new InvalidArgumentException('Stream must be a resource');
         }
 
@@ -336,7 +336,7 @@ class Stream implements StreamInterface
      */
     public static function create(string $content): self
     {
-        $resource = fopen('php://temp', 'rw+');
+        $resource = fopen('php://temp', 'rw+b');
         $stream = self::createFromResource($resource);
         $stream->write($content);
 
@@ -355,6 +355,6 @@ class Stream implements StreamInterface
      */
     protected function isStringOrNull($param): bool
     {
-        return in_array(gettype($param), ['string', 'NULL'], true);
+        return \in_array(\gettype($param), ['string', 'NULL'], true);
     }
 }

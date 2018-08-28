@@ -199,7 +199,7 @@ class Request implements RequestInterface
      */
     public function withUri(UriInterface $uri, $preserveHost = false): self
     {
-        if (!is_bool($preserveHost)) {
+        if (!\is_bool($preserveHost)) {
             throw new InvalidArgumentException('Preserve Host must be a boolean');
         }
 
@@ -224,11 +224,11 @@ class Request implements RequestInterface
      */
     protected function filterMethod($method): void
     {
-        if (!is_string($method)) {
+        if (!\is_string($method)) {
             throw new InvalidArgumentException('Method must be a string');
         }
 
-        if (!in_array($method, self::$methods, true)) {
+        if (!\in_array($method, self::$methods, true)) {
             throw new InvalidArgumentException(sprintf('Method %s is invalid', $method));
         }
     }

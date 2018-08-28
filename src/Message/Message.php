@@ -71,7 +71,7 @@ trait Message
      */
     public function hasHeader($name): bool
     {
-        if (!is_string($name)) {
+        if (!\is_string($name)) {
             throw new InvalidArgumentException('Header name must be a string');
         }
 
@@ -87,7 +87,7 @@ trait Message
      */
     public function getHeader($name): array
     {
-        if (!is_string($name)) {
+        if (!\is_string($name)) {
             throw new InvalidArgumentException('Header name must be a string');
         }
 
@@ -111,7 +111,7 @@ trait Message
      */
     public function getHeaderLine($name): string
     {
-        if (!is_string($name)) {
+        if (!\is_string($name)) {
             throw new InvalidArgumentException('Header name must be a string');
         }
 
@@ -128,18 +128,18 @@ trait Message
      */
     public function withHeader($name, $value): self
     {
-        if (!is_string($name) || mb_strlen($name) <= 0) {
+        if (!\is_string($name) || mb_strlen($name) <= 0) {
             throw new InvalidArgumentException('Header name must be non-empty string');
         }
 
-        if (!is_array($value)) {
+        if (!\is_array($value)) {
             $value = [$value];
-        } elseif (count($value) <= 0) {
+        } elseif (\count($value) <= 0) {
             throw new InvalidArgumentException('Header values must be strings');
         }
 
         foreach ($value as $v) {
-            if (!is_string($v)) {
+            if (!\is_string($v)) {
                 throw new InvalidArgumentException('Header values must be strings');
             }
         }
@@ -167,20 +167,20 @@ trait Message
      */
     public function withAddedHeader($name, $value): self
     {
-        if (!is_string($name) || mb_strlen($name) <= 0) {
+        if (!\is_string($name) || mb_strlen($name) <= 0) {
             throw new InvalidArgumentException('Header name must be non-empty string');
         }
 
-        if (!is_array($value)) {
+        if (!\is_array($value)) {
             $value = [$value];
-        } elseif (count($value) > 0) {
+        } elseif (\count($value) > 0) {
             $value = array_values($value);
         } else {
             throw new InvalidArgumentException('Header values must be strings');
         }
 
         foreach ($value as $v) {
-            if (!is_string($v)) {
+            if (!\is_string($v)) {
                 throw new InvalidArgumentException('Header values must be strings');
             }
         }
@@ -209,7 +209,7 @@ trait Message
      */
     public function withoutHeader($name): self
     {
-        if (!is_string($name) || mb_strlen($name) <= 0) {
+        if (!\is_string($name) || mb_strlen($name) <= 0) {
             throw new InvalidArgumentException('Header name must be non-empty string');
         }
 
@@ -267,7 +267,7 @@ trait Message
         $this->headerNames = $this->headers = [];
 
         foreach ($headers as $header => $value) {
-            if (!is_array($value)) {
+            if (!\is_array($value)) {
                 $value = [$value];
             }
 
@@ -304,7 +304,7 @@ trait Message
      */
     protected function validateProtocolVersion(string $protocolVersion): string
     {
-        if (!in_array($protocolVersion, ['0.9', '1.0', '1.1', '2'], true)) {
+        if (!\in_array($protocolVersion, ['0.9', '1.0', '1.1', '2'], true)) {
             throw new InvalidArgumentException('Protocol Version must be 0.9 or 1.0 or 1.1 or 2');
         }
 

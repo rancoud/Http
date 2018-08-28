@@ -90,7 +90,7 @@ class UploadedFile implements UploadedFileInterface
             return $this->stream;
         }
 
-        $resource = fopen($this->file, 'r');
+        $resource = fopen($this->file, 'rb');
 
         return Stream::createFromResource($resource);
     }
@@ -110,7 +110,7 @@ class UploadedFile implements UploadedFileInterface
         }
 
         if ($this->file !== null) {
-            if (PHP_SAPI === 'cli') {
+            if (\PHP_SAPI === 'cli') {
                 $this->moved = rename($this->file, $targetPath);
             } else {
                 $this->moved = move_uploaded_file($this->file, $targetPath);
@@ -123,7 +123,7 @@ class UploadedFile implements UploadedFileInterface
 
             (new StreamFactory())->copyToStream(
                 $stream,
-                Stream::createFromResource(fopen($targetPath, 'w'))
+                Stream::createFromResource(fopen($targetPath, 'wb'))
             );
 
             $this->moved = true;
@@ -173,9 +173,9 @@ class UploadedFile implements UploadedFileInterface
      */
     protected function setStreamOrFile($streamOrFile): void
     {
-        if (is_string($streamOrFile)) {
+        if (\is_string($streamOrFile)) {
             $this->file = $streamOrFile;
-        } elseif (is_resource($streamOrFile)) {
+        } elseif (\is_resource($streamOrFile)) {
             $this->stream = Stream::createFromResource($streamOrFile);
         } elseif ($streamOrFile instanceof StreamInterface) {
             $this->stream = $streamOrFile;
@@ -191,11 +191,11 @@ class UploadedFile implements UploadedFileInterface
      */
     protected function setError($error): void
     {
-        if (!is_int($error)) {
+        if (!\is_int($error)) {
             throw new InvalidArgumentException('Upload file error status must be an integer');
         }
 
-        if (!in_array($error, self::$errors, true)) {
+        if (!\in_array($error, self::$errors, true)) {
             throw new InvalidArgumentException('Invalid error status for UploadedFile');
         }
 
@@ -209,7 +209,7 @@ class UploadedFile implements UploadedFileInterface
      */
     protected function setSize($size): void
     {
-        if (!is_int($size)) {
+        if (!\is_int($size)) {
             throw new InvalidArgumentException('Upload file size must be an integer');
         }
 
@@ -223,7 +223,7 @@ class UploadedFile implements UploadedFileInterface
      */
     protected function isStringOrNull($param): bool
     {
-        return in_array(gettype($param), ['string', 'NULL'], true);
+        return \in_array(\gettype($param), ['string', 'NULL'], true);
     }
 
     /**
@@ -233,7 +233,7 @@ class UploadedFile implements UploadedFileInterface
      */
     protected function isStringNotEmpty($param): bool
     {
-        return is_string($param) === true && mb_strlen($param) > 0;
+        return \is_string($param) === true && mb_strlen($param) > 0;
     }
 
     /**
