@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Rancoud\Http\Message;
 
-use InvalidArgumentException;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -49,14 +48,14 @@ class Uri implements UriInterface
      *
      * @param string $uri
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public function __construct(string $uri = '')
     {
         if ($uri !== '') {
             $parts = \parse_url($uri);
             if ($parts === false) {
-                throw new InvalidArgumentException("Unable to parse URI: $uri");
+                throw new \InvalidArgumentException("Unable to parse URI: $uri");
             }
 
             $this->applyParts($parts);
@@ -144,7 +143,7 @@ class Uri implements UriInterface
     /**
      * @param $scheme
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return Uri
      */
@@ -167,18 +166,18 @@ class Uri implements UriInterface
      * @param      $user
      * @param null $password
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return Uri
      */
     public function withUserInfo($user, $password = null): self
     {
         if (!\is_string($user)) {
-            throw new InvalidArgumentException('User must be a string');
+            throw new \InvalidArgumentException('User must be a string');
         }
 
         if (!$this->isStringOrNull($password)) {
-            throw new InvalidArgumentException('Password must be a string or NULL');
+            throw new \InvalidArgumentException('Password must be a string or NULL');
         }
 
         $info = $user;
@@ -199,7 +198,7 @@ class Uri implements UriInterface
     /**
      * @param $host
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return Uri
      */
@@ -220,7 +219,7 @@ class Uri implements UriInterface
     /**
      * @param $port
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return Uri
      */
@@ -241,7 +240,7 @@ class Uri implements UriInterface
     /**
      * @param $path
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return Uri
      */
@@ -262,7 +261,7 @@ class Uri implements UriInterface
     /**
      * @param $query
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return Uri
      */
@@ -283,7 +282,7 @@ class Uri implements UriInterface
     /**
      * @param $fragment
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return Uri
      */
@@ -318,7 +317,7 @@ class Uri implements UriInterface
     /**
      * @param array $parts
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     protected function applyParts(array $parts): void
     {
@@ -427,14 +426,14 @@ class Uri implements UriInterface
     /**
      * @param $scheme
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return string
      */
     protected function filterScheme($scheme): string
     {
         if (!\is_string($scheme)) {
-            throw new InvalidArgumentException('Scheme must be a string');
+            throw new \InvalidArgumentException('Scheme must be a string');
         }
 
         return \mb_strtolower($scheme);
@@ -443,14 +442,14 @@ class Uri implements UriInterface
     /**
      * @param $host
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return string
      */
     protected function filterHost($host): string
     {
         if (!\is_string($host)) {
-            throw new InvalidArgumentException('Host must be a string');
+            throw new \InvalidArgumentException('Host must be a string');
         }
 
         return \mb_strtolower($host);
@@ -459,7 +458,7 @@ class Uri implements UriInterface
     /**
      * @param $port
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return int|null
      */
@@ -471,7 +470,7 @@ class Uri implements UriInterface
 
         $port = (int) $port;
         if ($port < 1 || $port > 65535) {
-            throw new InvalidArgumentException(\sprintf('Invalid port: %d. Must be between 1 and 65535', $port));
+            throw new \InvalidArgumentException(\sprintf('Invalid port: %d. Must be between 1 and 65535', $port));
         }
 
         if (!self::isNonStandardPort($this->scheme, $port)) {
@@ -484,14 +483,14 @@ class Uri implements UriInterface
     /**
      * @param $path
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return string
      */
     protected function filterPath($path): string
     {
         if (!\is_string($path)) {
-            throw new InvalidArgumentException('Path must be a string');
+            throw new \InvalidArgumentException('Path must be a string');
         }
 
         return \preg_replace_callback(
@@ -504,14 +503,14 @@ class Uri implements UriInterface
     /**
      * @param $str
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return string
      */
     protected function filterQueryAndFragment($str): string
     {
         if (!\is_string($str)) {
-            throw new InvalidArgumentException('Query and fragment must be a string');
+            throw new \InvalidArgumentException('Query and fragment must be a string');
         }
 
         return \preg_replace_callback(

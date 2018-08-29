@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Rancoud\Http\Message;
 
-use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Rancoud\Http\Message\Factory\StreamFactory;
 
@@ -191,7 +190,7 @@ class Response implements ResponseInterface
      * @param string $version
      * @param null   $reason
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      * @throws \RuntimeException
      */
     public function __construct(
@@ -208,7 +207,7 @@ class Response implements ResponseInterface
         }
 
         $this->setHeaders($headers);
-        if ($reason === null && array_key_exists($this->statusCode, self::$phrases)) {
+        if ($reason === null && \array_key_exists($this->statusCode, self::$phrases)) {
             $this->reasonPhrase = self::$phrases[$status];
         } else {
             $this->reasonPhrase = (string) $reason;
@@ -229,24 +228,24 @@ class Response implements ResponseInterface
      * @param        $code
      * @param string $reasonPhrase
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return Response
      */
     public function withStatus($code, $reasonPhrase = ''): self
     {
         if (!\is_int($code) && !\is_string($code)) {
-            throw new InvalidArgumentException('Status code has to be an integer');
+            throw new \InvalidArgumentException('Status code has to be an integer');
         }
 
         $code = (int) $code;
-        if (!array_key_exists($code, self::$phrases)) {
-            throw new InvalidArgumentException('Status code has to be an integer between 100 and 599');
+        if (!\array_key_exists($code, self::$phrases)) {
+            throw new \InvalidArgumentException('Status code has to be an integer between 100 and 599');
         }
 
         $new = clone $this;
         $new->statusCode = (int) $code;
-        if ($reasonPhrase === '' && array_key_exists($new->statusCode, self::$phrases)) {
+        if ($reasonPhrase === '' && \array_key_exists($new->statusCode, self::$phrases)) {
             $reasonPhrase = self::$phrases[$new->statusCode];
         }
         $new->reasonPhrase = $reasonPhrase;
@@ -263,23 +262,23 @@ class Response implements ResponseInterface
     }
 
     /**
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      * @throws \RuntimeException
      */
     public function send()
     {
-        $httpLine = sprintf(
+        $httpLine = \sprintf(
             'HTTP/%s %s %s',
             $this->getProtocolVersion(),
             $this->getStatusCode(),
             $this->getReasonPhrase()
         );
 
-        header($httpLine, true, $this->getStatusCode());
+        \header($httpLine, true, $this->getStatusCode());
 
         foreach ($this->getHeaders() as $name => $values) {
             foreach ($values as $value) {
-                header("$name: $value", false);
+                \header("$name: $value", false);
             }
         }
 

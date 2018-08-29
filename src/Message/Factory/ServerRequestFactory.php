@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Rancoud\Http\Message\Factory;
 
-use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileInterface;
@@ -31,7 +30,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
     /**
      * @param array $server
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return ServerRequestInterface
      */
@@ -55,7 +54,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
      * @param array $post
      * @param array $files
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return ServerRequestInterface
      */
@@ -71,8 +70,8 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         $uri = $this->getUriFromEnvironmentWithHTTP($server);
 
         $protocol = '1.1';
-        if (array_key_exists('SERVER_PROTOCOL', $server)) {
-            $protocol = str_replace('HTTP/', '', $server['SERVER_PROTOCOL']);
+        if (\array_key_exists('SERVER_PROTOCOL', $server)) {
+            $protocol = \str_replace('HTTP/', '', $server['SERVER_PROTOCOL']);
         }
 
         $serverRequest = new ServerRequest($method, $uri, $headers, null, $protocol, $server);
@@ -85,20 +84,20 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
     }
 
     /**
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return ServerRequestInterface
      */
     public function createServerRequestFromGlobals(): ServerRequestInterface
     {
         $server = $_SERVER;
-        if (!array_key_exists('REQUEST_METHOD', $server)) {
+        if (!\array_key_exists('REQUEST_METHOD', $server)) {
             $server['REQUEST_METHOD'] = 'GET';
         }
 
         $headers = [];
         if (\function_exists('\getallheaders')) {
-            $headers = getallheaders();
+            $headers = \getallheaders();
         } else {
             $headers = $this->getAllHeaders();
         }
@@ -109,14 +108,14 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
     /**
      * @param array $environment
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return string
      */
     protected function getMethodFromEnvironment(array $environment): string
     {
-        if (!array_key_exists('REQUEST_METHOD', $environment)) {
-            throw new InvalidArgumentException('Cannot determine HTTP method');
+        if (!\array_key_exists('REQUEST_METHOD', $environment)) {
+            throw new \InvalidArgumentException('Cannot determine HTTP method');
         }
 
         return $environment['REQUEST_METHOD'];
@@ -125,7 +124,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
     /**
      * @param array $environment
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return UriInterface
      */
@@ -142,7 +141,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
     /**
      * @param array $files
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return array
      */
@@ -153,14 +152,14 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         foreach ($files as $key => $value) {
             if ($value instanceof UploadedFileInterface) {
                 $normalized[$key] = $value;
-            } elseif (\is_array($value) && array_key_exists('tmp_name', $value)) {
+            } elseif (\is_array($value) && \array_key_exists('tmp_name', $value)) {
                 $normalized[$key] = self::createUploadedFileFromSpec($value);
             } elseif (\is_array($value)) {
                 $normalized[$key] = self::normalizeFiles($value);
 
                 continue;
             } else {
-                throw new InvalidArgumentException('Invalid value in files specification');
+                throw new \InvalidArgumentException('Invalid value in files specification');
             }
         }
 
@@ -196,7 +195,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
     {
         $normalizedFiles = [];
 
-        foreach (array_keys($files['tmp_name']) as $key) {
+        foreach (\array_keys($files['tmp_name']) as $key) {
             $spec = [
                 'tmp_name' => $files['tmp_name'][$key],
                 'size'     => $files['size'][$key],
@@ -218,10 +217,10 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         $headers = [];
 
         foreach ($_SERVER as $name => $value) {
-            if (mb_substr($name, 0, 5) === 'HTTP_') {
-                $treatedName = mb_substr($name, 5);
-                $treatedName = ucwords(mb_strtolower(str_replace('_', ' ', $treatedName)));
-                $treatedName = str_replace(' ', '-', $treatedName);
+            if (\mb_substr($name, 0, 5) === 'HTTP_') {
+                $treatedName = \mb_substr($name, 5);
+                $treatedName = \ucwords(\mb_strtolower(\str_replace('_', ' ', $treatedName)));
+                $treatedName = \str_replace(' ', '-', $treatedName);
                 $headers[$treatedName] = $value;
             }
         }

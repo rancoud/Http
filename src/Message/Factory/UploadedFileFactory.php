@@ -30,13 +30,13 @@ class UploadedFileFactory implements UploadedFileFactoryInterface
     ): UploadedFile {
         if (\is_string($file)) {
             $content = $file;
-            $filename = sys_get_temp_dir() . '/' . uniqid('uploaded_file', true);
-            $file = fopen($filename, 'w+b');
-            fwrite($file, $content);
+            $filename = \sys_get_temp_dir() . '/' . \uniqid('uploaded_file', true);
+            $file = \fopen($filename, 'w+b');
+            \fwrite($file, $content);
         }
 
         if ($size === null) {
-            $stats = fstat($file);
+            $stats = \fstat($file);
             $size = $stats['size'];
         }
 

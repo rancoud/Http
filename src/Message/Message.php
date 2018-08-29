@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Rancoud\Http\Message;
 
-use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
 use Rancoud\Http\Message\Factory\StreamFactory;
 
@@ -36,7 +35,7 @@ trait Message
     /**
      * @param $version
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return self
      */
@@ -65,35 +64,35 @@ trait Message
     /**
      * @param $name
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return bool
      */
     public function hasHeader($name): bool
     {
         if (!\is_string($name)) {
-            throw new InvalidArgumentException('Header name must be a string');
+            throw new \InvalidArgumentException('Header name must be a string');
         }
 
-        return array_key_exists(mb_strtolower($name), $this->headerNames);
+        return \array_key_exists(\mb_strtolower($name), $this->headerNames);
     }
 
     /**
      * @param $name
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return array
      */
     public function getHeader($name): array
     {
         if (!\is_string($name)) {
-            throw new InvalidArgumentException('Header name must be a string');
+            throw new \InvalidArgumentException('Header name must be a string');
         }
 
-        $name = mb_strtolower($name);
+        $name = \mb_strtolower($name);
 
-        if (!array_key_exists($name, $this->headerNames)) {
+        if (!\array_key_exists($name, $this->headerNames)) {
             return [];
         }
 
@@ -105,47 +104,47 @@ trait Message
     /**
      * @param $name
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return string
      */
     public function getHeaderLine($name): string
     {
         if (!\is_string($name)) {
-            throw new InvalidArgumentException('Header name must be a string');
+            throw new \InvalidArgumentException('Header name must be a string');
         }
 
-        return implode(', ', $this->getHeader($name));
+        return \implode(', ', $this->getHeader($name));
     }
 
     /**
      * @param $name
      * @param $value
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return self
      */
     public function withHeader($name, $value): self
     {
-        if (!\is_string($name) || mb_strlen($name) <= 0) {
-            throw new InvalidArgumentException('Header name must be non-empty string');
+        if (!\is_string($name) || \mb_strlen($name) <= 0) {
+            throw new \InvalidArgumentException('Header name must be non-empty string');
         }
 
         if (!\is_array($value)) {
             $value = [$value];
         } elseif (\count($value) <= 0) {
-            throw new InvalidArgumentException('Header values must be strings');
+            throw new \InvalidArgumentException('Header values must be strings');
         }
 
         foreach ($value as $v) {
             if (!\is_string($v)) {
-                throw new InvalidArgumentException('Header values must be strings');
+                throw new \InvalidArgumentException('Header values must be strings');
             }
         }
 
         $value = $this->trimHeaderValues($value);
-        $normalized = mb_strtolower($name);
+        $normalized = \mb_strtolower($name);
 
         $new = clone $this;
         if (isset($new->headerNames[$normalized])) {
@@ -161,37 +160,37 @@ trait Message
      * @param $name
      * @param $value
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return self
      */
     public function withAddedHeader($name, $value): self
     {
-        if (!\is_string($name) || mb_strlen($name) <= 0) {
-            throw new InvalidArgumentException('Header name must be non-empty string');
+        if (!\is_string($name) || \mb_strlen($name) <= 0) {
+            throw new \InvalidArgumentException('Header name must be non-empty string');
         }
 
         if (!\is_array($value)) {
             $value = [$value];
         } elseif (\count($value) > 0) {
-            $value = array_values($value);
+            $value = \array_values($value);
         } else {
-            throw new InvalidArgumentException('Header values must be strings');
+            throw new \InvalidArgumentException('Header values must be strings');
         }
 
         foreach ($value as $v) {
             if (!\is_string($v)) {
-                throw new InvalidArgumentException('Header values must be strings');
+                throw new \InvalidArgumentException('Header values must be strings');
             }
         }
 
         $value = $this->trimHeaderValues($value);
-        $normalized = mb_strtolower($name);
+        $normalized = \mb_strtolower($name);
 
         $new = clone $this;
         if (isset($new->headerNames[$normalized])) {
             $name = $this->headerNames[$normalized];
-            $new->headers[$name] = array_merge($this->headers[$name], $value);
+            $new->headers[$name] = \array_merge($this->headers[$name], $value);
         } else {
             $new->headerNames[$normalized] = $name;
             $new->headers[$name] = $value;
@@ -203,19 +202,19 @@ trait Message
     /**
      * @param $name
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return $this|Message
      */
     public function withoutHeader($name): self
     {
-        if (!\is_string($name) || mb_strlen($name) <= 0) {
-            throw new InvalidArgumentException('Header name must be non-empty string');
+        if (!\is_string($name) || \mb_strlen($name) <= 0) {
+            throw new \InvalidArgumentException('Header name must be non-empty string');
         }
 
-        $normalized = mb_strtolower($name);
+        $normalized = \mb_strtolower($name);
 
-        if (!array_key_exists($normalized, $this->headerNames)) {
+        if (!\array_key_exists($normalized, $this->headerNames)) {
             return $this;
         }
 
@@ -228,7 +227,7 @@ trait Message
     }
 
     /**
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      * @throws \RuntimeException
      *
      * @return StreamInterface
@@ -272,10 +271,10 @@ trait Message
             }
 
             $value = $this->trimHeaderValues($value);
-            $normalized = mb_strtolower($header);
-            if (array_key_exists($normalized, $this->headerNames)) {
+            $normalized = \mb_strtolower($header);
+            if (\array_key_exists($normalized, $this->headerNames)) {
                 $header = $this->headerNames[$normalized];
-                $this->headers[$header] = array_merge($this->headers[$header], $value);
+                $this->headers[$header] = \array_merge($this->headers[$header], $value);
             } else {
                 $this->headerNames[$normalized] = $header;
                 $this->headers[$header] = $value;
@@ -290,22 +289,22 @@ trait Message
      */
     protected function trimHeaderValues(array $values): array
     {
-        return array_map(function (string $value) {
-            return trim($value, " \t");
+        return \array_map(function (string $value) {
+            return \trim($value, " \t");
         }, $values);
     }
 
     /**
      * @param string $protocolVersion
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return string
      */
     protected function validateProtocolVersion(string $protocolVersion): string
     {
         if (!\in_array($protocolVersion, ['0.9', '1.0', '1.1', '2'], true)) {
-            throw new InvalidArgumentException('Protocol Version must be 0.9 or 1.0 or 1.1 or 2');
+            throw new \InvalidArgumentException('Protocol Version must be 0.9 or 1.0 or 1.1 or 2');
         }
 
         return $protocolVersion;

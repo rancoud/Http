@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Rancoud\Http\Message\Factory;
 
-use InvalidArgumentException;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\StreamInterface;
 use Rancoud\Http\Message\Stream;
@@ -20,7 +19,7 @@ class StreamFactory implements StreamFactoryInterface
     /**
      * @param resource|string|null $body
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      * @throws \RuntimeException
      *
      * @return null|StreamInterface|Stream
@@ -46,13 +45,13 @@ class StreamFactory implements StreamFactoryInterface
      * @param        $file
      * @param string $mode
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return Stream
      */
     public function createStreamFromFile($file, $mode = 'r'): Stream
     {
-        $resource = fopen($file, $mode);
+        $resource = \fopen($file, $mode);
 
         return Stream::createFromResource($resource);
     }
@@ -60,7 +59,7 @@ class StreamFactory implements StreamFactoryInterface
     /**
      * @param $resource
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return Stream
      */
@@ -89,7 +88,7 @@ class StreamFactory implements StreamFactoryInterface
         $bytes = 0;
         while ($source->eof() === false) {
             $buf = $source->read($maxLen - $bytes);
-            if (!($len = mb_strlen($buf))) {
+            if (!($len = \mb_strlen($buf))) {
                 break;
             }
             $bytes += $len;

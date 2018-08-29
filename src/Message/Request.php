@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Rancoud\Http\Message;
 
-use InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
 use Rancoud\Http\Message\Factory\StreamFactory;
@@ -89,7 +88,7 @@ class Request implements RequestInterface
      * @param null   $body
      * @param string $version
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      * @throws \RuntimeException
      */
     public function __construct(
@@ -140,14 +139,14 @@ class Request implements RequestInterface
     /**
      * @param $requestTarget
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return Request
      */
     public function withRequestTarget($requestTarget): self
     {
-        if (preg_match('#\s#', $requestTarget)) {
-            throw new InvalidArgumentException('Invalid request target provided; cannot contain whitespace');
+        if (\preg_match('#\s#', $requestTarget)) {
+            throw new \InvalidArgumentException('Invalid request target provided; cannot contain whitespace');
         }
 
         $new = clone $this;
@@ -167,7 +166,7 @@ class Request implements RequestInterface
     /**
      * @param $method
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return Request
      */
@@ -193,14 +192,14 @@ class Request implements RequestInterface
      * @param UriInterface $uri
      * @param bool         $preserveHost
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return Request
      */
     public function withUri(UriInterface $uri, $preserveHost = false): self
     {
         if (!\is_bool($preserveHost)) {
-            throw new InvalidArgumentException('Preserve Host must be a boolean');
+            throw new \InvalidArgumentException('Preserve Host must be a boolean');
         }
 
         if ($uri === $this->uri) {
@@ -220,16 +219,16 @@ class Request implements RequestInterface
     /**
      * @param $method
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     protected function filterMethod($method): void
     {
         if (!\is_string($method)) {
-            throw new InvalidArgumentException('Method must be a string');
+            throw new \InvalidArgumentException('Method must be a string');
         }
 
         if (!\in_array($method, self::$methods, true)) {
-            throw new InvalidArgumentException(sprintf('Method %s is invalid', $method));
+            throw new \InvalidArgumentException(\sprintf('Method %s is invalid', $method));
         }
     }
 
@@ -246,7 +245,7 @@ class Request implements RequestInterface
             $host .= ':' . $port;
         }
 
-        if (array_key_exists('host', $this->headerNames)) {
+        if (\array_key_exists('host', $this->headerNames)) {
             $header = $this->headerNames['host'];
         } else {
             $header = 'Host';
