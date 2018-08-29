@@ -199,7 +199,7 @@ class Response implements ResponseInterface
         array $headers = [],
         $body = null,
         string $version = '1.1',
-        $reason = null
+        string $reason = null
     ) {
         $this->statusCode = (int) $status;
 

@@ -93,11 +93,11 @@ class Request implements RequestInterface
      * @throws \RuntimeException
      */
     public function __construct(
-        $method,
+        string $method,
         $uri,
         array $headers = [],
         $body = null,
-        $version = '1.1'
+        string $version = '1.1'
     ) {
         if (($uri instanceof UriInterface) === false) {
             $uri = new Uri($uri);

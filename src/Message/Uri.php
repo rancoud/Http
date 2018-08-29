@@ -51,10 +51,10 @@ class Uri implements UriInterface
      *
      * @throws InvalidArgumentException
      */
-    public function __construct($uri = '')
+    public function __construct(string $uri = '')
     {
         if ($uri !== '') {
-            $parts = parse_url($uri);
+            $parts = \parse_url($uri);
             if ($parts === false) {
                 throw new InvalidArgumentException("Unable to parse URI: $uri");
             }
@@ -182,7 +182,7 @@ class Uri implements UriInterface
         }
 
         $info = $user;
-        if ($password !== null && mb_strlen($password) > 0) {
+        if ($password !== null && $password !== '') {
             $info .= ':' . $password;
         }
 
@@ -330,35 +330,35 @@ class Uri implements UriInterface
         $this->query = '';
         $this->fragment = '';
 
-        if (array_key_exists('scheme', $parts)) {
+        if (isset($parts['scheme'])) {
             $this->scheme = $this->filterScheme($parts['scheme']);
         }
 
-        if (array_key_exists('user', $parts)) {
+        if (isset($parts['user'])) {
             $this->userInfo = $parts['user'];
         }
 
-        if (array_key_exists('host', $parts)) {
+        if (isset($parts['host'])) {
             $this->host = $this->filterHost($parts['host']);
         }
 
-        if (array_key_exists('port', $parts)) {
+        if (isset($parts['port'])) {
             $this->port = $this->filterPort($parts['port']);
         }
 
-        if (array_key_exists('path', $parts)) {
+        if (isset($parts['path'])) {
             $this->path = $this->filterPath($parts['path']);
         }
 
-        if (array_key_exists('query', $parts)) {
+        if (isset($parts['query'])) {
             $this->query = $this->filterQueryAndFragment($parts['query']);
         }
 
-        if (array_key_exists('fragment', $parts)) {
+        if (isset($parts['fragment'])) {
             $this->fragment = $this->filterQueryAndFragment($parts['fragment']);
         }
 
-        if (array_key_exists('pass', $parts)) {
+        if (isset($parts['pass'])) {
             $this->userInfo .= ':' . $parts['pass'];
         }
     }
@@ -395,7 +395,7 @@ class Uri implements UriInterface
                 }
             } elseif (isset($path[1]) && $path[1] === '/') {
                 if ($authority === '') {
-                    $path = '/' . ltrim($path, '/');
+                    $path = '/' . \ltrim($path, '/');
                 }
             }
 
@@ -421,15 +421,7 @@ class Uri implements UriInterface
      */
     protected static function isNonStandardPort(string $scheme, int $port): bool
     {
-        if (!array_key_exists($scheme, self::$schemes)) {
-            return true;
-        }
-
-        if ($port !== self::$schemes[$scheme]) {
-            return true;
-        }
-
-        return false;
+        return !isset(self::$schemes[$scheme]) || $port !== self::$schemes[$scheme];
     }
 
     /**
@@ -445,7 +437,7 @@ class Uri implements UriInterface
             throw new InvalidArgumentException('Scheme must be a string');
         }
 
-        return mb_strtolower($scheme);
+        return \mb_strtolower($scheme);
     }
 
     /**
@@ -461,7 +453,7 @@ class Uri implements UriInterface
             throw new InvalidArgumentException('Host must be a string');
         }
 
-        return mb_strtolower($host);
+        return \mb_strtolower($host);
     }
 
     /**
@@ -479,7 +471,7 @@ class Uri implements UriInterface
 
         $port = (int) $port;
         if ($port < 1 || $port > 65535) {
-            throw new InvalidArgumentException(sprintf('Invalid port: %d. Must be between 1 and 65535', $port));
+            throw new InvalidArgumentException(\sprintf('Invalid port: %d. Must be between 1 and 65535', $port));
         }
 
         if (!self::isNonStandardPort($this->scheme, $port)) {
@@ -502,7 +494,7 @@ class Uri implements UriInterface
             throw new InvalidArgumentException('Path must be a string');
         }
 
-        return preg_replace_callback(
+        return \preg_replace_callback(
             $this->getPatternForFilteringPath(),
             [$this, 'rawurlencodeMatchZero'],
             $path
@@ -522,7 +514,7 @@ class Uri implements UriInterface
             throw new InvalidArgumentException('Query and fragment must be a string');
         }
 
-        return preg_replace_callback(
+        return \preg_replace_callback(
             $this->getPatternForFilteringQueryAndFragment(),
             [$this, 'rawurlencodeMatchZero'],
             $str
@@ -536,7 +528,7 @@ class Uri implements UriInterface
      */
     protected function rawurlencodeMatchZero(array $match): string
     {
-        return rawurlencode($match[0]);
+        return \rawurlencode($match[0]);
     }
 
     /**
