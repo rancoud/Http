@@ -74,7 +74,7 @@ trait Message
             throw new \InvalidArgumentException('Header name must be a string');
         }
 
-        return \array_key_exists(\mb_strtolower($name), $this->headerNames);
+        return isset($this->headerNames[\mb_strtolower($name)]);
     }
 
     /**
@@ -92,7 +92,7 @@ trait Message
 
         $name = \mb_strtolower($name);
 
-        if (!\array_key_exists($name, $this->headerNames)) {
+        if (!isset($this->headerNames[\mb_strtolower($name)])) {
             return [];
         }
 
@@ -127,7 +127,7 @@ trait Message
      */
     public function withHeader($name, $value): self
     {
-        if (!\is_string($name) || \mb_strlen($name) <= 0) {
+        if (!\is_string($name) || $name === '') {
             throw new \InvalidArgumentException('Header name must be non-empty string');
         }
 
@@ -166,7 +166,7 @@ trait Message
      */
     public function withAddedHeader($name, $value): self
     {
-        if (!\is_string($name) || \mb_strlen($name) <= 0) {
+        if (!\is_string($name) || $name === '') {
             throw new \InvalidArgumentException('Header name must be non-empty string');
         }
 
@@ -208,13 +208,13 @@ trait Message
      */
     public function withoutHeader($name): self
     {
-        if (!\is_string($name) || \mb_strlen($name) <= 0) {
+        if (!\is_string($name) || $name === '') {
             throw new \InvalidArgumentException('Header name must be non-empty string');
         }
 
         $normalized = \mb_strtolower($name);
 
-        if (!\array_key_exists($normalized, $this->headerNames)) {
+        if (!isset($this->headerNames[$normalized])) {
             return $this;
         }
 
@@ -272,7 +272,7 @@ trait Message
 
             $value = $this->trimHeaderValues($value);
             $normalized = \mb_strtolower($header);
-            if (\array_key_exists($normalized, $this->headerNames)) {
+            if (isset($this->headerNames[$normalized])) {
                 $header = $this->headerNames[$normalized];
                 $this->headers[$header] = \array_merge($this->headers[$header], $value);
             } else {
