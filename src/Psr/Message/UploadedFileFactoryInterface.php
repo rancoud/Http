@@ -2,13 +2,16 @@
 
 namespace Psr\Http\Message;
 
+use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\UploadedFileInterface;
+
 interface UploadedFileFactoryInterface
 {
     public function createUploadedFile(
-        $file,
-        $size = null,
-        $error = \UPLOAD_ERR_OK,
-        $clientFilename = null,
-        $clientMediaType = null
-    );
+        StreamInterface $stream,
+        int $size = null,
+        int $error = \UPLOAD_ERR_OK,
+        string $clientFilename = null,
+        string $clientMediaType = null
+    ): UploadedFileInterface;
 }
