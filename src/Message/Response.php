@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Rancoud\Http\Message;
 
+use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
-use Rancoud\Http\Message\Factory\StreamFactory;
+use RuntimeException;
 
 /**
  * Class Response.
@@ -188,10 +189,10 @@ class Response implements ResponseInterface
      * @param array  $headers
      * @param null   $body
      * @param string $version
-     * @param null   $reason
+     * @param string $reason
      *
-     * @throws \InvalidArgumentException
-     * @throws \RuntimeException
+     * @throws InvalidArgumentException
+     * @throws RuntimeException
      */
     public function __construct(
         int $status = 200,
@@ -203,11 +204,11 @@ class Response implements ResponseInterface
         $this->statusCode = (int) $status;
 
         if ($body !== '' && $body !== null) {
-            $this->stream = (new StreamFactory())->createStream($body);
+            $this->stream = Stream::create($body);
         }
 
         $this->setHeaders($headers);
-        if ($reason === null && \array_key_exists($this->statusCode, self::$phrases)) {
+        if ($reason === null && isset(self::$phrases[$this->statusCode])) {
             $this->reasonPhrase = self::$phrases[$status];
         } else {
             $this->reasonPhrase = (string) $reason;
@@ -228,24 +229,24 @@ class Response implements ResponseInterface
      * @param        $code
      * @param string $reasonPhrase
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      *
      * @return Response
      */
     public function withStatus($code, $reasonPhrase = ''): self
     {
         if (!\is_int($code) && !\is_string($code)) {
-            throw new \InvalidArgumentException('Status code has to be an integer');
+            throw new InvalidArgumentException('Status code has to be an integer');
         }
 
         $code = (int) $code;
-        if (!\array_key_exists($code, self::$phrases)) {
-            throw new \InvalidArgumentException('Status code has to be an integer between 100 and 599');
+        if (!isset(self::$phrases[$code])) {
+            throw new InvalidArgumentException('Status code has to be an integer between 100 and 599');
         }
 
         $new = clone $this;
-        $new->statusCode = (int) $code;
-        if ($reasonPhrase === '' && \array_key_exists($new->statusCode, self::$phrases)) {
+        $new->statusCode = $code;
+        if (($reasonPhrase === null || $reasonPhrase === '')) {
             $reasonPhrase = self::$phrases[$new->statusCode];
         }
         $new->reasonPhrase = $reasonPhrase;
@@ -262,8 +263,8 @@ class Response implements ResponseInterface
     }
 
     /**
-     * @throws \InvalidArgumentException
-     * @throws \RuntimeException
+     * @throws InvalidArgumentException
+     * @throws RuntimeException
      */
     public function send()
     {
