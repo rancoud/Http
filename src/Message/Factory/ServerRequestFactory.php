@@ -22,7 +22,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
      *
      * @return ServerRequestInterface
      */
-    public function createServerRequest($method, $uri): ServerRequestInterface
+    public function createServerRequest(string $method, $uri, array $serverParams = []): ServerRequestInterface
     {
         return new ServerRequest($method, $uri);
     }

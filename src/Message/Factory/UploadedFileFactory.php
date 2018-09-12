@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Rancoud\Http\Message\Factory;
 
+use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileFactoryInterface;
+use Psr\Http\Message\UploadedFileInterface;
 use Rancoud\Http\Message\UploadedFile;
 
 /**
@@ -22,14 +24,15 @@ class UploadedFileFactory implements UploadedFileFactoryInterface
      * @return UploadedFile
      */
     public function createUploadedFile(
-        $file,
-        $size = null,
-        $error = \UPLOAD_ERR_OK,
-        $clientFilename = null,
-        $clientMediaType = null
-    ): UploadedFile {
-        if (\is_string($file)) {
-            $content = $file;
+        StreamInterface $stream,
+        int $size = null,
+        int $error = \UPLOAD_ERR_OK,
+        string $clientFilename = null,
+        string $clientMediaType = null
+    ): UploadedFileInterface
+    {
+        if (\is_string($stream)) {
+            $content = $stream;
             $filename = \sys_get_temp_dir() . '/' . \uniqid('uploaded_file', true);
             $file = \fopen($filename, 'w+b');
             \fwrite($file, $content);

@@ -24,21 +24,9 @@ class StreamFactory implements StreamFactoryInterface
      *
      * @return null|StreamInterface|Stream
      */
-    public function createStream($body = null)
+    public function createStream(string $content = ''): StreamInterface
     {
-        if ($body instanceof StreamInterface) {
-            return $body;
-        }
-
-        if (\gettype($body) === 'resource') {
-            return Stream::createFromResource($body);
-        }
-
-        if ($body !== null) {
-            return Stream::create($body);
-        }
-
-        return Stream::create('');
+        return Stream::create($content);
     }
 
     /**
@@ -49,7 +37,7 @@ class StreamFactory implements StreamFactoryInterface
      *
      * @return Stream
      */
-    public function createStreamFromFile($file, $mode = 'r'): Stream
+    public function createStreamFromFile($file, $mode = 'r'): StreamInterface
     {
         $resource = \fopen($file, $mode);
 
@@ -63,7 +51,7 @@ class StreamFactory implements StreamFactoryInterface
      *
      * @return Stream
      */
-    public function createStreamFromResource($resource): Stream
+    public function createStreamFromResource($resource): StreamInterface
     {
         return Stream::createFromResource($resource);
     }
