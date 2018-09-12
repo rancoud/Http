@@ -12,7 +12,7 @@ use RuntimeException;
 /**
  * Trait Message.
  */
-trait Message
+trait MessageTrait
 {
     /** @var array */
     protected $headers = [];
@@ -206,7 +206,7 @@ trait Message
      *
      * @throws InvalidArgumentException
      *
-     * @return $this|Message
+     * @return $this|MessageTrait
      */
     public function withoutHeader($name): self
     {

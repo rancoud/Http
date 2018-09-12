@@ -4,14 +4,19 @@ declare(strict_types=1);
 
 namespace Rancoud\Http\Message;
 
+use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileInterface;
+use Psr\Http\Message\UriInterface;
 
 /**
  * Class ServerRequest.
  */
-class ServerRequest extends Request implements ServerRequestInterface
+class ServerRequest implements ServerRequestInterface
 {
+    use MessageTrait;
+    use RequestTrait;
+
     /** @var array */
     protected $attributes = [];
 
@@ -40,7 +45,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      * @param string $version
      * @param array  $serverParams
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      * @throws \RuntimeException
      */
     public function __construct(
@@ -53,7 +58,22 @@ class ServerRequest extends Request implements ServerRequestInterface
     ) {
         $this->serverParams = $serverParams;
 
-        parent::__construct($method, $uri, $headers, $body, $version);
+        if (($uri instanceof UriInterface) === false) {
+            $uri = new Uri($uri);
+        }
+
+        $this->method = $method;
+        $this->uri = $uri;
+        $this->setHeaders($headers);
+        $this->protocol = $this->validateProtocolVersion($version);
+
+        if (!$this->hasHeader('Host')) {
+            $this->updateHostFromUri();
+        }
+
+        if ($body !== '' && $body !== null) {
+            $this->stream = Stream::create($body);
+        }
     }
 
     /**
@@ -138,7 +158,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * @param $data
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      *
      * @return ServerRequest
      */
@@ -164,14 +184,14 @@ class ServerRequest extends Request implements ServerRequestInterface
      * @param      $name
      * @param null $default
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      *
      * @return mixed|null
      */
     public function getAttribute($name, $default = null)
     {
         if (!\is_string($name)) {
-            throw new \InvalidArgumentException('Name must be a string');
+            throw new InvalidArgumentException('Name must be a string');
         }
 
         if (!\array_key_exists($name, $this->attributes)) {
@@ -185,14 +205,14 @@ class ServerRequest extends Request implements ServerRequestInterface
      * @param $name
      * @param $value
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      *
      * @return ServerRequest
      */
     public function withAttribute($name, $value): self
     {
         if (!\is_string($name)) {
-            throw new \InvalidArgumentException('Name must be a string');
+            throw new InvalidArgumentException('Name must be a string');
         }
 
         $new = clone $this;
@@ -204,14 +224,14 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * @param $name
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      *
      * @return ServerRequest
      */
     public function withoutAttribute($name): self
     {
         if (!\is_string($name)) {
-            throw new \InvalidArgumentException('Name must be a string');
+            throw new InvalidArgumentException('Name must be a string');
         }
 
         if (!\array_key_exists($name, $this->attributes)) {
@@ -227,12 +247,12 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * @param $data
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     protected function validateData($data): void
     {
         if (!\is_array($data) && !\is_object($data) && $data !== null) {
-            throw new \InvalidArgumentException('First parameter to withParsedBody MUST be object, array or null');
+            throw new InvalidArgumentException('First parameter to withParsedBody MUST be object, array or null');
         }
     }
 }

@@ -13,7 +13,7 @@ use RuntimeException;
  */
 class Response implements ResponseInterface
 {
-    use Message;
+    use MessageTrait;
 
     /** @var array */
     public static $phrases = [
