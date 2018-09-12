@@ -25,7 +25,7 @@ use Rancoud\Http\Message\UploadedFile;
 use Rancoud\Http\Message\Uri;
 use RuntimeException;
 
-class Psr17Factory implements RequestFactoryInterface, ResponseFactoryInterface, ServerRequestFactoryInterface, StreamFactoryInterface, UploadedFileFactoryInterface, UriFactoryInterface
+class Factory implements RequestFactoryInterface, ResponseFactoryInterface, ServerRequestFactoryInterface, StreamFactoryInterface, UploadedFileFactoryInterface, UriFactoryInterface
 {
     /**
      * @param string $method
@@ -79,12 +79,16 @@ class Psr17Factory implements RequestFactoryInterface, ResponseFactoryInterface,
      */
     public function createStreamFromFile(string $filename, string $mode = 'r'): StreamInterface
     {
-        $resource = @\fopen($filename, $mode);
-        if (false === $resource) {
-            if (0 === \mb_strlen($mode) || false === \in_array($mode[0], ['r', 'w', 'a', 'x', 'c'], true)) {
-                throw new InvalidArgumentException('The mode ' . $mode . ' is invalid.');
+        if (!\file_exists($filename)) {
+            throw new RuntimeException(\sprintf('The file %s doesn\'t exist.', $filename));
+        }
+
+        $resource = \fopen($filename, $mode);
+        if ($resource === false) {
+            if (!\in_array($mode[0], ['r', 'w', 'a', 'x', 'c'], true)) {
+                throw new InvalidArgumentException(\sprintf('The mode %s is invalid.', $mode));
             }
-            throw new RuntimeException('The file ' . $filename . ' cannot be opened.');
+            throw new RuntimeException(\sprintf('The file %s cannot be opened.', $filename));
         }
 
         return Stream::create($resource);
@@ -116,7 +120,7 @@ class Psr17Factory implements RequestFactoryInterface, ResponseFactoryInterface,
      */
     public function createUploadedFile(StreamInterface $stream, int $size = null, int $error = \UPLOAD_ERR_OK, string $clientFilename = null, string $clientMediaType = null): UploadedFileInterface
     {
-        if (null === $size) {
+        if ($size === null) {
             $size = $stream->getSize();
         }
 
@@ -133,6 +137,49 @@ class Psr17Factory implements RequestFactoryInterface, ResponseFactoryInterface,
     public function createUri(string $uri = ''): UriInterface
     {
         return new Uri($uri);
+    }
+
+    /**
+     * @param array $server
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return UriInterface
+     */
+    public function createUriFromArray(array $server): UriInterface
+    {
+        $uri = new Uri('');
+
+        if (isset($server['REQUEST_SCHEME'])) {
+            $uri = $uri->withScheme($server['REQUEST_SCHEME']);
+        } elseif (isset($server['HTTPS'])) {
+            if ($server['HTTPS'] === 'on') {
+                $uri = $uri->withScheme('https');
+            } else {
+                $uri = $uri->withScheme('http');
+            }
+        }
+
+        if (isset($server['HTTP_HOST'])) {
+            $uri = $uri->withHost($server['HTTP_HOST']);
+        } elseif (isset($server['SERVER_NAME'])) {
+            $uri = $uri->withHost($server['SERVER_NAME']);
+        }
+
+        if (isset($server['SERVER_PORT'])) {
+            $uri = $uri->withPort($server['SERVER_PORT']);
+        }
+
+        if (isset($server['REQUEST_URI'])) {
+            $parts = \explode('?', $server['REQUEST_URI']);
+            $uri = $uri->withPath($parts[0]);
+        }
+
+        if (isset($server['QUERY_STRING'])) {
+            $uri = $uri->withQuery($server['QUERY_STRING']);
+        }
+
+        return $uri;
     }
 
     /**

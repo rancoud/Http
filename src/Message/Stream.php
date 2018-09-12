@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Rancoud\Http\Message;
 
+use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
 
 /**
@@ -331,13 +332,34 @@ class Stream implements StreamInterface
      *
      * @return Stream
      */
-    public static function create(string $content): self
+    public static function create(string $content): StreamInterface
     {
-        $resource = \fopen('php://temp', 'rw+b');
+        /*$resource = \fopen('php://temp', 'rw+b');
         $stream = self::createFromResource($resource);
         $stream->write($content);
 
-        return $stream;
+        return $stream;*/
+
+        if ($content instanceof StreamInterface) {
+            return $content;
+        }
+        if (\is_string($content)) {
+            $resource = \fopen('php://temp', 'rw+');
+            \fwrite($resource, $content);
+            $content = $resource;
+        }
+        if ('resource' === \gettype($content)) {
+            $obj = new self();
+            $obj->stream = $content;
+            $meta = \stream_get_meta_data($obj->stream);
+            $obj->seekable = $meta['seekable'];
+            $obj->readable = isset(self::$readWriteHash['read'][$meta['mode']]);
+            $obj->writable = isset(self::$readWriteHash['write'][$meta['mode']]);
+            $obj->uri = $obj->getMetadata('uri');
+            return $obj;
+        }
+
+        throw new InvalidArgumentException('First argument to Stream::create() must be a string, resource or StreamInterface.');
     }
 
     public function __destruct()
