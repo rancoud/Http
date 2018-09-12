@@ -2,9 +2,6 @@
 
 namespace Psr\Http\Message;
 
-use Psr\Http\Message\StreamInterface;
-use Psr\Http\Message\UploadedFileInterface;
-
 interface UploadedFileFactoryInterface
 {
     public function createUploadedFile(
