@@ -29,8 +29,7 @@ class UploadedFileFactory implements UploadedFileFactoryInterface
         int $error = \UPLOAD_ERR_OK,
         string $clientFilename = null,
         string $clientMediaType = null
-    ): UploadedFileInterface
-    {
+    ): UploadedFileInterface {
         if (\is_string($stream)) {
             $content = $stream;
             $filename = \sys_get_temp_dir() . '/' . \uniqid('uploaded_file', true);
