@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/rancoud/Http.svg?branch=master)](https://travis-ci.org/rancoud/Http) [![Coverage Status](https://coveralls.io/repos/github/rancoud/Http/badge.svg?branch=master)](https://coveralls.io/github/rancoud/Http?branch=master)
 
-Based on [Nyholm](https://github.com/nyholm) works from the psr7 repository [https://github.com/nyholm/psr7](https://github.com/nyholm/psr7)
+Heavily based on [Nyholm](https://github.com/nyholm) works from the psr7 repository [https://github.com/nyholm/psr7](https://github.com/nyholm/psr7)
 
 Http with PSR 7 15 17 18.  
 
