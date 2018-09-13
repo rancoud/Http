@@ -232,6 +232,6 @@ class StreamTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('First argument to Stream::create() must be a string, resource or StreamInterface.');
 
-        $stream = Stream::create(1);
+        Stream::create(1);
     }
 }
