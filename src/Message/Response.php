@@ -208,7 +208,7 @@ class Response implements ResponseInterface
         }
 
         $this->setHeaders($headers);
-        if ($reason === null && isset(self::$phrases[$this->statusCode])) {
+        if (($reason === null || $reason === '') && isset(self::$phrases[$this->statusCode])) {
             $this->reasonPhrase = self::$phrases[$status];
         } else {
             $this->reasonPhrase = (string) $reason;

@@ -9,5 +9,10 @@
     <exclude-pattern>*/src/Psr/*</exclude-pattern>
 
     <rule ref="PSR2"></rule>
-
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="lineLimit" value="200" />
+            <property name="absoluteLineLimit" value="200" />
+        </properties>
+    </rule>
 </ruleset>

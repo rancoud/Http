@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Rancoud\Http\Message;
 
+use Exception;
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
+use RuntimeException;
 
 /**
  * Class Stream.
@@ -46,6 +48,10 @@ class Stream implements StreamInterface
         ],
     ];
 
+    private function __construct()
+    {
+    }
+
     /**
      * @return string
      */
@@ -57,7 +63,7 @@ class Stream implements StreamInterface
             }
 
             return $this->getContents();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return '';
         }
     }
@@ -107,7 +113,7 @@ class Stream implements StreamInterface
         }
 
         $stats = \fstat($this->stream);
-        if (\is_array($stats) && \array_key_exists('size', $stats)) {
+        if (isset($stats['size'])) {
             $this->size = $stats['size'];
 
             return $this->size;
@@ -117,7 +123,7 @@ class Stream implements StreamInterface
     }
 
     /**
-     * @throws \RuntimeException
+     * @throws RuntimeException
      *
      * @return int
      */
@@ -126,7 +132,7 @@ class Stream implements StreamInterface
         $result = \ftell($this->stream);
 
         if ($result === false) {
-            throw new \RuntimeException('Unable to determine stream position');
+            throw new RuntimeException('Unable to determine stream position');
         }
 
         return $result;
@@ -152,31 +158,31 @@ class Stream implements StreamInterface
      * @param     $offset
      * @param int $whence
      *
-     * @throws \InvalidArgumentException
-     * @throws \RuntimeException
+     * @throws InvalidArgumentException
+     * @throws RuntimeException
      */
-    public function seek($offset, $whence = SEEK_SET): void
+    public function seek($offset, $whence = \SEEK_SET): void
     {
         if (!\is_int($offset)) {
-            throw new \InvalidArgumentException('Offset must be a int');
+            throw new InvalidArgumentException('Offset must be a int');
         }
 
         if (!\is_int($whence)) {
-            throw new \InvalidArgumentException('Whence must be a int');
+            throw new InvalidArgumentException('Whence must be a int');
         }
 
         if (!$this->seekable) {
-            throw new \RuntimeException('Stream is not seekable');
+            throw new RuntimeException('Stream is not seekable');
         } elseif (\fseek($this->stream, $offset, $whence) === -1) {
             $whenceStr = \var_export($whence, true);
             $message = \sprintf('Unable to seek to stream position %d with whence %d', $offset, $whenceStr);
-            throw new \RuntimeException($message);
+            throw new RuntimeException($message);
         }
     }
 
     /**
-     * @throws \InvalidArgumentException
-     * @throws \RuntimeException
+     * @throws InvalidArgumentException
+     * @throws RuntimeException
      */
     public function rewind(): void
     {
@@ -194,26 +200,26 @@ class Stream implements StreamInterface
     /**
      * @param $string
      *
-     * @throws \InvalidArgumentException
-     * @throws \RuntimeException
+     * @throws InvalidArgumentException
+     * @throws RuntimeException
      *
      * @return bool|int
      */
     public function write($string)
     {
         if (!\is_string($string)) {
-            throw new \InvalidArgumentException('Data must be a string');
+            throw new InvalidArgumentException('Data must be a string');
         }
 
         if (!$this->writable) {
-            throw new \RuntimeException('Cannot write to a non-writable stream');
+            throw new RuntimeException('Cannot write to a non-writable stream');
         }
 
         $this->size = null;
         $result = \fwrite($this->stream, $string);
 
         if ($result === false) {
-            throw new \RuntimeException('Unable to write to stream');
+            throw new RuntimeException('Unable to write to stream');
         }
 
         return $result;
@@ -230,39 +236,39 @@ class Stream implements StreamInterface
     /**
      * @param $length
      *
-     * @throws \InvalidArgumentException
-     * @throws \RuntimeException
+     * @throws InvalidArgumentException
+     * @throws RuntimeException
      *
      * @return string
      */
     public function read($length): string
     {
         if (!\is_int($length)) {
-            throw new \InvalidArgumentException('Length must be a int');
+            throw new InvalidArgumentException('Length must be a int');
         }
 
         if (!$this->readable) {
-            throw new \RuntimeException('Cannot read from non-readable stream');
+            throw new RuntimeException('Cannot read from non-readable stream');
         }
 
         return \fread($this->stream, $length);
     }
 
     /**
-     * @throws \RuntimeException
+     * @throws RuntimeException
      *
      * @return string
      */
     public function getContents(): string
     {
-        if (isset($this->stream) === false) {
-            throw new \RuntimeException('Unable to read stream contents');
+        if (!isset($this->stream)) {
+            throw new RuntimeException('Unable to read stream contents');
         }
 
         $contents = \stream_get_contents($this->stream);
 
         if ($contents === false) {
-            throw new \RuntimeException('Unable to read stream contents');
+            throw new RuntimeException('Unable to read stream contents');
         }
 
         return $contents;
@@ -271,14 +277,14 @@ class Stream implements StreamInterface
     /**
      * @param null $key
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      *
      * @return array|null
      */
     public function getMetadata($key = null)
     {
         if (!$this->isStringOrNull($key)) {
-            throw new \InvalidArgumentException('Key must be a string or NULL');
+            throw new InvalidArgumentException('Key must be a string or NULL');
         }
 
         if (!isset($this->stream)) {
@@ -293,7 +299,7 @@ class Stream implements StreamInterface
 
         $meta = \stream_get_meta_data($this->stream);
 
-        if (!\array_key_exists($key, $meta)) {
+        if (!isset($meta[$key])) {
             return null;
         }
 
@@ -301,53 +307,24 @@ class Stream implements StreamInterface
     }
 
     /**
-     * @param $resource
-     *
-     * @throws \InvalidArgumentException
-     *
-     * @return Stream
-     */
-    public static function createFromResource($resource): self
-    {
-        if (!\is_resource($resource)) {
-            throw new \InvalidArgumentException('Stream must be a resource');
-        }
-
-        $obj = new self();
-        $obj->stream = $resource;
-        $meta = \stream_get_meta_data($obj->stream);
-        $obj->seekable = $meta['seekable'];
-        $obj->readable = isset(self::$readWriteHash['read'][$meta['mode']]);
-        $obj->writable = isset(self::$readWriteHash['write'][$meta['mode']]);
-        $obj->uri = $obj->getMetadata('uri');
-
-        return $obj;
-    }
-
-    /**
      * @param string $content
      *
-     * @throws \InvalidArgumentException
-     * @throws \RuntimeException
+     * @throws InvalidArgumentException
      *
      * @return Stream
      */
-    public static function create(string $content): StreamInterface
+    public static function create($content = ''): StreamInterface
     {
-        /*$resource = \fopen('php://temp', 'rw+b');
-        $stream = self::createFromResource($resource);
-        $stream->write($content);
-
-        return $stream;*/
-
         if ($content instanceof StreamInterface) {
             return $content;
         }
+
         if (\is_string($content)) {
-            $resource = \fopen('php://temp', 'rw+');
+            $resource = \fopen('php://temp', 'rw+b');
             \fwrite($resource, $content);
             $content = $resource;
         }
+
         if ('resource' === \gettype($content)) {
             $obj = new self();
             $obj->stream = $content;
@@ -356,6 +333,7 @@ class Stream implements StreamInterface
             $obj->readable = isset(self::$readWriteHash['read'][$meta['mode']]);
             $obj->writable = isset(self::$readWriteHash['write'][$meta['mode']]);
             $obj->uri = $obj->getMetadata('uri');
+
             return $obj;
         }
 

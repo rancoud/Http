@@ -2,6 +2,7 @@
 
 namespace Tests\Rancoud\Psr7;
 
+use Rancoud\Http\Message\Factory\Factory;
 use Rancoud\Http\Message\ServerRequest;
 use Rancoud\Http\Message\UploadedFile;
 use Rancoud\Http\Message\Uri;
@@ -255,12 +256,19 @@ class ServerRequestTest extends TestCase
         ];
     }
 
+    public function testConstruct()
+    {
+        $serverRequest = new ServerRequest('GET', '/', [], 'string');
+
+        $this->assertEquals('string', (string)$serverRequest->getBody());
+    }
+    
     /**
      * @dataProvider dataNormalizeFiles
      */
     public function testNormalizeFiles($files, $expected)
     {
-        $result = (new ServerRequestFactory())
+        $result = (new Factory())
             ->createServerRequestFromArrays(['REQUEST_METHOD' => 'POST'], [], [], [], [], $files)
             ->getUploadedFiles();
 
@@ -272,7 +280,7 @@ class ServerRequestTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid value in files specification');
 
-        (new ServerRequestFactory())->createServerRequestFromArrays(['REQUEST_METHOD' => 'POST'], [], [], [], [], ['test' => 'something']);
+        (new Factory())->createServerRequestFromArrays(['REQUEST_METHOD' => 'POST'], [], [], [], [], ['test' => 'something']);
     }
 
     public function dataGetUriFromGlobals()
@@ -341,7 +349,7 @@ class ServerRequestTest extends TestCase
      */
     public function testGetUriFromGlobals($expected, $serverParams)
     {
-        $this->assertEquals(new Uri($expected), (new UriFactory())->createUriFromArray($serverParams));
+        $this->assertEquals(new Uri($expected), (new Factory())->createUriFromArray($serverParams));
     }
 
     public function testFromGlobals()
@@ -401,7 +409,7 @@ class ServerRequestTest extends TestCase
             ],
         ];
 
-        $server = (new ServerRequestFactory())->createServerRequestFromArrays($server, [], $cookie, $get, $post, $files);
+        $server = (new Factory())->createServerRequestFromArrays($server, [], $cookie, $get, $post, $files);
 
         $this->assertEquals('POST', $server->getMethod());
         $this->assertEquals(['Host' => ['www.blakesimpson.co.uk']], $server->getHeaders());

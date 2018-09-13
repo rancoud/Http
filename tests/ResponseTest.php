@@ -2,6 +2,7 @@
 
 namespace Tests\Rancoud\Psr7;
 
+use Rancoud\Http\Message\Factory\Factory;
 use Rancoud\Http\Message\Response;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\StreamInterface;
@@ -143,7 +144,7 @@ class ResponseTest extends TestCase
 
     public function testWithBody()
     {
-        $b = (new \Rancoud\Http\Message\Factory\StreamFactory())->createStream('0');
+        $b = (new Factory())->createStream('0');
         $r = (new Response())->withBody($b);
         $this->assertInstanceOf(StreamInterface::class, $r->getBody());
         $this->assertSame('0', (string) $r->getBody());

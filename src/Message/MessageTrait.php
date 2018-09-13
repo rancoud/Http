@@ -6,7 +6,7 @@ namespace Rancoud\Http\Message;
 
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
-use Rancoud\Http\Message\Factory\StreamFactory;
+use Rancoud\Http\Message\Factory\Factory;
 use RuntimeException;
 
 /**
@@ -237,7 +237,7 @@ trait MessageTrait
     public function getBody(): StreamInterface
     {
         if (!$this->stream) {
-            $this->stream = (new StreamFactory())->createStream('');
+            $this->stream = (new Factory())->createStream('');
         }
 
         return $this->stream;
