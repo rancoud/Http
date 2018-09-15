@@ -217,4 +217,11 @@ class RequestTest extends TestCase
         $r = new Request('GET', 'http://foo.com:8124/bar');
         $r->withMethod('NULL_METHOD');
     }
+
+    public function testCanHaveHeaderWithEmptyValue()
+    {
+        $r = new Request('GET', 'https://example.com/');
+        $r = $r->withHeader('Foo', '');
+        $this->assertEquals([''], $r->getHeader('Foo'));
+    }
 }
