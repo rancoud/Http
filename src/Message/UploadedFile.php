@@ -287,30 +287,15 @@ class UploadedFile implements UploadedFileInterface
     /**
      * @param StreamInterface $source
      * @param StreamInterface $dest
-     * @param int             $maxLen
      */
-    protected function copyToStream(StreamInterface $source, StreamInterface $dest, $maxLen = -1)
+    protected function copyToStream(StreamInterface $source, StreamInterface $dest)
     {
-        if ($maxLen === -1) {
-            while (!$source->eof()) {
-                if (!$dest->write($source->read($this->defaultMaxBytesLength))) {
-                    break;
-                }
-            }
-
-            return;
-        }
-        $bytes = 0;
         while (!$source->eof()) {
-            $buf = $source->read($maxLen - $bytes);
-            if (!($len = \mb_strlen($buf))) {
-                break;
-            }
-            $bytes += $len;
-            $dest->write($buf);
-            if ($bytes === $maxLen) {
+            if (!$dest->write($source->read($this->defaultMaxBytesLength))) {
                 break;
             }
         }
+
+        return;
     }
 }
