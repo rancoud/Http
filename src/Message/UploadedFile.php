@@ -92,7 +92,7 @@ class UploadedFile implements UploadedFileInterface
             return $this->stream;
         }
 
-        $resource = \fopen($this->file, 'r');
+        $resource = \fopen($this->file, 'rb');
 
         return Stream::create($resource);
     }
@@ -123,7 +123,7 @@ class UploadedFile implements UploadedFileInterface
                 $stream->rewind();
             }
 
-            $this->copyToStream($stream, Stream::create(\fopen($targetPath, 'w')));
+            $this->copyToStream($stream, Stream::create(\fopen($targetPath, 'wb')));
             $this->moved = true;
         }
 
