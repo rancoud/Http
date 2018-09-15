@@ -295,7 +295,5 @@ class UploadedFile implements UploadedFileInterface
                 break;
             }
         }
-
-        return;
     }
 }
