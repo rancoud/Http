@@ -290,7 +290,7 @@ class ResponseTest extends TestCase
     public function testWithHeaderValueArrayMustHaveCorrectType()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Header values must be strings');
+        $this->expectExceptionMessage('Header values must be a string or an array of strings, empty array given.');
 
         $r = new Response();
         $this->assertSame($r, $r->withHeader('aze', []));
@@ -299,7 +299,7 @@ class ResponseTest extends TestCase
     public function testWithHeaderValueStringMustHaveCorrectType()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Header values must be strings');
+        $this->expectExceptionMessage('Header values must be RFC 7230 compatible strings.');
 
         $r = new Response();
         $this->assertSame($r, $r->withHeader('aze', [null]));
@@ -314,10 +314,28 @@ class ResponseTest extends TestCase
         $this->assertSame($r, $r->withAddedHeader('', ''));
     }
 
+    public function testWithAddedHeaderNameMustHaveCorrectTypeRFC()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Header name must be RFC 7230 compatible string.');
+
+        $r = new Response();
+        $this->assertSame($r, $r->withAddedHeader("a\t", ''));
+    }
+
+    public function testWithAddedHeaderValueMustHaveCorrectTypeRFC()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Header value must be RFC 7230 compatible string.');
+
+        $r = new Response();
+        $this->assertSame($r, $r->withAddedHeader("a", null));
+    }
+    
     public function testWithAddedHeaderValueArrayMustHaveCorrectType()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Header values must be strings');
+        $this->expectExceptionMessage('Header values must be a string or an array of strings, empty array given.');
 
         $r = new Response();
         $this->assertSame($r, $r->withAddedHeader('aze', []));
@@ -326,7 +344,7 @@ class ResponseTest extends TestCase
     public function testWithAddedHeaderValueStringMustHaveCorrectType()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Header values must be strings');
+        $this->expectExceptionMessage('Header values must be RFC 7230 compatible strings.');
 
         $r = new Response();
         $this->assertSame($r, $r->withAddedHeader('aze', [null]));

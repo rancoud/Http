@@ -18,6 +18,7 @@ class Uri implements UriInterface
         'https' => 443,
     ];
 
+    /** @var string */
     protected static $charUnreserved = 'a-zA-Z0-9_\-\.~';
 
     /** @var string */

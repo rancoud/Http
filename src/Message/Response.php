@@ -201,7 +201,7 @@ class Response implements ResponseInterface
         string $version = '1.1',
         string $reason = null
     ) {
-        $this->statusCode = (int) $status;
+        $this->statusCode = $status;
 
         if ($body !== '' && $body !== null) {
             $this->stream = Stream::create($body);
@@ -211,7 +211,7 @@ class Response implements ResponseInterface
         if (($reason === null || $reason === '') && isset(self::$phrases[$this->statusCode])) {
             $this->reasonPhrase = self::$phrases[$status];
         } else {
-            $this->reasonPhrase = (string) $reason;
+            $this->reasonPhrase = $reason;
         }
 
         $this->protocol = $this->validateProtocolVersion($version);

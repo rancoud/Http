@@ -7,13 +7,18 @@ namespace Rancoud\Http\Message;
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
 use Rancoud\Http\Message\Factory\Factory;
-use RuntimeException;
 
 /**
  * Trait Message.
  */
 trait MessageTrait
 {
+    /** @var string */
+    protected static $patternHeaderName = "@^[!#$%&'*+.^_`|~0-9A-Za-z-]+$@";
+
+    /** @var string */
+    protected static $patternHeaderValue = "@^[ \t\x21-\x7E\x80-\xFF]*$@";
+
     /** @var array */
     protected $headers = [];
 
@@ -133,19 +138,7 @@ trait MessageTrait
             throw new InvalidArgumentException('Header name must be non-empty string');
         }
 
-        if (!\is_array($value)) {
-            $value = [$value];
-        } elseif (\count($value) <= 0) {
-            throw new InvalidArgumentException('Header values must be strings');
-        }
-
-        foreach ($value as $v) {
-            if (!\is_string($v)) {
-                throw new InvalidArgumentException('Header values must be strings');
-            }
-        }
-
-        $value = $this->trimHeaderValues($value);
+        $value = $this->validateAndTrimHeader($name, $value);
         $normalized = \mb_strtolower($name);
 
         $new = clone $this;
@@ -172,31 +165,8 @@ trait MessageTrait
             throw new InvalidArgumentException('Header name must be non-empty string');
         }
 
-        if (!\is_array($value)) {
-            $value = [$value];
-        } elseif (\count($value) > 0) {
-            $value = \array_values($value);
-        } else {
-            throw new InvalidArgumentException('Header values must be strings');
-        }
-
-        foreach ($value as $v) {
-            if (!\is_string($v)) {
-                throw new InvalidArgumentException('Header values must be strings');
-            }
-        }
-
-        $value = $this->trimHeaderValues($value);
-        $normalized = \mb_strtolower($name);
-
         $new = clone $this;
-        if (isset($new->headerNames[$normalized])) {
-            $name = $this->headerNames[$normalized];
-            $new->headers[$name] = \array_merge($this->headers[$name], $value);
-        } else {
-            $new->headerNames[$normalized] = $name;
-            $new->headers[$name] = $value;
-        }
+        $new->setHeaders([$name => $value]);
 
         return $new;
     }
@@ -230,7 +200,6 @@ trait MessageTrait
 
     /**
      * @throws InvalidArgumentException
-     * @throws RuntimeException
      *
      * @return StreamInterface
      */
@@ -262,17 +231,13 @@ trait MessageTrait
 
     /**
      * @param array $headers
+     *
+     * @throws InvalidArgumentException
      */
     protected function setHeaders(array $headers): void
     {
-        $this->headerNames = $this->headers = [];
-
         foreach ($headers as $header => $value) {
-            if (!\is_array($value)) {
-                $value = [$value];
-            }
-
-            $value = $this->trimHeaderValues($value);
+            $value = $this->validateAndTrimHeader($header, $value);
             $normalized = \mb_strtolower($header);
             if (isset($this->headerNames[$normalized])) {
                 $header = $this->headerNames[$normalized];
@@ -285,15 +250,41 @@ trait MessageTrait
     }
 
     /**
-     * @param array $values
+     * @param $header
+     * @param $values
+     *
+     * @throws InvalidArgumentException
      *
      * @return array
      */
-    protected function trimHeaderValues(array $values): array
+    protected function validateAndTrimHeader($header, $values): array
     {
-        return \array_map(function (string $value) {
-            return \trim($value, " \t");
-        }, $values);
+        if (!\is_string($header) || \preg_match(self::$patternHeaderName, $header) !== 1) {
+            throw new InvalidArgumentException('Header name must be RFC 7230 compatible string.');
+        }
+
+        if (!\is_array($values)) {
+            if ((!\is_numeric($values) && !\is_string($values)) || \preg_match(self::$patternHeaderValue, (string) $values) !== 1) {
+                throw new InvalidArgumentException('Header value must be RFC 7230 compatible string.');
+            }
+
+            return [\trim((string) $values, " \t")];
+        }
+
+        if (empty($values)) {
+            throw new InvalidArgumentException('Header values must be a string or an array of strings, empty array given.');
+        }
+
+        $returnValues = [];
+        foreach ($values as $v) {
+            if ((!\is_numeric($v) && !\is_string($v)) || \preg_match(self::$patternHeaderValue, (string) $v) !== 1) {
+                throw new InvalidArgumentException('Header values must be RFC 7230 compatible strings.');
+            }
+
+            $returnValues[] = \trim((string) $v, " \t");
+        }
+
+        return $returnValues;
     }
 
     /**
