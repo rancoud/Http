@@ -17,6 +17,7 @@ $factory = new Rancoud\Http\Message\Factory();
 $request = $factory->createRequest('GET', 'https://example.com');
 $stream = (new Rancoud\Http\Message\Factory())->createStream('foobar');
 ```
+
 ## Factory
 ### Methods
 * createRequest(method: string, uri: mixed): RequestInterface  
@@ -29,7 +30,7 @@ $stream = (new Rancoud\Http\Message\Factory())->createStream('foobar');
 * createUriFromArray(server: array): UriInterface  
 * createServerRequest(method: string, uri: mixed, [serverParams: array = []]): ServerRequestInterface  
 * createServerRequestFromArray(server: array): ServerRequestInterface  
-* createServerRequestFromArrays($server: array, headers: array, cookie: array, get: array, post: array, files: array): ServerRequestInterface  
+* createServerRequestFromArrays(server: array, headers: array, cookie: array, get: array, post: array, files: array): ServerRequestInterface  
 * createServerRequestFromGlobals(): ServerRequestInterface  
 
 ## Request
@@ -37,29 +38,88 @@ $stream = (new Rancoud\Http\Message\Factory())->createStream('foobar');
 #### Mandatory
 | Parameter | Type | Description |
 | --- | --- | --- |
-| folders | array | Folder's list. ROOT and ROUTES are mandatory |
+| method | string | HTTP method |
+| uri | mixed | Uri |
 
 #### Optionnals
 | Parameter | Type | Default value | Description |
 | --- | --- | --- | --- |
-| env | Rancoud\Environment\Environment | null | Setup a different .env file |
+| headers | array | [] | Request headers |
+| body | mixed | [] | Request body |
+| version | string | '1.1' | HTTP protocol version |
 
 ### Methods
 * getBody(): StreamInterface  
 * getHeader(name: string): array  
 * getHeaderLine(name: string): string  
 * getHeaders(): array  
+* getMethod(): string  
 * getProtocolVersion(): string  
-* getReasonPhrase(): string  
-* getStatusCode(): int  
+* getRequestTarget(): string  
+* getUri(): UriInterface  
 * hasHeader(name: string): bool  
-* send(): void  
 * withAddedHeader(name: string, value: mixed): self  
 * withBody(body: StreamInterface): self  
 * withHeader(name: string, value: mixed): self  
+* withMethod(method: string): self  
 * withoutHeader(name: string): self  
 * withProtocolVersion(version: string): self  
-* withStatus(code: int, [reasonPhrase: string = '']): self
+* withRequestTarget(requestTarget: string): self  
+* withUri(uri: UriInterface, [preserveHost: bool = false]): self  
+
+### HTTP Methods supported
+* ACL  
+* BASELINE-CONTROL  
+* BCOPY  
+* BDELETE  
+* BIND  
+* BMOVE  
+* BPROPFIND  
+* BPROPPATCH  
+* CHECKIN  
+* CHECKOUT  
+* CONNECT  
+* COPY  
+* DELETE  
+* GET  
+* HEAD  
+* LABEL  
+* LINK  
+* LOCK  
+* M-SEARCH  
+* MERGE  
+* MKACTIVITY  
+* MKCALENDAR  
+* MKCOL  
+* MKREDIRECTREF  
+* MKWORKSPACE  
+* MOVE  
+* NOTIFY  
+* OPTIONS  
+* ORDERPATCH  
+* PATCH  
+* POLL  
+* POST  
+* PRI  
+* PROPFIND  
+* PROPPATCH  
+* PURGE  
+* PUT  
+* REBIND  
+* REPORT  
+* SEARCH  
+* SUBSCRIBE  
+* TRACE  
+* UNBIND  
+* UNCHECKOUT  
+* UNLINK  
+* UNLOCK  
+* UNSUBSCRIBE  
+* UPDATE  
+* UPDATEREDIRECTREF  
+* VERSION-CONTROL  
+* VIEW  
+* X-MS-ENUMATTS  
 
 ## Response
 ### Constructor
@@ -253,26 +313,60 @@ $stream = (new Rancoud\Http\Message\Factory())->createStream('foobar');
 #### Mandatory
 | Parameter | Type | Description |
 | --- | --- | --- |
-| folders | array | Folder's list. ROOT and ROUTES are mandatory |
+| method | string | HTTP method |
+| uri | mixed | Uri |
 
 #### Optionnals
 | Parameter | Type | Default value | Description |
 | --- | --- | --- | --- |
-| env | Rancoud\Environment\Environment | null | Setup a different .env file |
+| headers | array | [] | Request headers |
+| body | mixed | [] | Request body |
+| version | string | '1.1' | HTTP protocol version |
+| serverParams | array | [] | Server parameters |
 
 ### Methods
+* getAttribute(name: string, [default: mixed = null]): mixed|null  
+* getAttributes(): array  
+* getBody(): StreamInterface  
+* getCookieParams(): array  
+* getHeader(name: string): array  
+* getHeaderLine(name: string): string  
+* getHeaders(): array  
+* getMethod(): string  
+* getParsedBody(): array|null|object  
+* getProtocolVersion(): string  
+* getQueryParams(): array  
+* getRequestTarget(): string  
+* getServerParams(): array  
+* getUploadedFiles(): array  
+* getUri(): UriInterface  
+* hasHeader(name: string): bool  
+* withAddedHeader(name: string, value: mixed): self  
+* withAttribute(name: string, value: mixed): self  
+* withBody(body: StreamInterface): self  
+* withCookieParams(cookies: array): self
+* withHeader(name: string, value: mixed): self  
+* withMethod(method: string): self  
+* withoutAttribute(name: string): self  
+* withoutHeader(name: string): self  
+* withParsedBody(data: array|null|object): self
+* withProtocolVersion(version: string): self  
+* withQueryParams(query: array): self  
+* withRequestTarget(requestTarget: string): self  
+* withUploadedFiles(uploadedFiles: array): self
+* withUri(uri: UriInterface, [preserveHost: bool = false]): self  
 
 ## Stream
 ### Methods
 * __destruct(): void  
 * __toString(): string  
 * close(): void  
-* create([content: string = '']): StreamInterface|Stream  
+* create([content: string = '']): StreamInterface  
 * detach(): null|resource  
 * eof(): bool  
 * getContents(): string  
-* getMetadata([key: string|null = null]): array|null  
-* getSize(): int|null  
+* getMetadata([key: string|null = null]): ?array  
+* getSize(): ?int  
 * isReadable(): bool  
 * isSeekable(): bool  
 * isWritable(): bool  
@@ -280,35 +374,65 @@ $stream = (new Rancoud\Http\Message\Factory())->createStream('foobar');
 * rewind(): void  
 * seek(offset: int, [whence: int = \SEEK_SET]): void  
 * tell(): int  
-* write(string: mixed): bool|int  
+* write(string: string): bool|int  
 
 ## UploadedFile
 ### Constructor
 #### Mandatory
 | Parameter | Type | Description |
 | --- | --- | --- |
-| folders | array | Folder's list. ROOT and ROUTES are mandatory |
+| streamOrFile | mixed | Stream or file |
+| size | int | Filesize |
+| errorStatus | int | Upload errors |
 
 #### Optionnals
 | Parameter | Type | Default value | Description |
 | --- | --- | --- | --- |
-| env | Rancoud\Environment\Environment | null | Setup a different .env file |
+| clientFilename | string\|null | null | Filename |
+| clientMediaType | string\|null | null | Media type |
 
 ### Methods
+* getClientFilename(): ?string  
+* getClientMediaType(): ?string  
+* getError(): int  
+* getSize(): ?int  
+* getStream(): StreamInterface  
+* moveTo(targetPath: string): void  
+
+### Upload errors supported
+* \UPLOAD_ERR_OK  
+* \UPLOAD_ERR_INI_SIZE  
+* \UPLOAD_ERR_FORM_SIZE  
+* \UPLOAD_ERR_PARTIAL  
+* \UPLOAD_ERR_NO_FILE  
+* \UPLOAD_ERR_NO_TMP_DIR  
+* \UPLOAD_ERR_CANT_WRITE  
+* \UPLOAD_ERR_EXTENSION  
 
 ## Uri
 ### Constructor
-#### Mandatory
-| Parameter | Type | Description |
-| --- | --- | --- |
-| folders | array | Folder's list. ROOT and ROUTES are mandatory |
-
 #### Optionnals
 | Parameter | Type | Default value | Description |
 | --- | --- | --- | --- |
-| env | Rancoud\Environment\Environment | null | Setup a different .env file |
+| uri | string | '' | Uri |
 
 ### Methods
+* __toString(): string  
+* getAuthority(): string  
+* getFragment(): string  
+* getHost(): string  
+* getPath(): string  
+* getPort(): ?int  
+* getQuery(): string  
+* getScheme(): string  
+* getUserInfo(): string  
+* withFragment(fragment: string): self  
+* withHost(host: string): self  
+* withPath(path: string): self  
+* withPort(port: int|null): self  
+* withQuery(query: string): self  
+* withScheme(scheme: string): self  
+* withUserInfo(user: string, [password: string|null = null]): self  
 
 ## How to Dev
 `./run_all_commands.sh` for php-cs-fixer and phpunit and coverage  

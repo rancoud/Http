@@ -9,7 +9,7 @@ use Psr\Http\Message\StreamInterface;
 use Rancoud\Http\Message\Factory\Factory;
 
 /**
- * Trait Message.
+ * Trait MessageTrait.
  */
 trait MessageTrait
 {
@@ -176,7 +176,7 @@ trait MessageTrait
      *
      * @throws InvalidArgumentException
      *
-     * @return $this|MessageTrait
+     * @return self
      */
     public function withoutHeader($name): self
     {

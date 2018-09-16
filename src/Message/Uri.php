@@ -143,11 +143,11 @@ class Uri implements UriInterface
     }
 
     /**
-     * @param $scheme
+     * @param string $scheme
      *
      * @throws InvalidArgumentException
      *
-     * @return Uri
+     * @return self
      */
     public function withScheme($scheme): self
     {
@@ -165,12 +165,12 @@ class Uri implements UriInterface
     }
 
     /**
-     * @param      $user
-     * @param null $password
+     * @param string      $user
+     * @param string|null $password
      *
      * @throws InvalidArgumentException
      *
-     * @return Uri
+     * @return self
      */
     public function withUserInfo($user, $password = null): self
     {
@@ -198,11 +198,11 @@ class Uri implements UriInterface
     }
 
     /**
-     * @param $host
+     * @param string $host
      *
      * @throws InvalidArgumentException
      *
-     * @return Uri
+     * @return self
      */
     public function withHost($host): self
     {
@@ -219,11 +219,11 @@ class Uri implements UriInterface
     }
 
     /**
-     * @param $port
+     * @param int|null $port
      *
      * @throws InvalidArgumentException
      *
-     * @return Uri
+     * @return self
      */
     public function withPort($port): self
     {
@@ -240,11 +240,11 @@ class Uri implements UriInterface
     }
 
     /**
-     * @param $path
+     * @param string $path
      *
      * @throws InvalidArgumentException
      *
-     * @return Uri
+     * @return self
      */
     public function withPath($path): self
     {
@@ -261,11 +261,11 @@ class Uri implements UriInterface
     }
 
     /**
-     * @param $query
+     * @param string $query
      *
      * @throws InvalidArgumentException
      *
-     * @return Uri
+     * @return self
      */
     public function withQuery($query): self
     {
@@ -282,11 +282,11 @@ class Uri implements UriInterface
     }
 
     /**
-     * @param $fragment
+     * @param string $fragment
      *
      * @throws InvalidArgumentException
      *
-     * @return Uri
+     * @return self
      */
     public function withFragment($fragment): self
     {
@@ -426,7 +426,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * @param $scheme
+     * @param string $scheme
      *
      * @throws InvalidArgumentException
      *
@@ -442,7 +442,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * @param $host
+     * @param string $host
      *
      * @throws InvalidArgumentException
      *
@@ -458,7 +458,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * @param $port
+     * @param int|null $port
      *
      * @throws InvalidArgumentException
      *
@@ -483,7 +483,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * @param $path
+     * @param string $path
      *
      * @throws InvalidArgumentException
      *
@@ -503,7 +503,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * @param $str
+     * @param string $str
      *
      * @throws InvalidArgumentException
      *

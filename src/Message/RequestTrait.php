@@ -8,7 +8,7 @@ use InvalidArgumentException;
 use Psr\Http\Message\UriInterface;
 
 /**
- * Class RequestTrait.
+ * Trait RequestTrait.
  */
 trait RequestTrait
 {
@@ -101,7 +101,7 @@ trait RequestTrait
      *
      * @throws InvalidArgumentException
      *
-     * @return Request
+     * @return self
      */
     public function withRequestTarget($requestTarget): self
     {
@@ -124,11 +124,11 @@ trait RequestTrait
     }
 
     /**
-     * @param $method
+     * @param string $method
      *
      * @throws InvalidArgumentException
      *
-     * @return Request
+     * @return self
      */
     public function withMethod($method): self
     {
@@ -154,7 +154,7 @@ trait RequestTrait
      *
      * @throws InvalidArgumentException
      *
-     * @return Request
+     * @return self
      */
     public function withUri(UriInterface $uri, $preserveHost = false): self
     {
@@ -177,7 +177,7 @@ trait RequestTrait
     }
 
     /**
-     * @param $method
+     * @param string $method
      *
      * @throws InvalidArgumentException
      */

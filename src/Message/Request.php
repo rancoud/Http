@@ -18,14 +18,13 @@ class Request implements RequestInterface
     /**
      * Request constructor.
      *
-     * @param        $method
-     * @param        $uri
+     * @param string $method
+     * @param mixed  $uri
      * @param array  $headers
-     * @param null   $body
+     * @param mixed  $body
      * @param string $version
      *
      * @throws \InvalidArgumentException
-     * @throws \RuntimeException
      */
     public function __construct(
         string $method,

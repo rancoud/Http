@@ -155,7 +155,7 @@ class Stream implements StreamInterface
     }
 
     /**
-     * @param     $offset
+     * @param int $offset
      * @param int $whence
      *
      * @throws InvalidArgumentException
@@ -198,7 +198,7 @@ class Stream implements StreamInterface
     }
 
     /**
-     * @param $string
+     * @param string $string
      *
      * @throws InvalidArgumentException
      * @throws RuntimeException
@@ -275,7 +275,7 @@ class Stream implements StreamInterface
     }
 
     /**
-     * @param null $key
+     * @param string|null $key
      *
      * @throws InvalidArgumentException
      *
@@ -311,7 +311,7 @@ class Stream implements StreamInterface
      *
      * @throws InvalidArgumentException
      *
-     * @return Stream
+     * @return StreamInterface
      */
     public static function create($content = ''): StreamInterface
     {

@@ -38,15 +38,14 @@ class ServerRequest implements ServerRequestInterface
     /**
      * ServerRequest constructor.
      *
-     * @param        $method
-     * @param        $uri
+     * @param string $method
+     * @param mixed  $uri
      * @param array  $headers
-     * @param null   $body
+     * @param mixed  $body
      * @param string $version
      * @param array  $serverParams
      *
      * @throws InvalidArgumentException
-     * @throws \RuntimeException
      */
     public function __construct(
         string $method,
@@ -95,7 +94,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * @param array $cookies
      *
-     * @return ServerRequest
+     * @return self
      */
     public function withCookieParams(array $cookies): self
     {
@@ -116,7 +115,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * @param array $query
      *
-     * @return ServerRequest
+     * @return self
      */
     public function withQueryParams(array $query): self
     {
@@ -137,7 +136,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * @param array $uploadedFiles
      *
-     * @return ServerRequest
+     * @return self
      */
     public function withUploadedFiles(array $uploadedFiles): self
     {
@@ -156,11 +155,11 @@ class ServerRequest implements ServerRequestInterface
     }
 
     /**
-     * @param $data
+     * @param array|null|object $data
      *
      * @throws InvalidArgumentException
      *
-     * @return ServerRequest
+     * @return self
      */
     public function withParsedBody($data): self
     {
@@ -181,8 +180,8 @@ class ServerRequest implements ServerRequestInterface
     }
 
     /**
-     * @param      $name
-     * @param null $default
+     * @param string $name
+     * @param mixed  $default
      *
      * @throws InvalidArgumentException
      *
@@ -202,12 +201,12 @@ class ServerRequest implements ServerRequestInterface
     }
 
     /**
-     * @param $name
-     * @param $value
+     * @param string $name
+     * @param mixed  $value
      *
      * @throws InvalidArgumentException
      *
-     * @return ServerRequest
+     * @return self
      */
     public function withAttribute($name, $value): self
     {
@@ -222,11 +221,11 @@ class ServerRequest implements ServerRequestInterface
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @throws InvalidArgumentException
      *
-     * @return ServerRequest
+     * @return self
      */
     public function withoutAttribute($name): self
     {
@@ -245,7 +244,7 @@ class ServerRequest implements ServerRequestInterface
     }
 
     /**
-     * @param $data
+     * @param mixed $data
      *
      * @throws InvalidArgumentException
      */

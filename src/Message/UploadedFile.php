@@ -53,11 +53,11 @@ class UploadedFile implements UploadedFileInterface
     /**
      * UploadedFile constructor.
      *
-     * @param      $streamOrFile
-     * @param      $size
-     * @param      $errorStatus
-     * @param null $clientFilename
-     * @param null $clientMediaType
+     * @param mixed       $streamOrFile
+     * @param int         $size
+     * @param int         $errorStatus
+     * @param string|null $clientFilename
+     * @param string|null $clientMediaType
      *
      * @throws InvalidArgumentException
      */
@@ -98,7 +98,7 @@ class UploadedFile implements UploadedFileInterface
     }
 
     /**
-     * @param $targetPath
+     * @param string $targetPath
      *
      * @throws InvalidArgumentException
      * @throws RuntimeException
@@ -183,7 +183,7 @@ class UploadedFile implements UploadedFileInterface
     }
 
     /**
-     * @param $error
+     * @param int $error
      *
      * @throws InvalidArgumentException
      */
@@ -201,7 +201,7 @@ class UploadedFile implements UploadedFileInterface
     }
 
     /**
-     * @param $size
+     * @param int $size
      *
      * @throws InvalidArgumentException
      */
@@ -235,7 +235,7 @@ class UploadedFile implements UploadedFileInterface
     }
 
     /**
-     * @param $clientFilename
+     * @param string|null $clientFilename
      *
      * @throws InvalidArgumentException
      */
@@ -249,7 +249,7 @@ class UploadedFile implements UploadedFileInterface
     }
 
     /**
-     * @param $clientMediaType
+     * @param string|null $clientMediaType
      *
      * @throws InvalidArgumentException
      */
