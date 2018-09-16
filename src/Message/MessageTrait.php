@@ -40,7 +40,7 @@ trait MessageTrait
     }
 
     /**
-     * @param $version
+     * @param string $version
      *
      * @throws InvalidArgumentException
      *
@@ -69,7 +69,7 @@ trait MessageTrait
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @throws InvalidArgumentException
      *
@@ -85,7 +85,7 @@ trait MessageTrait
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @throws InvalidArgumentException
      *
@@ -109,7 +109,7 @@ trait MessageTrait
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @throws InvalidArgumentException
      *
@@ -125,8 +125,8 @@ trait MessageTrait
     }
 
     /**
-     * @param $name
-     * @param $value
+     * @param string $name
+     * @param mixed  $value
      *
      * @throws InvalidArgumentException
      *
@@ -152,8 +152,8 @@ trait MessageTrait
     }
 
     /**
-     * @param $name
-     * @param $value
+     * @param string $name
+     * @param mixed  $value
      *
      * @throws InvalidArgumentException
      *
@@ -172,7 +172,7 @@ trait MessageTrait
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @throws InvalidArgumentException
      *
@@ -250,8 +250,8 @@ trait MessageTrait
     }
 
     /**
-     * @param $header
-     * @param $values
+     * @param string $header
+     * @param mixed  $values
      *
      * @throws InvalidArgumentException
      *

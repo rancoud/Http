@@ -6,7 +6,6 @@ namespace Rancoud\Http\Message;
 
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
-use RuntimeException;
 
 /**
  * Class Response.
@@ -187,12 +186,11 @@ class Response implements ResponseInterface
      *
      * @param int    $status
      * @param array  $headers
-     * @param null   $body
+     * @param mixed  $body
      * @param string $version
      * @param string $reason
      *
      * @throws InvalidArgumentException
-     * @throws RuntimeException
      */
     public function __construct(
         int $status = 200,
@@ -226,7 +224,7 @@ class Response implements ResponseInterface
     }
 
     /**
-     * @param        $code
+     * @param int    $code
      * @param string $reasonPhrase
      *
      * @throws InvalidArgumentException
@@ -264,7 +262,6 @@ class Response implements ResponseInterface
 
     /**
      * @throws InvalidArgumentException
-     * @throws RuntimeException
      */
     public function send()
     {
