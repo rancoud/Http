@@ -361,7 +361,6 @@ $stream = (new Rancoud\Http\Message\Factory())->createStream('foobar');
 * __destruct(): void  
 * __toString(): string  
 * close(): void  
-* Stream::create([content: string = '']): StreamInterface  
 * detach(): null|resource  
 * eof(): bool  
 * getContents(): string  
@@ -375,6 +374,9 @@ $stream = (new Rancoud\Http\Message\Factory())->createStream('foobar');
 * seek(offset: int, [whence: int = \SEEK_SET]): void  
 * tell(): int  
 * write(string: string): bool|int  
+
+### Static Methods
+* create([content: string = '']): StreamInterface  
 
 ## UploadedFile
 ### Constructor
