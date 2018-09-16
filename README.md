@@ -361,7 +361,7 @@ $stream = (new Rancoud\Http\Message\Factory())->createStream('foobar');
 * __destruct(): void  
 * __toString(): string  
 * close(): void  
-* create([content: string = '']): StreamInterface  
+* Stream::create([content: string = '']): StreamInterface  
 * detach(): null|resource  
 * eof(): bool  
 * getContents(): string  
