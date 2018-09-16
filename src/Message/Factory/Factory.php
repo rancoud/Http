@@ -25,6 +25,9 @@ use Rancoud\Http\Message\UploadedFile;
 use Rancoud\Http\Message\Uri;
 use RuntimeException;
 
+/**
+ * Class Factory.
+ */
 class Factory implements RequestFactoryInterface, ResponseFactoryInterface, ServerRequestFactoryInterface, StreamFactoryInterface, UploadedFileFactoryInterface, UriFactoryInterface
 {
     /**
@@ -117,8 +120,13 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
      *
      * @return UploadedFileInterface
      */
-    public function createUploadedFile(StreamInterface $stream, int $size = null, int $error = \UPLOAD_ERR_OK, string $clientFilename = null, string $clientMediaType = null): UploadedFileInterface
-    {
+    public function createUploadedFile(
+        StreamInterface $stream,
+        int $size = null,
+        int $error = \UPLOAD_ERR_OK,
+        string $clientFilename = null,
+        string $clientMediaType = null
+    ): UploadedFileInterface {
         if ($size === null) {
             $size = $stream->getSize();
         }
