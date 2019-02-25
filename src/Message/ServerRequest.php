@@ -23,7 +23,7 @@ class ServerRequest implements ServerRequestInterface
     /** @var array */
     protected $cookieParams = [];
 
-    /** @var null|array|object */
+    /** @var array|object|null */
     protected $parsedBody;
 
     /** @var array */
@@ -147,7 +147,7 @@ class ServerRequest implements ServerRequestInterface
     }
 
     /**
-     * @return array|null|object
+     * @return array|object|null
      */
     public function getParsedBody()
     {
@@ -155,7 +155,7 @@ class ServerRequest implements ServerRequestInterface
     }
 
     /**
-     * @param array|null|object $data
+     * @param array|object|null $data
      *
      * @throws InvalidArgumentException
      *

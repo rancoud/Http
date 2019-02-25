@@ -15,15 +15,15 @@ use RuntimeException;
 class UploadedFile implements UploadedFileInterface
 {
     /** @var int[] */
-    protected static $errors = [
-        \UPLOAD_ERR_OK,
-        \UPLOAD_ERR_INI_SIZE,
-        \UPLOAD_ERR_FORM_SIZE,
-        \UPLOAD_ERR_PARTIAL,
-        \UPLOAD_ERR_NO_FILE,
-        \UPLOAD_ERR_NO_TMP_DIR,
-        \UPLOAD_ERR_CANT_WRITE,
-        \UPLOAD_ERR_EXTENSION
+    protected const ERRORS = [
+        \UPLOAD_ERR_OK         => 1,
+        \UPLOAD_ERR_INI_SIZE   => 1,
+        \UPLOAD_ERR_FORM_SIZE  => 1,
+        \UPLOAD_ERR_PARTIAL    => 1,
+        \UPLOAD_ERR_NO_FILE    => 1,
+        \UPLOAD_ERR_NO_TMP_DIR => 1,
+        \UPLOAD_ERR_CANT_WRITE => 1,
+        \UPLOAD_ERR_EXTENSION  => 1,
     ];
 
     /** @var string */
@@ -35,16 +35,16 @@ class UploadedFile implements UploadedFileInterface
     /** @var int */
     protected $error;
 
-    /** @var null|string */
+    /** @var string|null */
     protected $file;
 
     /** @var bool */
     protected $moved = false;
 
-    /** @var null|int */
+    /** @var int|null */
     protected $size;
 
-    /** @var null|StreamInterface */
+    /** @var StreamInterface|null */
     protected $stream;
 
     /** @var int */
@@ -53,11 +53,11 @@ class UploadedFile implements UploadedFileInterface
     /**
      * UploadedFile constructor.
      *
-     * @param mixed       $streamOrFile
-     * @param int         $size
-     * @param int         $errorStatus
-     * @param string|null $clientFilename
-     * @param string|null $clientMediaType
+     * @param StreamInterface|string|resource $streamOrFile
+     * @param int                             $size
+     * @param int                             $errorStatus
+     * @param string|null                     $clientFilename
+     * @param string|null                     $clientMediaType
      *
      * @throws InvalidArgumentException
      */
@@ -92,7 +92,7 @@ class UploadedFile implements UploadedFileInterface
             return $this->stream;
         }
 
-        $resource = \fopen($this->file, 'rb');
+        $resource = \fopen($this->file, 'r');
 
         return Stream::create($resource);
     }
@@ -119,11 +119,11 @@ class UploadedFile implements UploadedFileInterface
             }
         } else {
             $stream = $this->getStream();
-            if ($stream->isSeekable() === true) {
+            if ($stream->isSeekable()) {
                 $stream->rewind();
             }
 
-            $this->copyToStream($stream, Stream::create(\fopen($targetPath, 'wb')));
+            $this->copyToStream($stream, Stream::create(\fopen($targetPath, 'w')));
             $this->moved = true;
         }
 
@@ -149,7 +149,7 @@ class UploadedFile implements UploadedFileInterface
     }
 
     /**
-     * @return null|string
+     * @return string|null
      */
     public function getClientFilename(): ?string
     {
@@ -157,7 +157,7 @@ class UploadedFile implements UploadedFileInterface
     }
 
     /**
-     * @return null|string
+     * @return string|null
      */
     public function getClientMediaType(): ?string
     {
@@ -193,7 +193,7 @@ class UploadedFile implements UploadedFileInterface
             throw new InvalidArgumentException('Upload file error status must be an integer');
         }
 
-        if (!\in_array($error, self::$errors, true)) {
+        if (!isset(static::ERRORS[$error])) {
             throw new \InvalidArgumentException('Invalid error status for UploadedFile');
         }
 
@@ -267,7 +267,7 @@ class UploadedFile implements UploadedFileInterface
      */
     protected function isOk(): bool
     {
-        return $this->error === UPLOAD_ERR_OK;
+        return $this->error === \UPLOAD_ERR_OK;
     }
 
     /**

@@ -259,7 +259,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
             ->withCookieParams($cookie)
             ->withQueryParams($get)
             ->withParsedBody($post)
-            ->withUploadedFiles(self::normalizeFiles($files));
+            ->withUploadedFiles(static::normalizeFiles($files));
     }
 
     /**
@@ -333,9 +333,9 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
             if ($value instanceof UploadedFileInterface) {
                 $normalized[$key] = $value;
             } elseif (\is_array($value) && isset($value['tmp_name'])) {
-                $normalized[$key] = self::createUploadedFileFromSpec($value);
+                $normalized[$key] = static::createUploadedFileFromSpec($value);
             } elseif (\is_array($value)) {
-                $normalized[$key] = self::normalizeFiles($value);
+                $normalized[$key] = static::normalizeFiles($value);
 
                 continue;
             } else {
@@ -356,7 +356,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
     protected static function createUploadedFileFromSpec(array $value)
     {
         if (\is_array($value['tmp_name'])) {
-            return self::normalizeNestedFileSpec($value);
+            return static::normalizeNestedFileSpec($value);
         }
 
         return new UploadedFile(
@@ -387,7 +387,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
                 'name'     => $files['name'][$key],
                 'type'     => $files['type'][$key],
             ];
-            $normalizedFiles[$key] = self::createUploadedFileFromSpec($spec);
+            $normalizedFiles[$key] = static::createUploadedFileFromSpec($spec);
         }
 
         return $normalizedFiles;

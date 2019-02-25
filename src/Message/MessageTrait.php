@@ -259,12 +259,12 @@ trait MessageTrait
      */
     protected function validateAndTrimHeader($header, $values): array
     {
-        if (!\is_string($header) || \preg_match(self::$patternHeaderName, $header) !== 1) {
+        if (!\is_string($header) || \preg_match(static::$patternHeaderName, $header) !== 1) {
             throw new InvalidArgumentException('Header name must be RFC 7230 compatible string.');
         }
 
         if (!\is_array($values)) {
-            if ((!\is_numeric($values) && !\is_string($values)) || \preg_match(self::$patternHeaderValue, (string) $values) !== 1) {
+            if ((!\is_numeric($values) && !\is_string($values)) || \preg_match(static::$patternHeaderValue, (string) $values) !== 1) {
                 throw new InvalidArgumentException('Header value must be RFC 7230 compatible string.');
             }
 
@@ -277,7 +277,7 @@ trait MessageTrait
 
         $returnValues = [];
         foreach ($values as $v) {
-            if ((!\is_numeric($v) && !\is_string($v)) || \preg_match(self::$patternHeaderValue, (string) $v) !== 1) {
+            if ((!\is_numeric($v) && !\is_string($v)) || \preg_match(static::$patternHeaderValue, (string) $v) !== 1) {
                 throw new InvalidArgumentException('Header values must be RFC 7230 compatible strings.');
             }
 

@@ -70,10 +70,10 @@ trait RequestTrait
     /** @var string */
     protected $method;
 
-    /** @var null|string */
+    /** @var string|null */
     protected $requestTarget;
 
-    /** @var null|UriInterface */
+    /** @var UriInterface|null */
     protected $uri;
 
     /**
@@ -187,7 +187,7 @@ trait RequestTrait
             throw new InvalidArgumentException('Method must be a string');
         }
 
-        if (!\in_array($method, self::$methods, true)) {
+        if (!\in_array($method, static::$methods, true)) {
             throw new InvalidArgumentException(\sprintf('Method %s is invalid', $method));
         }
     }

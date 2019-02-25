@@ -13,16 +13,16 @@ use Psr\Http\Message\UriInterface;
 class Uri implements UriInterface
 {
     /** @var array */
-    protected static $schemes = [
+    protected const SCHEMES = [
         'http'  => 80,
         'https' => 443,
     ];
 
     /** @var string */
-    protected static $charUnreserved = 'a-zA-Z0-9_\-\.~';
+    protected const CHAR_UNRESERVED = 'a-zA-Z0-9_\-\.~';
 
     /** @var string */
-    protected static $charSubDelims = '!\$&\'\(\)\*\+,;=';
+    protected const CHAR_SUB_DELIMS = '!\$&\'\(\)\*\+,;=';
 
     /** @var string Uri scheme. */
     protected $scheme = '';
@@ -307,7 +307,7 @@ class Uri implements UriInterface
      */
     public function __toString(): string
     {
-        return self::createUriString(
+        return static::createUriString(
             $this->scheme,
             $this->getAuthority(),
             $this->path,
@@ -422,7 +422,7 @@ class Uri implements UriInterface
      */
     protected static function isNonStandardPort(string $scheme, int $port): bool
     {
-        return !isset(self::$schemes[$scheme]) || $port !== self::$schemes[$scheme];
+        return !isset(static::SCHEMES[$scheme]) || $port !== static::SCHEMES[$scheme];
     }
 
     /**
@@ -475,7 +475,7 @@ class Uri implements UriInterface
             throw new InvalidArgumentException(\sprintf('Invalid port: %d. Must be between 1 and 65535', $port));
         }
 
-        if (!self::isNonStandardPort($this->scheme, $port)) {
+        if (!static::isNonStandardPort($this->scheme, $port)) {
             return null;
         }
 
@@ -547,7 +547,7 @@ class Uri implements UriInterface
      */
     protected function getPatternForFilteringPath(): string
     {
-        return '/(?:[^' . self::$charUnreserved . self::$charSubDelims . '%:@\/]++|%(?![A-Fa-f0-9]{2}))/';
+        return '/(?:[^' . static::CHAR_UNRESERVED . static::CHAR_SUB_DELIMS . '%:@\/]++|%(?![A-Fa-f0-9]{2}))/';
     }
 
     /**
@@ -555,6 +555,6 @@ class Uri implements UriInterface
      */
     protected function getPatternForFilteringQueryAndFragment(): string
     {
-        return '/(?:[^' . self::$charUnreserved . self::$charSubDelims . '%:@\/\?]++|%(?![A-Fa-f0-9]{2}))/';
+        return '/(?:[^' . static::CHAR_UNRESERVED . static::CHAR_SUB_DELIMS . '%:@\/\?]++|%(?![A-Fa-f0-9]{2}))/';
     }
 }

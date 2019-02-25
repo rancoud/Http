@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Rancoud\Http\Message;
 
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -18,11 +19,11 @@ class Request implements RequestInterface
     /**
      * Request constructor.
      *
-     * @param string $method
-     * @param mixed  $uri
-     * @param array  $headers
-     * @param mixed  $body
-     * @param string $version
+     * @param string                               $method  HTTP method
+     * @param string|UriInterface                  $uri     URI
+     * @param array                                $headers Request headers
+     * @param string|resource|StreamInterface|null $body    Request body
+     * @param string                               $version Protocol version
      *
      * @throws \InvalidArgumentException
      */

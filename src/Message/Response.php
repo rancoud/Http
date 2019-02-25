@@ -15,7 +15,7 @@ class Response implements ResponseInterface
     use MessageTrait;
 
     /** @var array */
-    public static $phrases = [
+    public const PHRASES = [
         100 => 'Continue',
         101 => 'Switching Protocols',
         102 => 'Processing',
@@ -206,8 +206,8 @@ class Response implements ResponseInterface
         }
 
         $this->setHeaders($headers);
-        if (($reason === null || $reason === '') && isset(self::$phrases[$this->statusCode])) {
-            $this->reasonPhrase = self::$phrases[$status];
+        if (($reason === null || $reason === '') && isset(static::PHRASES[$this->statusCode])) {
+            $this->reasonPhrase = static::PHRASES[$status];
         } else {
             $this->reasonPhrase = $reason;
         }
@@ -238,14 +238,14 @@ class Response implements ResponseInterface
         }
 
         $code = (int) $code;
-        if (!isset(self::$phrases[$code])) {
+        if (!isset(static::PHRASES[$code])) {
             throw new InvalidArgumentException('Status code has to be an integer between 100 and 599');
         }
 
         $new = clone $this;
         $new->statusCode = $code;
         if (($reasonPhrase === null || $reasonPhrase === '')) {
-            $reasonPhrase = self::$phrases[$new->statusCode];
+            $reasonPhrase = static::PHRASES[$new->statusCode];
         }
         $new->reasonPhrase = $reasonPhrase;
 

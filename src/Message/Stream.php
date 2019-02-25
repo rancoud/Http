@@ -26,14 +26,14 @@ class Stream implements StreamInterface
     /** @var bool */
     protected $writable;
 
-    /** @var array|mixed|null|void */
+    /** @var array|mixed|void|null */
     protected $uri;
 
     /** @var int */
     protected $size;
 
     /** @var array Hash of readable and writable stream types */
-    protected static $readWriteHash = [
+    protected const READ_WRITE_HASH = [
         'read' => [
             'r'   => true, 'w+' => true, 'r+' => true, 'x+' => true, 'c+' => true,
             'rb'  => true, 'w+b' => true, 'r+b' => true, 'x+b' => true,
@@ -79,7 +79,7 @@ class Stream implements StreamInterface
     }
 
     /**
-     * @return null|resource
+     * @return resource|null
      */
     public function detach()
     {
@@ -320,7 +320,7 @@ class Stream implements StreamInterface
         }
 
         if (\is_string($content)) {
-            $resource = \fopen('php://temp', 'rw+b');
+            $resource = \fopen('php://temp', 'rw+');
             \fwrite($resource, $content);
             $content = $resource;
         }
@@ -330,8 +330,8 @@ class Stream implements StreamInterface
             $obj->stream = $content;
             $meta = \stream_get_meta_data($obj->stream);
             $obj->seekable = $meta['seekable'];
-            $obj->readable = isset(self::$readWriteHash['read'][$meta['mode']]);
-            $obj->writable = isset(self::$readWriteHash['write'][$meta['mode']]);
+            $obj->readable = isset(static::READ_WRITE_HASH['read'][$meta['mode']]);
+            $obj->writable = isset(static::READ_WRITE_HASH['write'][$meta['mode']]);
             $obj->uri = $obj->getMetadata('uri');
 
             return $obj;
