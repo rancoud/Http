@@ -45,8 +45,6 @@ class Uri implements UriInterface
     protected $fragment = '';
 
     /**
-     * Uri constructor.
-     *
      * @param string $uri
      *
      * @throws \InvalidArgumentException
@@ -173,15 +171,9 @@ class Uri implements UriInterface
      */
     public function withUserInfo($user, $password = null): self
     {
-        if (!\is_string($user)) {
-            throw new \InvalidArgumentException('User must be a string');
-        }
+        $info = $this->filterUser($user);
+        $password = $this->filterPass($password);
 
-        if (!$this->isStringOrNull($password)) {
-            throw new \InvalidArgumentException('Password must be a string or NULL');
-        }
-
-        $info = $user;
         if ($password !== null && $password !== '') {
             $info .= ':' . $password;
         }
@@ -335,7 +327,7 @@ class Uri implements UriInterface
         }
 
         if (isset($parts['user'])) {
-            $this->userInfo = $parts['user'];
+            $this->userInfo = $this->filterUser($parts['user']);
         }
 
         if (isset($parts['host'])) {
@@ -359,7 +351,7 @@ class Uri implements UriInterface
         }
 
         if (isset($parts['pass'])) {
-            $this->userInfo .= ':' . $parts['pass'];
+            $this->userInfo .= ':' . $this->filterPass($parts['pass']);
         }
     }
 
@@ -388,12 +380,15 @@ class Uri implements UriInterface
             $uri .= '//' . $authority;
         }
 
+        $charAtPosZero = \mb_substr($path, 0, 1);
+        $charAtPosOne = \mb_substr($path, 1, 1);
+
         if ($path !== '') {
-            if ($path[0] !== '/') {
+            if ($charAtPosZero !== '/') {
                 if ($authority !== '') {
                     $path = '/' . $path;
                 }
-            } elseif (isset($path[1]) && $path[1] === '/') {
+            } elseif (isset($charAtPosOne) && $charAtPosOne === '/') {
                 if ($authority === '') {
                     $path = '/' . \ltrim($path, '/');
                 }
@@ -438,6 +433,38 @@ class Uri implements UriInterface
         }
 
         return \mb_strtolower($scheme);
+    }
+
+    /**
+     * @param string $user
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return string
+     */
+    protected function filterUser($user): string
+    {
+        if (!\is_string($user)) {
+            throw new \InvalidArgumentException('User must be a string');
+        }
+
+        return $user;
+    }
+
+    /**
+     * @param ?string $pass
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return string
+     */
+    protected function filterPass($pass): ?string
+    {
+        if ($pass !== null && !\is_string($pass)) {
+            throw new \InvalidArgumentException('Password must be a string or NULL');
+        }
+
+        return $pass;
     }
 
     /**
@@ -495,7 +522,7 @@ class Uri implements UriInterface
         }
 
         return \preg_replace_callback(
-            $this->getPatternForFilteringPath(),
+            static::getPatternForFilteringPath(),
             [__CLASS__, 'rawurlencodeMatchZero'],
             $path
         );
@@ -515,7 +542,7 @@ class Uri implements UriInterface
         }
 
         return \preg_replace_callback(
-            $this->getPatternForFilteringQueryAndFragment(),
+            static::getPatternForFilteringQueryAndFragment(),
             [__CLASS__, 'rawurlencodeMatchZero'],
             $str
         );
@@ -526,25 +553,15 @@ class Uri implements UriInterface
      *
      * @return string
      */
-    protected function rawurlencodeMatchZero(array $match): string
+    protected static function rawurlencodeMatchZero(array $match): string
     {
         return \rawurlencode($match[0]);
     }
 
     /**
-     * @param $param
-     *
-     * @return bool
-     */
-    protected function isStringOrNull($param): bool
-    {
-        return \in_array(\gettype($param), ['string', 'NULL'], true);
-    }
-
-    /**
      * @return string
      */
-    protected function getPatternForFilteringPath(): string
+    protected static function getPatternForFilteringPath(): string
     {
         return '/(?:[^' . static::CHAR_UNRESERVED . static::CHAR_SUB_DELIMS . '%:@\/]++|%(?![A-Fa-f0-9]{2}))/';
     }
@@ -552,7 +569,7 @@ class Uri implements UriInterface
     /**
      * @return string
      */
-    protected function getPatternForFilteringQueryAndFragment(): string
+    protected static function getPatternForFilteringQueryAndFragment(): string
     {
         return '/(?:[^' . static::CHAR_UNRESERVED . static::CHAR_SUB_DELIMS . '%:@\/\?]++|%(?![A-Fa-f0-9]{2}))/';
     }

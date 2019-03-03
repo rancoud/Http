@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Rancoud\Http\Message;
 
-use Psr\Http\Message\{ServerRequestInterface, UploadedFileInterface, UriInterface};
+use Psr\Http\Message\{ServerRequestInterface, StreamInterface, UploadedFileInterface, UriInterface};
 
 /**
  * Class ServerRequest.
@@ -33,14 +33,12 @@ class ServerRequest implements ServerRequestInterface
     protected $uploadedFiles = [];
 
     /**
-     * ServerRequest constructor.
-     *
-     * @param string $method
-     * @param mixed  $uri
-     * @param array  $headers
-     * @param mixed  $body
-     * @param string $version
-     * @param array  $serverParams
+     * @param string                               $method       HTTP method
+     * @param string|UriInterface                  $uri          URI
+     * @param array                                $headers      Request headers
+     * @param string|resource|StreamInterface|null $body         Request body
+     * @param string                               $version      Protocol version
+     * @param array                                $serverParams Typically the $_SERVER superglobal
      *
      * @throws \InvalidArgumentException
      */
@@ -58,7 +56,7 @@ class ServerRequest implements ServerRequestInterface
             $uri = new Uri($uri);
         }
 
-        $this->method = $method;
+        $this->method = $this->filterMethod($method);
         $this->uri = $uri;
         $this->setHeaders($headers);
         $this->protocol = $this->validateProtocolVersion($version);

@@ -15,8 +15,6 @@ class Request implements RequestInterface
     use RequestTrait;
 
     /**
-     * Request constructor.
-     *
      * @param string                               $method  HTTP method
      * @param string|UriInterface                  $uri     URI
      * @param array                                $headers Request headers
@@ -36,7 +34,7 @@ class Request implements RequestInterface
             $uri = new Uri($uri);
         }
 
-        $this->method = $method;
+        $this->method = $this->filterMethod($method);
         $this->uri = $uri;
         $this->setHeaders($headers);
         $this->protocol = $this->validateProtocolVersion($version);

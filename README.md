@@ -141,7 +141,7 @@ $stream = (new Rancoud\Http\Message\Factory())->createStream('foobar');
 * getReasonPhrase(): string  
 * getStatusCode(): int  
 * hasHeader(name: string): bool  
-* send(): void  
+* send([bodyChunkSize: int = 8192]): void  
 * withAddedHeader(name: string, value: mixed): self  
 * withBody(body: StreamInterface): self  
 * withHeader(name: string, value: mixed): self  

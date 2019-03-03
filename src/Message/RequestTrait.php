@@ -134,7 +134,7 @@ trait RequestTrait
      */
     public function withMethod($method): self
     {
-        $this->filterMethod($method);
+        $method = $this->filterMethod($method);
 
         $new = clone $this;
         $new->method = $method;
@@ -182,8 +182,10 @@ trait RequestTrait
      * @param string $method
      *
      * @throws \InvalidArgumentException
+     *
+     * @return string
      */
-    protected function filterMethod($method): void
+    protected function filterMethod($method): string
     {
         if (!\is_string($method)) {
             throw new \InvalidArgumentException('Method must be a string');
@@ -192,6 +194,8 @@ trait RequestTrait
         if (!\in_array($method, static::$methods, true)) {
             throw new \InvalidArgumentException(\sprintf('Method %s is invalid', $method));
         }
+
+        return $method;
     }
 
     protected function updateHostFromUri(): void

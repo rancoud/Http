@@ -181,8 +181,6 @@ class Response implements ResponseInterface
     protected $statusCode = 200;
 
     /**
-     * Response constructor.
-     *
      * @param int                                  $status
      * @param array                                $headers
      * @param string|resource|StreamInterface|null $body
@@ -198,7 +196,8 @@ class Response implements ResponseInterface
         string $version = '1.1',
         string $reason = null
     ) {
-        if (!isset(static::PHRASES[$status])) {
+        $isStatusExist = isset(static::PHRASES[$status]);
+        if (!$isStatusExist) {
             throw new \InvalidArgumentException('Status code has to be an integer between 100 and 799');
         }
 
@@ -209,7 +208,7 @@ class Response implements ResponseInterface
         }
 
         $this->setHeaders($headers);
-        if (($reason === null || $reason === '') && isset(static::PHRASES[$this->statusCode])) {
+        if (($reason === null || $reason === '') && $isStatusExist) {
             $this->reasonPhrase = static::PHRASES[$status];
         } else {
             $this->reasonPhrase = $reason;
@@ -263,19 +262,23 @@ class Response implements ResponseInterface
     }
 
     /**
+     * @param int $bodyChunkSize
+     *
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      */
-    public function send()
+    public function send(int $bodyChunkSize = 8192): void
     {
+        $statusCode = $this->getStatusCode();
+
         $httpLine = \sprintf(
             'HTTP/%s %s %s',
             $this->getProtocolVersion(),
-            $this->getStatusCode(),
+            $statusCode,
             $this->getReasonPhrase()
         );
 
-        \header($httpLine, true, $this->getStatusCode());
+        \header($httpLine, true, $statusCode);
 
         foreach ($this->getHeaders() as $name => $values) {
             foreach ($values as $value) {
@@ -290,7 +293,7 @@ class Response implements ResponseInterface
         }
 
         while (!$stream->eof()) {
-            echo $stream->read(1024 * 8);
+            echo $stream->read($bodyChunkSize);
         }
     }
 }

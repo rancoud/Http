@@ -11,7 +11,7 @@ use Psr\Http\Message\{StreamInterface, UploadedFileInterface};
  */
 class UploadedFile implements UploadedFileInterface
 {
-    /** @var int[] */
+    /** @var array */
     protected const ERRORS = [
         \UPLOAD_ERR_OK         => 1,
         \UPLOAD_ERR_INI_SIZE   => 1,
@@ -22,6 +22,9 @@ class UploadedFile implements UploadedFileInterface
         \UPLOAD_ERR_CANT_WRITE => 1,
         \UPLOAD_ERR_EXTENSION  => 1,
     ];
+
+    /** @var int */
+    protected const DEFAULT_MAX_BYTES_LENGTH = 1048576;
 
     /** @var string */
     protected $clientFilename;
@@ -44,12 +47,7 @@ class UploadedFile implements UploadedFileInterface
     /** @var StreamInterface|null */
     protected $stream;
 
-    /** @var int */
-    protected $defaultMaxBytesLength = 1048576;
-
     /**
-     * UploadedFile constructor.
-     *
      * @param StreamInterface|string|resource $streamOrFile
      * @param int                             $size
      * @param int                             $errorStatus
@@ -70,7 +68,7 @@ class UploadedFile implements UploadedFileInterface
         $this->setClientFilename($clientFilename);
         $this->setClientMediaType($clientMediaType);
 
-        if ($this->isOk()) {
+        if ($this->isUploadSuccess()) {
             $this->setStreamOrFile($streamOrFile);
         }
     }
@@ -120,7 +118,8 @@ class UploadedFile implements UploadedFileInterface
                 $stream->rewind();
             }
 
-            $this->copyToStream($stream, Stream::create(\fopen($targetPath, 'w')));
+            $destination = Stream::create(\fopen($targetPath, 'w'));
+            $this->copyToStream($stream, $destination);
             $this->moved = true;
         }
 
@@ -218,7 +217,7 @@ class UploadedFile implements UploadedFileInterface
      */
     protected function isStringOrNull($param): bool
     {
-        return \in_array(\gettype($param), ['string', 'NULL'], true);
+        return $param === null || \is_string($param);
     }
 
     /**
@@ -262,7 +261,7 @@ class UploadedFile implements UploadedFileInterface
     /**
      * @return bool
      */
-    protected function isOk(): bool
+    protected function isUploadSuccess(): bool
     {
         return $this->error === \UPLOAD_ERR_OK;
     }
@@ -272,7 +271,7 @@ class UploadedFile implements UploadedFileInterface
      */
     protected function validateActive(): void
     {
-        if (!$this->isOk()) {
+        if (!$this->isUploadSuccess()) {
             throw new \RuntimeException('Cannot retrieve stream due to upload error');
         }
 
@@ -290,7 +289,7 @@ class UploadedFile implements UploadedFileInterface
     protected function copyToStream(StreamInterface $source, StreamInterface $dest)
     {
         while (!$source->eof()) {
-            if (!$dest->write($source->read($this->defaultMaxBytesLength))) {
+            if (!$dest->write($source->read(static::DEFAULT_MAX_BYTES_LENGTH))) {
                 break;
             }
         }

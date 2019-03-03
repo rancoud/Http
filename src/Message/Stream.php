@@ -290,17 +290,15 @@ class Stream implements StreamInterface
             }
 
             return [];
-        } elseif ($key === null) {
-            return \stream_get_meta_data($this->stream);
         }
 
         $meta = \stream_get_meta_data($this->stream);
 
-        if (!isset($meta[$key])) {
-            return null;
+        if ($key === null) {
+            return $meta;
         }
 
-        return $meta[$key];
+        return $meta[$key] ?? null;
     }
 
     /**
