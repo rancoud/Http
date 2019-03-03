@@ -24,8 +24,8 @@ use Rancoud\Http\Message\{Request, Response, ServerRequest, Stream, UploadedFile
 class Factory implements RequestFactoryInterface, ResponseFactoryInterface, ServerRequestFactoryInterface, StreamFactoryInterface, UploadedFileFactoryInterface, UriFactoryInterface
 {
     /**
-     * @param string $method
-     * @param        $uri
+     * @param string              $method
+     * @param string|UriInterface $uri
      *
      * @throws \InvalidArgumentException
      *
@@ -47,6 +47,31 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
     public function createResponse(int $code = 200, string $reasonPhrase = ''): ResponseInterface
     {
         return new Response($code, [], null, '1.1', $reasonPhrase);
+    }
+
+    /**
+     * @param int                                  $code
+     * @param string|resource|StreamInterface|null $body
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return Response
+     */
+    public function createResponseBody(int $code = 200, $body = null): Response
+    {
+        return new Response($code, [], $body, '1.1');
+    }
+
+    /**
+     * @param string $location
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return Response
+     */
+    public function createRedirection(string $location): Response
+    {
+        return new Response(301, ['Location' => $location], null, '1.1');
     }
 
     /**
@@ -89,7 +114,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
     }
 
     /**
-     * @param $resource
+     * @param resource $resource
      *
      * @throws \InvalidArgumentException
      *
@@ -142,9 +167,9 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
      *
      * @throws \InvalidArgumentException
      *
-     * @return UriInterface
+     * @return Uri
      */
-    public function createUriFromArray(array $server): UriInterface
+    public function createUriFromArray(array $server): Uri
     {
         $uri = new Uri('');
 
@@ -181,9 +206,9 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
     }
 
     /**
-     * @param string $method
-     * @param        $uri
-     * @param array  $serverParams
+     * @param string              $method
+     * @param string|UriInterface $uri
+     * @param array               $serverParams
      *
      * @throws \InvalidArgumentException
      *
@@ -199,9 +224,9 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
      *
      * @throws \InvalidArgumentException
      *
-     * @return ServerRequestInterface
+     * @return ServerRequest
      */
-    public function createServerRequestFromArray(array $server): ServerRequestInterface
+    public function createServerRequestFromArray(array $server): ServerRequest
     {
         return new ServerRequest(
             $this->getMethodFromEnvironment($server),
@@ -223,7 +248,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
      *
      * @throws \InvalidArgumentException
      *
-     * @return ServerRequestInterface
+     * @return ServerRequest
      */
     public function createServerRequestFromArrays(
         array $server,
@@ -232,7 +257,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
         array $get,
         array $post,
         array $files
-    ): ServerRequestInterface {
+    ): ServerRequest {
         $method = $this->getMethodFromEnvironment($server);
         $uri = $this->getUriFromEnvironmentWithHTTP($server);
 
@@ -253,9 +278,9 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
     /**
      * @throws \InvalidArgumentException
      *
-     * @return ServerRequestInterface
+     * @return ServerRequest
      */
-    public function createServerRequestFromGlobals(): ServerRequestInterface
+    public function createServerRequestFromGlobals(): ServerRequest
     {
         $server = $_SERVER;
         if (!\array_key_exists('REQUEST_METHOD', $server)) {

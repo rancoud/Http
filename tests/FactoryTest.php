@@ -30,7 +30,29 @@ class FactoryTest extends TestCase
         $this->assertInstanceOf(StreamInterface::class, $r->getBody());
         $this->assertSame('', (string) $r->getBody());
     }
-    
+
+    public function testCreateResponseBody()
+    {
+        $r = (new Factory())->createResponseBody(201, 'yolo');
+        $this->assertSame(201, $r->getStatusCode());
+        $this->assertSame('1.1', $r->getProtocolVersion());
+        $this->assertSame('Created', $r->getReasonPhrase());
+        $this->assertSame([], $r->getHeaders());
+        $this->assertInstanceOf(StreamInterface::class, $r->getBody());
+        $this->assertSame('yolo', (string) $r->getBody());
+    }
+
+    public function testCreateRedirection()
+    {
+        $r = (new Factory())->createRedirection('/blog/');
+        $this->assertSame(301, $r->getStatusCode());
+        $this->assertSame('1.1', $r->getProtocolVersion());
+        $this->assertSame('Moved Permanently', $r->getReasonPhrase());
+        $this->assertEquals(['Location' => ['/blog/']], $r->getHeaders());
+        $this->assertInstanceOf(StreamInterface::class, $r->getBody());
+        $this->assertSame('', (string) $r->getBody());
+    }
+
     public function testCreateServerRequest()
     {
         $r = (new Factory())->createServerRequest('POST', '/');
@@ -83,7 +105,7 @@ class FactoryTest extends TestCase
         $this->assertEquals('/aze/', $r->getPath());
     }
 
-    public function testCreateUriFromArray()
+    public function testCreateUriFromServer()
     {
         $server = [
             'PHP_SELF' => '/blog/article.php',
