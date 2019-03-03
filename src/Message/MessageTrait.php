@@ -200,6 +200,8 @@ trait MessageTrait
     }
 
     /**
+     * @throws \InvalidArgumentException
+     *
      * @return StreamInterface
      */
     public function getBody(): StreamInterface
@@ -286,9 +288,11 @@ trait MessageTrait
         return $returnValues;
     }
 
-
     /**
      * @param string $protocolVersion
+     *
+     * @throws \InvalidArgumentException
+     *
      * @return string
      */
     protected function validateProtocolVersion(string $protocolVersion): string

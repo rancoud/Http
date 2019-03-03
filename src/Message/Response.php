@@ -261,6 +261,7 @@ class Response implements ResponseInterface
 
     /**
      * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     public function send()
     {

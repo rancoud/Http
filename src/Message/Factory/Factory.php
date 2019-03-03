@@ -28,7 +28,6 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
      * @param        $uri
      *
      * @throws \InvalidArgumentException
-     * @throws \RuntimeException
      *
      * @return RequestInterface
      */
@@ -42,7 +41,6 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
      * @param string $reasonPhrase
      *
      * @throws \InvalidArgumentException
-     * @throws \RuntimeException
      *
      * @return ResponseInterface
      */
@@ -188,7 +186,6 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
      * @param array  $serverParams
      *
      * @throws \InvalidArgumentException
-     * @throws \RuntimeException
      *
      * @return ServerRequestInterface
      */
@@ -201,7 +198,6 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
      * @param array $server
      *
      * @throws \InvalidArgumentException
-     * @throws \RuntimeException
      *
      * @return ServerRequestInterface
      */
@@ -226,7 +222,6 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
      * @param array $files
      *
      * @throws \InvalidArgumentException
-     * @throws \RuntimeException
      *
      * @return ServerRequestInterface
      */
@@ -257,7 +252,6 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
 
     /**
      * @throws \InvalidArgumentException
-     * @throws \RuntimeException
      *
      * @return ServerRequestInterface
      */
@@ -268,7 +262,6 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
             $server['REQUEST_METHOD'] = 'GET';
         }
 
-        $headers = [];
         if (\function_exists('\getallheaders')) {
             $headers = \getallheaders();
         } else {

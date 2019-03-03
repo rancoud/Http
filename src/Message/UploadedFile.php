@@ -284,6 +284,8 @@ class UploadedFile implements UploadedFileInterface
     /**
      * @param StreamInterface $source
      * @param StreamInterface $dest
+     *
+     * @throws \RuntimeException
      */
     protected function copyToStream(StreamInterface $source, StreamInterface $dest)
     {
