@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Rancoud\Http\Message;
 
-use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
-use Rancoud\Http\Message\Factory\Factory;
 
 /**
  * Trait MessageTrait.
@@ -20,6 +18,9 @@ trait MessageTrait
     protected static $patternHeaderValue = "@^[ \t\x21-\x7E\x80-\xFF]*$@";
 
     /** @var array */
+    protected static $validProtocols = ['0.9', '1.0', '1.1', '2'];
+
+    /** @var array */
     protected $headers = [];
 
     /** @var array */
@@ -28,7 +29,7 @@ trait MessageTrait
     /** @var string */
     protected $protocol = '1.1';
 
-    /** @var StreamInterface */
+    /** @var StreamInterface|null */
     protected $stream;
 
     /**
@@ -42,7 +43,7 @@ trait MessageTrait
     /**
      * @param string $version
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return self
      */
@@ -71,14 +72,14 @@ trait MessageTrait
     /**
      * @param string $name
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return bool
      */
     public function hasHeader($name): bool
     {
         if (!\is_string($name)) {
-            throw new InvalidArgumentException('Header name must be a string');
+            throw new \InvalidArgumentException('Header name must be a string');
         }
 
         return isset($this->headerNames[\mb_strtolower($name)]);
@@ -87,19 +88,19 @@ trait MessageTrait
     /**
      * @param string $name
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return array
      */
     public function getHeader($name): array
     {
         if (!\is_string($name)) {
-            throw new InvalidArgumentException('Header name must be a string');
+            throw new \InvalidArgumentException('Header name must be a string');
         }
 
         $name = \mb_strtolower($name);
 
-        if (!isset($this->headerNames[\mb_strtolower($name)])) {
+        if (!isset($this->headerNames[$name])) {
             return [];
         }
 
@@ -111,31 +112,31 @@ trait MessageTrait
     /**
      * @param string $name
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return string
      */
     public function getHeaderLine($name): string
     {
         if (!\is_string($name)) {
-            throw new InvalidArgumentException('Header name must be a string');
+            throw new \InvalidArgumentException('Header name must be a string');
         }
 
         return \implode(', ', $this->getHeader($name));
     }
 
     /**
-     * @param string $name
-     * @param mixed  $value
+     * @param string                 $name
+     * @param string|int|float|array $value
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return self
      */
     public function withHeader($name, $value): self
     {
         if (!\is_string($name) || $name === '') {
-            throw new InvalidArgumentException('Header name must be non-empty string');
+            throw new \InvalidArgumentException('Header name must be non-empty string');
         }
 
         $value = $this->validateAndTrimHeader($name, $value);
@@ -152,17 +153,17 @@ trait MessageTrait
     }
 
     /**
-     * @param string $name
-     * @param mixed  $value
+     * @param string                 $name
+     * @param string|int|float|array $value
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return self
      */
     public function withAddedHeader($name, $value): self
     {
         if (!\is_string($name) || $name === '') {
-            throw new InvalidArgumentException('Header name must be non-empty string');
+            throw new \InvalidArgumentException('Header name must be non-empty string');
         }
 
         $new = clone $this;
@@ -174,14 +175,14 @@ trait MessageTrait
     /**
      * @param string $name
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return self
      */
     public function withoutHeader($name): self
     {
         if (!\is_string($name) || $name === '') {
-            throw new InvalidArgumentException('Header name must be non-empty string');
+            throw new \InvalidArgumentException('Header name must be non-empty string');
         }
 
         $normalized = \mb_strtolower($name);
@@ -199,14 +200,14 @@ trait MessageTrait
     }
 
     /**
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return StreamInterface
      */
     public function getBody(): StreamInterface
     {
         if (!$this->stream) {
-            $this->stream = (new Factory())->createStream('');
+            $this->stream = Stream::create('');
         }
 
         return $this->stream;
@@ -232,7 +233,7 @@ trait MessageTrait
     /**
      * @param array $headers
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     protected function setHeaders(array $headers): void
     {
@@ -253,32 +254,32 @@ trait MessageTrait
      * @param string $header
      * @param mixed  $values
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return array
      */
     protected function validateAndTrimHeader($header, $values): array
     {
-        if (!\is_string($header) || \preg_match(self::$patternHeaderName, $header) !== 1) {
-            throw new InvalidArgumentException('Header name must be RFC 7230 compatible string.');
+        if (!\is_string($header) || \preg_match(static::$patternHeaderName, $header) !== 1) {
+            throw new \InvalidArgumentException('Header name must be RFC 7230 compatible string.');
         }
 
         if (!\is_array($values)) {
-            if ((!\is_numeric($values) && !\is_string($values)) || \preg_match(self::$patternHeaderValue, (string) $values) !== 1) {
-                throw new InvalidArgumentException('Header value must be RFC 7230 compatible string.');
+            if ((!\is_numeric($values) && !\is_string($values)) || \preg_match(static::$patternHeaderValue, (string) $values) !== 1) {
+                throw new \InvalidArgumentException('Header value must be RFC 7230 compatible string.');
             }
 
             return [\trim((string) $values, " \t")];
         }
 
         if (empty($values)) {
-            throw new InvalidArgumentException('Header values must be a string or an array of strings, empty array given.');
+            throw new \InvalidArgumentException('Header values must be a string or an array of strings, empty array given.');
         }
 
         $returnValues = [];
         foreach ($values as $v) {
-            if ((!\is_numeric($v) && !\is_string($v)) || \preg_match(self::$patternHeaderValue, (string) $v) !== 1) {
-                throw new InvalidArgumentException('Header values must be RFC 7230 compatible strings.');
+            if ((!\is_numeric($v) && !\is_string($v)) || \preg_match(static::$patternHeaderValue, (string) $v) !== 1) {
+                throw new \InvalidArgumentException('Header values must be RFC 7230 compatible strings.');
             }
 
             $returnValues[] = \trim((string) $v, " \t");
@@ -290,14 +291,14 @@ trait MessageTrait
     /**
      * @param string $protocolVersion
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return string
      */
     protected function validateProtocolVersion(string $protocolVersion): string
     {
-        if (!\in_array($protocolVersion, ['0.9', '1.0', '1.1', '2'], true)) {
-            throw new InvalidArgumentException('Protocol Version must be 0.9 or 1.0 or 1.1 or 2');
+        if (!\in_array($protocolVersion, static::$validProtocols, true)) {
+            throw new \InvalidArgumentException('Protocol Version must be 0.9 or 1.0 or 1.1 or 2');
         }
 
         return $protocolVersion;

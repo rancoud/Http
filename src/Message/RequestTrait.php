@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Rancoud\Http\Message;
 
-use InvalidArgumentException;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -70,10 +69,10 @@ trait RequestTrait
     /** @var string */
     protected $method;
 
-    /** @var null|string */
+    /** @var string|null */
     protected $requestTarget;
 
-    /** @var null|UriInterface */
+    /** @var UriInterface|null */
     protected $uri;
 
     /**
@@ -86,11 +85,14 @@ trait RequestTrait
         }
 
         $target = $this->uri->getPath();
+        $query = $this->uri->getQuery();
+
         if ($target === '') {
             $target = '/';
         }
-        if ($this->uri->getQuery() !== '') {
-            $target .= '?' . $this->uri->getQuery();
+
+        if ($query !== '') {
+            $target .= '?' . $query;
         }
 
         return $target;
@@ -99,14 +101,14 @@ trait RequestTrait
     /**
      * @param $requestTarget
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return self
      */
     public function withRequestTarget($requestTarget): self
     {
         if (\preg_match('#\s#', $requestTarget)) {
-            throw new InvalidArgumentException('Invalid request target provided; cannot contain whitespace');
+            throw new \InvalidArgumentException('Invalid request target provided; cannot contain whitespace');
         }
 
         $new = clone $this;
@@ -126,13 +128,13 @@ trait RequestTrait
     /**
      * @param string $method
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return self
      */
     public function withMethod($method): self
     {
-        $this->filterMethod($method);
+        $method = $this->filterMethod($method);
 
         $new = clone $this;
         $new->method = $method;
@@ -152,14 +154,14 @@ trait RequestTrait
      * @param UriInterface $uri
      * @param bool         $preserveHost
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return self
      */
     public function withUri(UriInterface $uri, $preserveHost = false): self
     {
         if (!\is_bool($preserveHost)) {
-            throw new InvalidArgumentException('Preserve Host must be a boolean');
+            throw new \InvalidArgumentException('Preserve Host must be a boolean');
         }
 
         if ($uri === $this->uri) {
@@ -179,23 +181,26 @@ trait RequestTrait
     /**
      * @param string $method
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
+     *
+     * @return string
      */
-    protected function filterMethod($method): void
+    protected function filterMethod($method): string
     {
         if (!\is_string($method)) {
-            throw new InvalidArgumentException('Method must be a string');
+            throw new \InvalidArgumentException('Method must be a string');
         }
 
-        if (!\in_array($method, self::$methods, true)) {
-            throw new InvalidArgumentException(\sprintf('Method %s is invalid', $method));
+        if (!\in_array($method, static::$methods, true)) {
+            throw new \InvalidArgumentException(\sprintf('Method %s is invalid', $method));
         }
+
+        return $method;
     }
 
     protected function updateHostFromUri(): void
     {
         $host = $this->uri->getHost();
-
         if ($host === '') {
             return;
         }

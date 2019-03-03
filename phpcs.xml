@@ -8,7 +8,7 @@
     <file>src</file>
     <exclude-pattern>*/src/Psr/*</exclude-pattern>
 
-    <rule ref="PSR2"></rule>
+    <rule ref="PSR12"></rule>
     <rule ref="Generic.Files.LineLength">
         <properties>
             <property name="lineLimit" value="200" />

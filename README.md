@@ -22,6 +22,8 @@ $stream = (new Rancoud\Http\Message\Factory())->createStream('foobar');
 ### Methods
 * createRequest(method: string, uri: mixed): RequestInterface  
 * createResponse([code: int = 200], [reasonPhrase: string = '']): ResponseInterface  
+* createResponseBody([code: int = 200], [body: mixed = null]): ResponseInterface  
+* createRedirection(location: string): ResponseInterface  
 * createStream([content: string = '']): StreamInterface  
 * createStreamFromFile(filename: string, [mode: string = 'r']): StreamInterface  
 * createStreamFromResource(resource: mixed): StreamInterface  
@@ -141,7 +143,7 @@ $stream = (new Rancoud\Http\Message\Factory())->createStream('foobar');
 * getReasonPhrase(): string  
 * getStatusCode(): int  
 * hasHeader(name: string): bool  
-* send(): void  
+* send([bodyChunkSize: int = 8192]): void  
 * withAddedHeader(name: string, value: mixed): self  
 * withBody(body: StreamInterface): self  
 * withHeader(name: string, value: mixed): self  

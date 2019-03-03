@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Rancoud\Http\Message;
 
-use InvalidArgumentException;
-use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\{ResponseInterface, StreamInterface};
 
 /**
  * Class Response.
@@ -15,7 +14,7 @@ class Response implements ResponseInterface
     use MessageTrait;
 
     /** @var array */
-    public static $phrases = [
+    public const PHRASES = [
         100 => 'Continue',
         101 => 'Switching Protocols',
         102 => 'Processing',
@@ -182,15 +181,13 @@ class Response implements ResponseInterface
     protected $statusCode = 200;
 
     /**
-     * Response constructor.
+     * @param int                                  $status
+     * @param array                                $headers
+     * @param string|resource|StreamInterface|null $body
+     * @param string                               $version
+     * @param string|null                          $reason
      *
-     * @param int    $status
-     * @param array  $headers
-     * @param mixed  $body
-     * @param string $version
-     * @param string $reason
-     *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public function __construct(
         int $status = 200,
@@ -199,6 +196,11 @@ class Response implements ResponseInterface
         string $version = '1.1',
         string $reason = null
     ) {
+        $isStatusExist = isset(static::PHRASES[$status]);
+        if (!$isStatusExist) {
+            throw new \InvalidArgumentException('Status code has to be an integer between 100 and 799');
+        }
+
         $this->statusCode = $status;
 
         if ($body !== '' && $body !== null) {
@@ -206,8 +208,8 @@ class Response implements ResponseInterface
         }
 
         $this->setHeaders($headers);
-        if (($reason === null || $reason === '') && isset(self::$phrases[$this->statusCode])) {
-            $this->reasonPhrase = self::$phrases[$status];
+        if (($reason === null || $reason === '') && $isStatusExist) {
+            $this->reasonPhrase = static::PHRASES[$status];
         } else {
             $this->reasonPhrase = $reason;
         }
@@ -227,25 +229,24 @@ class Response implements ResponseInterface
      * @param int    $code
      * @param string $reasonPhrase
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return Response
      */
     public function withStatus($code, $reasonPhrase = ''): self
     {
-        if (!\is_int($code) && !\is_string($code)) {
-            throw new InvalidArgumentException('Status code has to be an integer');
+        if (!\is_int($code)) {
+            throw new \InvalidArgumentException('Status code has to be an integer');
         }
 
-        $code = (int) $code;
-        if (!isset(self::$phrases[$code])) {
-            throw new InvalidArgumentException('Status code has to be an integer between 100 and 599');
+        if (!isset(static::PHRASES[$code])) {
+            throw new \InvalidArgumentException('Status code has to be an integer between 100 and 799');
         }
 
         $new = clone $this;
         $new->statusCode = $code;
         if (($reasonPhrase === null || $reasonPhrase === '')) {
-            $reasonPhrase = self::$phrases[$new->statusCode];
+            $reasonPhrase = static::PHRASES[$new->statusCode];
         }
         $new->reasonPhrase = $reasonPhrase;
 
@@ -261,18 +262,23 @@ class Response implements ResponseInterface
     }
 
     /**
-     * @throws InvalidArgumentException
+     * @param int $bodyChunkSize
+     *
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
-    public function send()
+    public function send(int $bodyChunkSize = 8192): void
     {
+        $statusCode = $this->getStatusCode();
+
         $httpLine = \sprintf(
             'HTTP/%s %s %s',
             $this->getProtocolVersion(),
-            $this->getStatusCode(),
+            $statusCode,
             $this->getReasonPhrase()
         );
 
-        \header($httpLine, true, $this->getStatusCode());
+        \header($httpLine, true, $statusCode);
 
         foreach ($this->getHeaders() as $name => $values) {
             foreach ($values as $value) {
@@ -287,7 +293,7 @@ class Response implements ResponseInterface
         }
 
         while (!$stream->eof()) {
-            echo $stream->read(1024 * 8);
+            echo $stream->read($bodyChunkSize);
         }
     }
 }

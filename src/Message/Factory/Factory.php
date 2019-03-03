@@ -4,26 +4,19 @@ declare(strict_types=1);
 
 namespace Rancoud\Http\Message\Factory;
 
-use InvalidArgumentException;
-use Psr\Http\Message\RequestFactoryInterface;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseFactoryInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestFactoryInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\StreamFactoryInterface;
-use Psr\Http\Message\StreamInterface;
-use Psr\Http\Message\UploadedFileFactoryInterface;
-use Psr\Http\Message\UploadedFileInterface;
-use Psr\Http\Message\UriFactoryInterface;
-use Psr\Http\Message\UriInterface;
-use Rancoud\Http\Message\Request;
-use Rancoud\Http\Message\Response;
-use Rancoud\Http\Message\ServerRequest;
-use Rancoud\Http\Message\Stream;
-use Rancoud\Http\Message\UploadedFile;
-use Rancoud\Http\Message\Uri;
-use RuntimeException;
+use Psr\Http\Message\{RequestFactoryInterface,
+    RequestInterface,
+    ResponseFactoryInterface,
+    ResponseInterface,
+    ServerRequestFactoryInterface,
+    ServerRequestInterface,
+    StreamFactoryInterface,
+    StreamInterface,
+    UploadedFileFactoryInterface,
+    UploadedFileInterface,
+    UriFactoryInterface,
+    UriInterface};
+use Rancoud\Http\Message\{Request, Response, ServerRequest, Stream, UploadedFile, Uri};
 
 /**
  * Class Factory.
@@ -31,11 +24,10 @@ use RuntimeException;
 class Factory implements RequestFactoryInterface, ResponseFactoryInterface, ServerRequestFactoryInterface, StreamFactoryInterface, UploadedFileFactoryInterface, UriFactoryInterface
 {
     /**
-     * @param string $method
-     * @param        $uri
+     * @param string              $method
+     * @param string|UriInterface $uri
      *
-     * @throws InvalidArgumentException
-     * @throws RuntimeException
+     * @throws \InvalidArgumentException
      *
      * @return RequestInterface
      */
@@ -48,8 +40,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
      * @param int    $code
      * @param string $reasonPhrase
      *
-     * @throws InvalidArgumentException
-     * @throws RuntimeException
+     * @throws \InvalidArgumentException
      *
      * @return ResponseInterface
      */
@@ -59,9 +50,34 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
     }
 
     /**
+     * @param int                                  $code
+     * @param string|resource|StreamInterface|null $body
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return Response
+     */
+    public function createResponseBody(int $code = 200, $body = null): Response
+    {
+        return new Response($code, [], $body, '1.1');
+    }
+
+    /**
+     * @param string $location
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return Response
+     */
+    public function createRedirection(string $location): Response
+    {
+        return new Response(301, ['Location' => $location], null, '1.1');
+    }
+
+    /**
      * @param string $content
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return StreamInterface
      */
@@ -74,33 +90,33 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
      * @param string $filename
      * @param string $mode
      *
-     * @throws InvalidArgumentException
-     * @throws RuntimeException
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      *
      * @return StreamInterface
      */
     public function createStreamFromFile(string $filename, string $mode = 'r'): StreamInterface
     {
         if (!\file_exists($filename)) {
-            throw new RuntimeException(\sprintf('The file %s doesn\'t exist.', $filename));
+            throw new \RuntimeException(\sprintf('The file %s doesn\'t exist.', $filename));
         }
 
         if (!\in_array($mode[0], ['r', 'w', 'a', 'x', 'c'], true)) {
-            throw new InvalidArgumentException(\sprintf('The mode %s is invalid.', $mode));
+            throw new \InvalidArgumentException(\sprintf('The mode %s is invalid.', $mode));
         }
 
         $resource = \fopen($filename, $mode);
         if ($resource === false) {
-            throw new RuntimeException(\sprintf('The file %s cannot be opened.', $filename));
+            throw new \RuntimeException(\sprintf('The file %s cannot be opened.', $filename));
         }
 
         return Stream::create($resource);
     }
 
     /**
-     * @param $resource
+     * @param resource $resource
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return StreamInterface
      */
@@ -116,7 +132,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
      * @param string|null     $clientFilename
      * @param string|null     $clientMediaType
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return UploadedFileInterface
      */
@@ -137,7 +153,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
     /**
      * @param string $uri
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return UriInterface
      */
@@ -149,11 +165,11 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
     /**
      * @param array $server
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
-     * @return UriInterface
+     * @return Uri
      */
-    public function createUriFromArray(array $server): UriInterface
+    public function createUriFromArray(array $server): Uri
     {
         $uri = new Uri('');
 
@@ -190,12 +206,11 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
     }
 
     /**
-     * @param string $method
-     * @param        $uri
-     * @param array  $serverParams
+     * @param string              $method
+     * @param string|UriInterface $uri
+     * @param array               $serverParams
      *
-     * @throws InvalidArgumentException
-     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      *
      * @return ServerRequestInterface
      */
@@ -207,12 +222,11 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
     /**
      * @param array $server
      *
-     * @throws InvalidArgumentException
-     * @throws RuntimeException
+     * @throws \InvalidArgumentException
      *
-     * @return ServerRequestInterface
+     * @return ServerRequest
      */
-    public function createServerRequestFromArray(array $server): ServerRequestInterface
+    public function createServerRequestFromArray(array $server): ServerRequest
     {
         return new ServerRequest(
             $this->getMethodFromEnvironment($server),
@@ -232,10 +246,9 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
      * @param array $post
      * @param array $files
      *
-     * @throws InvalidArgumentException
-     * @throws RuntimeException
+     * @throws \InvalidArgumentException
      *
-     * @return ServerRequestInterface
+     * @return ServerRequest
      */
     public function createServerRequestFromArrays(
         array $server,
@@ -244,7 +257,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
         array $get,
         array $post,
         array $files
-    ): ServerRequestInterface {
+    ): ServerRequest {
         $method = $this->getMethodFromEnvironment($server);
         $uri = $this->getUriFromEnvironmentWithHTTP($server);
 
@@ -259,23 +272,21 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
             ->withCookieParams($cookie)
             ->withQueryParams($get)
             ->withParsedBody($post)
-            ->withUploadedFiles(self::normalizeFiles($files));
+            ->withUploadedFiles(static::normalizeFiles($files));
     }
 
     /**
-     * @throws InvalidArgumentException
-     * @throws RuntimeException
+     * @throws \InvalidArgumentException
      *
-     * @return ServerRequestInterface
+     * @return ServerRequest
      */
-    public function createServerRequestFromGlobals(): ServerRequestInterface
+    public function createServerRequestFromGlobals(): ServerRequest
     {
         $server = $_SERVER;
         if (!\array_key_exists('REQUEST_METHOD', $server)) {
             $server['REQUEST_METHOD'] = 'GET';
         }
 
-        $headers = [];
         if (\function_exists('\getallheaders')) {
             $headers = \getallheaders();
         } else {
@@ -288,14 +299,14 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
     /**
      * @param array $environment
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return string
      */
     protected function getMethodFromEnvironment(array $environment): string
     {
         if (!isset($environment['REQUEST_METHOD'])) {
-            throw new InvalidArgumentException('Cannot determine HTTP method');
+            throw new \InvalidArgumentException('Cannot determine HTTP method');
         }
 
         return $environment['REQUEST_METHOD'];
@@ -304,7 +315,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
     /**
      * @param array $environment
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return UriInterface
      */
@@ -321,7 +332,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
     /**
      * @param array $files
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return array
      */
@@ -333,13 +344,13 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
             if ($value instanceof UploadedFileInterface) {
                 $normalized[$key] = $value;
             } elseif (\is_array($value) && isset($value['tmp_name'])) {
-                $normalized[$key] = self::createUploadedFileFromSpec($value);
+                $normalized[$key] = static::createUploadedFileFromSpec($value);
             } elseif (\is_array($value)) {
-                $normalized[$key] = self::normalizeFiles($value);
+                $normalized[$key] = static::normalizeFiles($value);
 
                 continue;
             } else {
-                throw new InvalidArgumentException('Invalid value in files specification');
+                throw new \InvalidArgumentException('Invalid value in files specification');
             }
         }
 
@@ -349,14 +360,14 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
     /**
      * @param array $value
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return array|UploadedFile
      */
     protected static function createUploadedFileFromSpec(array $value)
     {
         if (\is_array($value['tmp_name'])) {
-            return self::normalizeNestedFileSpec($value);
+            return static::normalizeNestedFileSpec($value);
         }
 
         return new UploadedFile(
@@ -371,7 +382,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
     /**
      * @param array $files
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return array
      */
@@ -387,7 +398,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
                 'name'     => $files['name'][$key],
                 'type'     => $files['type'][$key],
             ];
-            $normalizedFiles[$key] = self::createUploadedFileFromSpec($spec);
+            $normalizedFiles[$key] = static::createUploadedFileFromSpec($spec);
         }
 
         return $normalizedFiles;

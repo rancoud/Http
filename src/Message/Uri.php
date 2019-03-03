@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Rancoud\Http\Message;
 
-use InvalidArgumentException;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -13,16 +12,16 @@ use Psr\Http\Message\UriInterface;
 class Uri implements UriInterface
 {
     /** @var array */
-    protected static $schemes = [
+    protected const SCHEMES = [
         'http'  => 80,
         'https' => 443,
     ];
 
     /** @var string */
-    protected static $charUnreserved = 'a-zA-Z0-9_\-\.~';
+    protected const CHAR_UNRESERVED = 'a-zA-Z0-9_\-\.~';
 
     /** @var string */
-    protected static $charSubDelims = '!\$&\'\(\)\*\+,;=';
+    protected const CHAR_SUB_DELIMS = '!\$&\'\(\)\*\+,;=';
 
     /** @var string Uri scheme. */
     protected $scheme = '';
@@ -46,18 +45,16 @@ class Uri implements UriInterface
     protected $fragment = '';
 
     /**
-     * Uri constructor.
-     *
      * @param string $uri
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public function __construct(string $uri = '')
     {
         if ($uri !== '') {
             $parts = \parse_url($uri);
             if ($parts === false) {
-                throw new InvalidArgumentException(\sprintf('Unable to parse URI: %s', $uri));
+                throw new \InvalidArgumentException(\sprintf('Unable to parse URI: %s', $uri));
             }
 
             $this->applyParts($parts);
@@ -145,7 +142,7 @@ class Uri implements UriInterface
     /**
      * @param string $scheme
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return self
      */
@@ -168,21 +165,15 @@ class Uri implements UriInterface
      * @param string      $user
      * @param string|null $password
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return self
      */
     public function withUserInfo($user, $password = null): self
     {
-        if (!\is_string($user)) {
-            throw new InvalidArgumentException('User must be a string');
-        }
+        $info = $this->filterUser($user);
+        $password = $this->filterPass($password);
 
-        if (!$this->isStringOrNull($password)) {
-            throw new InvalidArgumentException('Password must be a string or NULL');
-        }
-
-        $info = $user;
         if ($password !== null && $password !== '') {
             $info .= ':' . $password;
         }
@@ -200,7 +191,7 @@ class Uri implements UriInterface
     /**
      * @param string $host
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return self
      */
@@ -221,7 +212,7 @@ class Uri implements UriInterface
     /**
      * @param int|null $port
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return self
      */
@@ -242,7 +233,7 @@ class Uri implements UriInterface
     /**
      * @param string $path
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return self
      */
@@ -263,7 +254,7 @@ class Uri implements UriInterface
     /**
      * @param string $query
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return self
      */
@@ -284,7 +275,7 @@ class Uri implements UriInterface
     /**
      * @param string $fragment
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return self
      */
@@ -307,7 +298,7 @@ class Uri implements UriInterface
      */
     public function __toString(): string
     {
-        return self::createUriString(
+        return static::createUriString(
             $this->scheme,
             $this->getAuthority(),
             $this->path,
@@ -319,7 +310,7 @@ class Uri implements UriInterface
     /**
      * @param array $parts
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     protected function applyParts(array $parts): void
     {
@@ -336,7 +327,7 @@ class Uri implements UriInterface
         }
 
         if (isset($parts['user'])) {
-            $this->userInfo = $parts['user'];
+            $this->userInfo = $this->filterUser($parts['user']);
         }
 
         if (isset($parts['host'])) {
@@ -360,7 +351,7 @@ class Uri implements UriInterface
         }
 
         if (isset($parts['pass'])) {
-            $this->userInfo .= ':' . $parts['pass'];
+            $this->userInfo .= ':' . $this->filterPass($parts['pass']);
         }
     }
 
@@ -389,12 +380,15 @@ class Uri implements UriInterface
             $uri .= '//' . $authority;
         }
 
+        $charAtPosZero = \mb_substr($path, 0, 1);
+        $charAtPosOne = \mb_substr($path, 1, 1);
+
         if ($path !== '') {
-            if ($path[0] !== '/') {
+            if ($charAtPosZero !== '/') {
                 if ($authority !== '') {
                     $path = '/' . $path;
                 }
-            } elseif (isset($path[1]) && $path[1] === '/') {
+            } elseif (isset($charAtPosOne) && $charAtPosOne === '/') {
                 if ($authority === '') {
                     $path = '/' . \ltrim($path, '/');
                 }
@@ -422,36 +416,68 @@ class Uri implements UriInterface
      */
     protected static function isNonStandardPort(string $scheme, int $port): bool
     {
-        return !isset(self::$schemes[$scheme]) || $port !== self::$schemes[$scheme];
+        return !isset(static::SCHEMES[$scheme]) || $port !== static::SCHEMES[$scheme];
     }
 
     /**
      * @param string $scheme
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return string
      */
     protected function filterScheme($scheme): string
     {
         if (!\is_string($scheme)) {
-            throw new InvalidArgumentException('Scheme must be a string');
+            throw new \InvalidArgumentException('Scheme must be a string');
         }
 
         return \mb_strtolower($scheme);
     }
 
     /**
+     * @param string $user
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return string
+     */
+    protected function filterUser($user): string
+    {
+        if (!\is_string($user)) {
+            throw new \InvalidArgumentException('User must be a string');
+        }
+
+        return $user;
+    }
+
+    /**
+     * @param ?string $pass
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return string
+     */
+    protected function filterPass($pass): ?string
+    {
+        if ($pass !== null && !\is_string($pass)) {
+            throw new \InvalidArgumentException('Password must be a string or NULL');
+        }
+
+        return $pass;
+    }
+
+    /**
      * @param string $host
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return string
      */
     protected function filterHost($host): string
     {
         if (!\is_string($host)) {
-            throw new InvalidArgumentException('Host must be a string');
+            throw new \InvalidArgumentException('Host must be a string');
         }
 
         return \mb_strtolower($host);
@@ -460,7 +486,7 @@ class Uri implements UriInterface
     /**
      * @param int|null $port
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return int|null
      */
@@ -472,10 +498,10 @@ class Uri implements UriInterface
 
         $port = (int) $port;
         if ($port < 1 || $port > 65535) {
-            throw new InvalidArgumentException(\sprintf('Invalid port: %d. Must be between 1 and 65535', $port));
+            throw new \InvalidArgumentException(\sprintf('Invalid port: %d. Must be between 1 and 65535', $port));
         }
 
-        if (!self::isNonStandardPort($this->scheme, $port)) {
+        if (!static::isNonStandardPort($this->scheme, $port)) {
             return null;
         }
 
@@ -485,19 +511,19 @@ class Uri implements UriInterface
     /**
      * @param string $path
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return string
      */
     protected function filterPath($path): string
     {
         if (!\is_string($path)) {
-            throw new InvalidArgumentException('Path must be a string');
+            throw new \InvalidArgumentException('Path must be a string');
         }
 
         return \preg_replace_callback(
-            $this->getPatternForFilteringPath(),
-            [$this, 'rawurlencodeMatchZero'],
+            static::getPatternForFilteringPath(),
+            [__CLASS__, 'rawurlencodeMatchZero'],
             $path
         );
     }
@@ -505,19 +531,19 @@ class Uri implements UriInterface
     /**
      * @param string $str
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return string
      */
     protected function filterQueryAndFragment($str): string
     {
         if (!\is_string($str)) {
-            throw new InvalidArgumentException('Query and fragment must be a string');
+            throw new \InvalidArgumentException('Query and fragment must be a string');
         }
 
         return \preg_replace_callback(
-            $this->getPatternForFilteringQueryAndFragment(),
-            [$this, 'rawurlencodeMatchZero'],
+            static::getPatternForFilteringQueryAndFragment(),
+            [__CLASS__, 'rawurlencodeMatchZero'],
             $str
         );
     }
@@ -527,34 +553,24 @@ class Uri implements UriInterface
      *
      * @return string
      */
-    protected function rawurlencodeMatchZero(array $match): string
+    protected static function rawurlencodeMatchZero(array $match): string
     {
         return \rawurlencode($match[0]);
     }
 
     /**
-     * @param $param
-     *
-     * @return bool
+     * @return string
      */
-    protected function isStringOrNull($param): bool
+    protected static function getPatternForFilteringPath(): string
     {
-        return \in_array(\gettype($param), ['string', 'NULL'], true);
+        return '/(?:[^' . static::CHAR_UNRESERVED . static::CHAR_SUB_DELIMS . '%:@\/]++|%(?![A-Fa-f0-9]{2}))/';
     }
 
     /**
      * @return string
      */
-    protected function getPatternForFilteringPath(): string
+    protected static function getPatternForFilteringQueryAndFragment(): string
     {
-        return '/(?:[^' . self::$charUnreserved . self::$charSubDelims . '%:@\/]++|%(?![A-Fa-f0-9]{2}))/';
-    }
-
-    /**
-     * @return string
-     */
-    protected function getPatternForFilteringQueryAndFragment(): string
-    {
-        return '/(?:[^' . self::$charUnreserved . self::$charSubDelims . '%:@\/\?]++|%(?![A-Fa-f0-9]{2}))/';
+        return '/(?:[^' . static::CHAR_UNRESERVED . static::CHAR_SUB_DELIMS . '%:@\/\?]++|%(?![A-Fa-f0-9]{2}))/';
     }
 }
