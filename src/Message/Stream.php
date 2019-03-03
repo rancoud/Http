@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace Rancoud\Http\Message;
 
-use Exception;
-use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
-use RuntimeException;
 
 /**
  * Class Stream.
@@ -29,7 +26,7 @@ class Stream implements StreamInterface
     /** @var array|mixed|void|null */
     protected $uri;
 
-    /** @var int */
+    /** @var int|null */
     protected $size;
 
     /** @var array Hash of readable and writable stream types */
@@ -63,7 +60,7 @@ class Stream implements StreamInterface
             }
 
             return $this->getContents();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return '';
         }
     }
@@ -123,7 +120,7 @@ class Stream implements StreamInterface
     }
 
     /**
-     * @throws RuntimeException
+     * @throws \RuntimeException
      *
      * @return int
      */
@@ -132,7 +129,7 @@ class Stream implements StreamInterface
         $result = \ftell($this->stream);
 
         if ($result === false) {
-            throw new RuntimeException('Unable to determine stream position');
+            throw new \RuntimeException('Unable to determine stream position');
         }
 
         return $result;
@@ -158,31 +155,31 @@ class Stream implements StreamInterface
      * @param int $offset
      * @param int $whence
      *
-     * @throws InvalidArgumentException
-     * @throws RuntimeException
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     public function seek($offset, $whence = \SEEK_SET): void
     {
         if (!\is_int($offset)) {
-            throw new InvalidArgumentException('Offset must be a int');
+            throw new \InvalidArgumentException('Offset must be a int');
         }
 
         if (!\is_int($whence)) {
-            throw new InvalidArgumentException('Whence must be a int');
+            throw new \InvalidArgumentException('Whence must be a int');
         }
 
         if (!$this->seekable) {
-            throw new RuntimeException('Stream is not seekable');
+            throw new \RuntimeException('Stream is not seekable');
         } elseif (\fseek($this->stream, $offset, $whence) === -1) {
             $whenceStr = \var_export($whence, true);
             $message = \sprintf('Unable to seek to stream position %d with whence %d', $offset, $whenceStr);
-            throw new RuntimeException($message);
+            throw new \RuntimeException($message);
         }
     }
 
     /**
-     * @throws InvalidArgumentException
-     * @throws RuntimeException
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     public function rewind(): void
     {
@@ -200,26 +197,26 @@ class Stream implements StreamInterface
     /**
      * @param string $string
      *
-     * @throws InvalidArgumentException
-     * @throws RuntimeException
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      *
      * @return bool|int
      */
     public function write($string)
     {
         if (!\is_string($string)) {
-            throw new InvalidArgumentException('Data must be a string');
+            throw new \InvalidArgumentException('Data must be a string');
         }
 
         if (!$this->writable) {
-            throw new RuntimeException('Cannot write to a non-writable stream');
+            throw new \RuntimeException('Cannot write to a non-writable stream');
         }
 
         $this->size = null;
         $result = \fwrite($this->stream, $string);
 
         if ($result === false) {
-            throw new RuntimeException('Unable to write to stream');
+            throw new \RuntimeException('Unable to write to stream');
         }
 
         return $result;
@@ -236,39 +233,39 @@ class Stream implements StreamInterface
     /**
      * @param $length
      *
-     * @throws InvalidArgumentException
-     * @throws RuntimeException
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      *
      * @return string
      */
     public function read($length): string
     {
         if (!\is_int($length)) {
-            throw new InvalidArgumentException('Length must be a int');
+            throw new \InvalidArgumentException('Length must be a int');
         }
 
         if (!$this->readable) {
-            throw new RuntimeException('Cannot read from non-readable stream');
+            throw new \RuntimeException('Cannot read from non-readable stream');
         }
 
         return \fread($this->stream, $length);
     }
 
     /**
-     * @throws RuntimeException
+     * @throws \RuntimeException
      *
      * @return string
      */
     public function getContents(): string
     {
         if (!isset($this->stream)) {
-            throw new RuntimeException('Unable to read stream contents');
+            throw new \RuntimeException('Unable to read stream contents');
         }
 
         $contents = \stream_get_contents($this->stream);
 
         if ($contents === false) {
-            throw new RuntimeException('Unable to read stream contents');
+            throw new \RuntimeException('Unable to read stream contents');
         }
 
         return $contents;
@@ -277,14 +274,14 @@ class Stream implements StreamInterface
     /**
      * @param string|null $key
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return array|null
      */
     public function getMetadata($key = null)
     {
         if (!$this->isStringOrNull($key)) {
-            throw new InvalidArgumentException('Key must be a string or NULL');
+            throw new \InvalidArgumentException('Key must be a string or NULL');
         }
 
         if (!isset($this->stream)) {
@@ -307,9 +304,9 @@ class Stream implements StreamInterface
     }
 
     /**
-     * @param string $content
+     * @param string|resource|StreamInterface $content
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return StreamInterface
      */
@@ -325,7 +322,7 @@ class Stream implements StreamInterface
             $content = $resource;
         }
 
-        if ('resource' === \gettype($content)) {
+        if (\is_resource($content)) {
             $obj = new self();
             $obj->stream = $content;
             $meta = \stream_get_meta_data($obj->stream);
@@ -337,7 +334,7 @@ class Stream implements StreamInterface
             return $obj;
         }
 
-        throw new InvalidArgumentException('First argument to Stream::create() must be a string, resource or StreamInterface.');
+        throw new \InvalidArgumentException('First argument to Stream::create() must be a string, resource or StreamInterface.');
     }
 
     public function __destruct()
@@ -352,6 +349,6 @@ class Stream implements StreamInterface
      */
     protected function isStringOrNull($param): bool
     {
-        return \in_array(\gettype($param), ['string', 'NULL'], true);
+        return $param === null || \is_string($param);
     }
 }

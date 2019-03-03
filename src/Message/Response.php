@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Rancoud\Http\Message;
 
-use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -190,7 +189,7 @@ class Response implements ResponseInterface
      * @param string $version
      * @param string $reason
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public function __construct(
         int $status = 200,
@@ -227,19 +226,19 @@ class Response implements ResponseInterface
      * @param int    $code
      * @param string $reasonPhrase
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return Response
      */
     public function withStatus($code, $reasonPhrase = ''): self
     {
         if (!\is_int($code) && !\is_string($code)) {
-            throw new InvalidArgumentException('Status code has to be an integer');
+            throw new \InvalidArgumentException('Status code has to be an integer');
         }
 
         $code = (int) $code;
         if (!isset(static::PHRASES[$code])) {
-            throw new InvalidArgumentException('Status code has to be an integer between 100 and 599');
+            throw new \InvalidArgumentException('Status code has to be an integer between 100 and 599');
         }
 
         $new = clone $this;
@@ -261,7 +260,7 @@ class Response implements ResponseInterface
     }
 
     /**
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public function send()
     {

@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Rancoud\Http\Message;
 
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\StreamInterface;
-use Psr\Http\Message\UriInterface;
+use Psr\Http\Message\{RequestInterface, StreamInterface, UriInterface};
 
 /**
  * Class Request.

@@ -25,6 +25,7 @@ return PhpCsFixer\Config::create()
         'php_unit_strict' => true,
         'phpdoc_order' => true,
         'semicolon_after_instruction' => true,
+        'single_import_per_statement' => false,
         'strict_comparison' => true,
         'strict_param' => true,
         'concat_space' => ['spacing' => 'one'],

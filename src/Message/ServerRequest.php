@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace Rancoud\Http\Message;
 
-use InvalidArgumentException;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\UploadedFileInterface;
-use Psr\Http\Message\UriInterface;
+use Psr\Http\Message\{ServerRequestInterface, UploadedFileInterface, UriInterface};
 
 /**
  * Class ServerRequest.
@@ -45,7 +42,7 @@ class ServerRequest implements ServerRequestInterface
      * @param string $version
      * @param array  $serverParams
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public function __construct(
         string $method,
@@ -157,7 +154,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * @param array|object|null $data
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return self
      */
@@ -183,14 +180,14 @@ class ServerRequest implements ServerRequestInterface
      * @param string $name
      * @param mixed  $default
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return mixed|null
      */
     public function getAttribute($name, $default = null)
     {
         if (!\is_string($name)) {
-            throw new InvalidArgumentException('Name must be a string');
+            throw new \InvalidArgumentException('Name must be a string');
         }
 
         if (!\array_key_exists($name, $this->attributes)) {
@@ -204,14 +201,14 @@ class ServerRequest implements ServerRequestInterface
      * @param string $name
      * @param mixed  $value
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return self
      */
     public function withAttribute($name, $value): self
     {
         if (!\is_string($name)) {
-            throw new InvalidArgumentException('Name must be a string');
+            throw new \InvalidArgumentException('Name must be a string');
         }
 
         $new = clone $this;
@@ -223,14 +220,14 @@ class ServerRequest implements ServerRequestInterface
     /**
      * @param string $name
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return self
      */
     public function withoutAttribute($name): self
     {
         if (!\is_string($name)) {
-            throw new InvalidArgumentException('Name must be a string');
+            throw new \InvalidArgumentException('Name must be a string');
         }
 
         if (!\array_key_exists($name, $this->attributes)) {
@@ -246,12 +243,12 @@ class ServerRequest implements ServerRequestInterface
     /**
      * @param mixed $data
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     protected function validateData($data): void
     {
         if (!\is_array($data) && !\is_object($data) && $data !== null) {
-            throw new InvalidArgumentException('First parameter to withParsedBody MUST be object, array or null');
+            throw new \InvalidArgumentException('First parameter to withParsedBody MUST be object, array or null');
         }
     }
 }
