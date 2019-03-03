@@ -85,11 +85,14 @@ trait RequestTrait
         }
 
         $target = $this->uri->getPath();
+        $query = $this->uri->getQuery();
+
         if ($target === '') {
             $target = '/';
         }
-        if ($this->uri->getQuery() !== '') {
-            $target .= '?' . $this->uri->getQuery();
+
+        if ($query !== '') {
+            $target .= '?' . $query;
         }
 
         return $target;
@@ -194,7 +197,6 @@ trait RequestTrait
     protected function updateHostFromUri(): void
     {
         $host = $this->uri->getHost();
-
         if ($host === '') {
             return;
         }
