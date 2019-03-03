@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Rancoud\Http\Message;
 
-use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\{ResponseInterface, StreamInterface};
 
 /**
  * Class Response.
@@ -183,11 +183,11 @@ class Response implements ResponseInterface
     /**
      * Response constructor.
      *
-     * @param int    $status
-     * @param array  $headers
-     * @param mixed  $body
-     * @param string $version
-     * @param string $reason
+     * @param int                                  $status
+     * @param array                                $headers
+     * @param string|resource|StreamInterface|null $body
+     * @param string                               $version
+     * @param string|null                          $reason
      *
      * @throws \InvalidArgumentException
      */
@@ -198,6 +198,10 @@ class Response implements ResponseInterface
         string $version = '1.1',
         string $reason = null
     ) {
+        if (!isset(static::PHRASES[$status])) {
+            throw new \InvalidArgumentException('Status code has to be an integer between 100 and 799');
+        }
+
         $this->statusCode = $status;
 
         if ($body !== '' && $body !== null) {
@@ -232,13 +236,12 @@ class Response implements ResponseInterface
      */
     public function withStatus($code, $reasonPhrase = ''): self
     {
-        if (!\is_int($code) && !\is_string($code)) {
+        if (!\is_int($code)) {
             throw new \InvalidArgumentException('Status code has to be an integer');
         }
 
-        $code = (int) $code;
         if (!isset(static::PHRASES[$code])) {
-            throw new \InvalidArgumentException('Status code has to be an integer between 100 and 599');
+            throw new \InvalidArgumentException('Status code has to be an integer between 100 and 799');
         }
 
         $new = clone $this;

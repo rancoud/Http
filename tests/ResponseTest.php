@@ -40,14 +40,23 @@ class ResponseTest extends TestCase
         $this->assertSame($body, $r->getBody());
     }
 
-    public function testStatusCanBeNumericString()
+    public function testConstructStatusCantBeNumericString()
     {
-        $r = new Response('404');
-        $r2 = $r->withStatus('201');
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Status code has to be an integer');
+
+        $r = new Response('-404.4');
+    }
+
+    public function testWithStatusCantBeNumericString()
+    {
+        $r = new Response(404);
         $this->assertSame(404, $r->getStatusCode());
         $this->assertSame('Not Found', $r->getReasonPhrase());
-        $this->assertSame(201, $r2->getStatusCode());
-        $this->assertSame('Created', $r2->getReasonPhrase());
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Status code has to be an integer');
+        $r->withStatus('201');
     }
 
     public function testCanConstructWithHeaders()
@@ -381,7 +390,7 @@ class ResponseTest extends TestCase
     public function testWithStatusReasonPhraseMustHaveCorrectType()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Status code has to be an integer between 100 and 599');
+        $this->expectExceptionMessage('Status code has to be an integer between 100 and 799');
 
         $r = new Response();
         $r->withStatus(9, []);
