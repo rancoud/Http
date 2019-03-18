@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Rancoud\Psr7;
+namespace Tests\Rancoud\Http;
 
 use Rancoud\Http\Message\Uri;
 use PHPUnit\Framework\TestCase;
@@ -491,7 +491,7 @@ class UriTest extends TestCase
         //  should not use late static binding to access private static members.
         // If they do, this will fatal.
         $this->assertInstanceOf(
-            '\Tests\Rancoud\Psr7\ExtendingClassTest',
+            '\Tests\Rancoud\Http\ExtendingClassTest',
             new ExtendingClassTest('http://h:9/')
         );
     }

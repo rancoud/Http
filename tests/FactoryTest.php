@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Rancoud\Psr7;
+namespace Tests\Rancoud\Http;
 
 use Psr\Http\Message\StreamInterface;
 use Rancoud\Http\Message\Factory\Factory;

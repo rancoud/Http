@@ -86,8 +86,6 @@ class Client implements ClientInterface
             \curl_setopt($curlHandle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0);
         } elseif ($version === '1.1') {
             \curl_setopt($curlHandle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
-        } elseif ($version === '2.0') {
-            \curl_setopt($curlHandle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_2_0);
         } elseif ($version === '2') {
             \curl_setopt($curlHandle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_2);
         }
@@ -157,12 +155,8 @@ class Client implements ClientInterface
 
         $headers = $request->getHeaders();
         foreach ($headers as $key => $values) {
-            if (!\is_array($values)) {
-                $headersCurl[] = \sprintf('%s: %s', $key, $values);
-            } else {
-                foreach ($values as $value) {
-                    $headersCurl[] = \sprintf('%s: %s', $key, $value);
-                }
+            foreach ($values as $value) {
+                $headersCurl[] = \sprintf('%s: %s', $key, $value);
             }
         }
 
