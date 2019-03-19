@@ -51,9 +51,9 @@ class ClientTest extends TestCase
     public function testRequestException()
     {
         $this->expectException(RequestException::class);
-        $this->expectExceptionMessage('SSL certificate problem: unable to get local issuer certificate');
 
         $client = new Client();
+        $client->setCaInfosPath('/', '/');
         $client->sendRequest(new Request("GET", "https://lab.rancoud.com/http-tests/get.php"));
     }
 
