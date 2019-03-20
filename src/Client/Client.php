@@ -34,7 +34,9 @@ class Client implements ClientInterface
      *
      * @param RequestInterface $request
      *
-     * @throws \Psr\Http\Client\ClientExceptionInterface if an error happens while processing the request
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @throws RequestException
+     * @throws NetworkException
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      *

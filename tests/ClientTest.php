@@ -3,6 +3,7 @@
 namespace Tests\Rancoud\Http;
 
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Client\ClientExceptionInterface;
 use Rancoud\Http\Client\Client;
 use Rancoud\Http\Client\Exception\NetworkException;
 use Rancoud\Http\Client\Exception\RequestException;
@@ -117,11 +118,48 @@ class ClientTest extends TestCase
     public function testSmallBody()
     {
         $body = Stream::create('a=a');
-        $request = (new Request("POST", "https://lab.rancoud.com/http-tests/body.php"))->withBody($body);
+        $request = (new Request("POST", "https://lab.rancoud.com/http-tests/small-body.php"))->withBody($body);
         $client = new Client();
         $client->disableSSLVerification();
         $res = $client->sendRequest($request);
         static::assertEquals(200, $res->getStatusCode());
         static::assertEquals('a', $res->getBody()->__toString());
+    }
+
+    public function testBigBody()
+    {
+        $body = Stream::create(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'noise.jpg'));
+        $request = (new Request("PUT", "https://lab.rancoud.com/http-tests/big-body.php"))->withBody($body);
+        $client = new Client();
+        $client->disableSSLVerification();
+        $res = $client->sendRequest($request);
+
+        static::assertEquals(200, $res->getStatusCode());
+        static::assertEquals('a', $res->getBody()->__toString());
+    }
+
+    public function testRequestExceptionGetRequest()
+    {
+        $request = new Request("GET", "https://lab.rancoud.com/http-tests/get.php");
+        try {
+            $client = new Client();
+            $client->setCaInfosPath('/', '/');
+            $client->sendRequest($request);
+        } catch (RequestException $e) {
+            $req = $e->getRequest();
+            static::assertEquals($request, $req);
+        }
+    }
+
+    public function testNetworkExceptionGetRequest()
+    {
+        $request = new Request("GET", "https://labo.rancoud.com/http-tests/get.php");
+        try {
+            $client = new Client();
+            $client->sendRequest($request);
+        } catch (NetworkException $e) {
+            $req = $e->getRequest();
+            static::assertEquals($request, $req);
+        }
     }
 }
