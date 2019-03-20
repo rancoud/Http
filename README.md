@@ -18,6 +18,13 @@ $request = $factory->createRequest('GET', 'https://example.com');
 $stream = (new Rancoud\Http\Message\Factory())->createStream('foobar');
 ```
 
+## Client
+### Methods
+* sendRequest(request: RequestInterface): ResponseInterface
+* setCaInfosPath([infos: string = null], [path: string = null]): void
+* disableSSLVerification(): void
+* enableSSLVerification(): void
+
 ## Factory
 ### Methods
 * createRequest(method: string, uri: mixed): RequestInterface  
