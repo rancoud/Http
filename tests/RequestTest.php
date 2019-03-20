@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Rancoud\Psr7;
+namespace Tests\Rancoud\Http;
 
 use Rancoud\Http\Message\Request;
 use Rancoud\Http\Message\Uri;
