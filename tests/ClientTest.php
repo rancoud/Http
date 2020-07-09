@@ -103,6 +103,8 @@ class ClientTest extends TestCase
         try {
             $client->sendRequest(new Request("GET", "https://labo.rancoud.com/http-tests/get.php"));
         } catch (NetworkException $e) {
+            static::assertStringContainsStringIgnoringCase("Could not resolve", $e->getMessage());
+            static::assertStringContainsStringIgnoringCase("labo.rancoud.com", $e->getMessage());
             throw $e;
         } catch (RequestException $e) {
         } catch (ClientExceptionInterface $e) {
