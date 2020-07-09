@@ -111,6 +111,11 @@ class ClientTest extends TestCase
         }
     }
 
+    /**
+     * @throws ClientExceptionInterface
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testCaInfos(): void
     {
         $client = new Client();
@@ -121,6 +126,11 @@ class ClientTest extends TestCase
         static::assertEquals('content from get', $res->getBody()->__toString());
     }
 
+    /**
+     * @throws ClientExceptionInterface
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testDisableEnableSSL(): void
     {
         $request = new Request("GET", "https://lab.rancoud.com/http-tests/get.php");
@@ -146,6 +156,11 @@ class ClientTest extends TestCase
         }
     }
 
+    /**
+     * @throws ClientExceptionInterface
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testProtocolVersion(): void
     {
         $client = new Client();
@@ -159,6 +174,11 @@ class ClientTest extends TestCase
         static::assertEquals('', $res->getBody()->__toString());
     }
 
+    /**
+     * @throws ClientExceptionInterface
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testSmallBody(): void
     {
         $body = Stream::create('a=a');
@@ -170,6 +190,11 @@ class ClientTest extends TestCase
         static::assertEquals('a', $res->getBody()->__toString());
     }
 
+    /**
+     * @throws ClientExceptionInterface
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testBigBody(): void
     {
         $body = Stream::create(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'noise.jpg'));
@@ -182,6 +207,10 @@ class ClientTest extends TestCase
         static::assertEquals('a', $res->getBody()->__toString());
     }
 
+    /**
+     * @throws ClientExceptionInterface
+     * @throws NetworkException
+     */
     public function testRequestExceptionGetRequest(): void
     {
         $request = new Request("GET", "https://lab.rancoud.com/http-tests/get.php");
@@ -195,6 +224,10 @@ class ClientTest extends TestCase
         }
     }
 
+    /**
+     * @throws ClientExceptionInterface
+     * @throws RequestException
+     */
     public function testNetworkExceptionGetRequest(): void
     {
         $request = new Request("GET", "https://labo.rancoud.com/http-tests/get.php");

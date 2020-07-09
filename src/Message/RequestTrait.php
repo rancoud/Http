@@ -164,7 +164,7 @@ trait RequestTrait
             throw new \InvalidArgumentException('Preserve Host must be a boolean');
         }
 
-        if ($uri === $this->uri) {
+        if ($this->uri === $uri) {
             return $this;
         }
 

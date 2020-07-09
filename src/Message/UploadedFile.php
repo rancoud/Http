@@ -1,5 +1,7 @@
 <?php
 
+/** @noinspection FopenBinaryUnsafeUsageInspection */
+
 declare(strict_types=1);
 
 namespace Rancoud\Http\Message;

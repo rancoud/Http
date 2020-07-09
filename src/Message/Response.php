@@ -196,8 +196,7 @@ class Response implements ResponseInterface
         string $version = '1.1',
         string $reason = null
     ) {
-        $isStatusExist = isset(static::PHRASES[$status]);
-        if (!$isStatusExist) {
+        if (!isset(static::PHRASES[$status])) {
             throw new \InvalidArgumentException('Status code has to be an integer between 100 and 799');
         }
 
@@ -208,10 +207,11 @@ class Response implements ResponseInterface
         }
 
         $this->setHeaders($headers);
-        if (($reason === null || $reason === '') && $isStatusExist) {
+
+        if (($reason === null || $reason === '')) {
             $this->reasonPhrase = static::PHRASES[$status];
         } else {
-            $this->reasonPhrase = $reason;
+            $this->reasonPhrase = $reason ?? '';
         }
 
         $this->protocol = $this->validateProtocolVersion($version);

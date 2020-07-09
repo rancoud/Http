@@ -12,13 +12,13 @@ class StreamTest extends TestCase
         $handle = fopen('php://temp', 'r+');
         fwrite($handle, 'data');
         $stream = Stream::create($handle);
-        $this->assertTrue($stream->isReadable());
-        $this->assertTrue($stream->isWritable());
-        $this->assertTrue($stream->isSeekable());
-        $this->assertEquals('php://temp', $stream->getMetadata('uri'));
-        $this->assertIsArray($stream->getMetadata());
-        $this->assertEquals(4, $stream->getSize());
-        $this->assertFalse($stream->eof());
+        static::assertTrue($stream->isReadable());
+        static::assertTrue($stream->isWritable());
+        static::assertTrue($stream->isSeekable());
+        static::assertEquals('php://temp', $stream->getMetadata('uri'));
+        static::assertIsArray($stream->getMetadata());
+        static::assertEquals(4, $stream->getSize());
+        static::assertFalse($stream->eof());
         $stream->close();
     }
 
@@ -27,7 +27,7 @@ class StreamTest extends TestCase
         $handle = fopen('php://temp', 'r');
         $stream = Stream::create($handle);
         unset($stream);
-        $this->assertFalse(is_resource($handle));
+        static::assertFalse(is_resource($handle));
     }
 
     public function testConvertsToString(): void
@@ -35,8 +35,8 @@ class StreamTest extends TestCase
         $handle = fopen('php://temp', 'w+');
         fwrite($handle, 'data');
         $stream = Stream::create($handle);
-        $this->assertEquals('data', (string) $stream);
-        $this->assertEquals('data', (string) $stream);
+        static::assertEquals('data', (string) $stream);
+        static::assertEquals('data', (string) $stream);
         $stream->close();
     }
 
@@ -45,10 +45,10 @@ class StreamTest extends TestCase
         $handle = fopen('php://temp', 'w+');
         fwrite($handle, 'data');
         $stream = Stream::create($handle);
-        $this->assertEquals('', $stream->getContents());
+        static::assertEquals('', $stream->getContents());
         $stream->seek(0);
-        $this->assertEquals('data', $stream->getContents());
-        $this->assertEquals('', $stream->getContents());
+        static::assertEquals('data', $stream->getContents());
+        static::assertEquals('', $stream->getContents());
     }
 
     public function testChecksEof(): void
@@ -56,9 +56,9 @@ class StreamTest extends TestCase
         $handle = fopen('php://temp', 'w+');
         fwrite($handle, 'data');
         $stream = Stream::create($handle);
-        $this->assertFalse($stream->eof());
+        static::assertFalse($stream->eof());
         $stream->read(4);
-        $this->assertTrue($stream->eof());
+        static::assertTrue($stream->eof());
         $stream->close();
     }
 
@@ -67,21 +67,21 @@ class StreamTest extends TestCase
         $size = filesize(__FILE__);
         $handle = fopen(__FILE__, 'r');
         $stream = Stream::create($handle);
-        $this->assertEquals($size, $stream->getSize());
+        static::assertEquals($size, $stream->getSize());
         // Load from cache
-        $this->assertEquals($size, $stream->getSize());
+        static::assertEquals($size, $stream->getSize());
         $stream->close();
     }
 
     public function testEnsuresSizeIsConsistent(): void
     {
         $h = fopen('php://temp', 'w+');
-        $this->assertEquals(3, fwrite($h, 'foo'));
+        static::assertEquals(3, fwrite($h, 'foo'));
         $stream = Stream::create($h);
-        $this->assertEquals(3, $stream->getSize());
-        $this->assertEquals(4, $stream->write('test'));
-        $this->assertEquals(7, $stream->getSize());
-        $this->assertEquals(7, $stream->getSize());
+        static::assertEquals(3, $stream->getSize());
+        static::assertEquals(4, $stream->write('test'));
+        static::assertEquals(7, $stream->getSize());
+        static::assertEquals(7, $stream->getSize());
         $stream->close();
     }
 
@@ -89,59 +89,62 @@ class StreamTest extends TestCase
     {
         $handle = fopen('php://temp', 'w+');
         $stream = Stream::create($handle);
-        $this->assertEquals(0, $stream->tell());
+        static::assertEquals(0, $stream->tell());
         $stream->write('foo');
-        $this->assertEquals(3, $stream->tell());
+        static::assertEquals(3, $stream->tell());
         $stream->seek(1);
-        $this->assertEquals(1, $stream->tell());
-        $this->assertSame(ftell($handle), $stream->tell());
+        static::assertEquals(1, $stream->tell());
+        static::assertSame(ftell($handle), $stream->tell());
         $stream->close();
     }
 
     public function testCanDetachStream(): void
     {
+        $this->expectException(\Throwable::class);
+
         $r = fopen('php://temp', 'w+');
         $stream = Stream::create($r);
         $stream->write('foo');
-        $this->assertTrue($stream->isReadable());
-        $this->assertSame($r, $stream->detach());
+        static::assertTrue($stream->isReadable());
+        static::assertSame($r, $stream->detach());
         $stream->detach();
 
-        $this->assertFalse($stream->isReadable());
-        $this->assertFalse($stream->isWritable());
-        $this->assertFalse($stream->isSeekable());
+        static::assertFalse($stream->isReadable());
+        static::assertFalse($stream->isWritable());
+        static::assertFalse($stream->isSeekable());
 
-        $throws = function (callable $fn) use ($stream) {
+        $throws = static function (callable $fn) use ($stream) {
             try {
                 $fn($stream);
-                $this->fail();
+                static::fail();
             } catch (\Exception $e) {
             }
         };
 
-        $throws(function ($stream) {
+        $throws(static function ($stream) {
             $stream->read(10);
         });
-        $throws(function ($stream) {
+        $throws(static function ($stream) {
             $stream->write('bar');
         });
-        $throws(function ($stream) {
+        $throws(static function ($stream) {
             $stream->seek(10);
         });
-        $throws(function ($stream) {
+        $throws(static function ($stream) {
             $stream->tell();
         });
-        $throws(function ($stream) {
+        $throws(static function ($stream) {
             $stream->eof();
         });
-        $throws(function ($stream) {
+        $throws(static function ($stream) {
             $stream->getSize();
         });
-        $throws(function ($stream) {
+        $throws(static function ($stream) {
             $stream->getContents();
         });
-        $this->assertSame('', (string) $stream);
+
         $stream->close();
+        $content = (string) $stream;
     }
 
     public function testCloseClearProperties(): void
@@ -150,12 +153,12 @@ class StreamTest extends TestCase
         $stream = Stream::create($handle);
         $stream->close();
 
-        $this->assertFalse($stream->isSeekable());
-        $this->assertFalse($stream->isReadable());
-        $this->assertFalse($stream->isWritable());
-        $this->assertNull($stream->getSize());
-        $this->assertEmpty($stream->getMetadata());
-        $this->assertNull($stream->getMetadata("key"));
+        static::assertFalse($stream->isSeekable());
+        static::assertFalse($stream->isReadable());
+        static::assertFalse($stream->isWritable());
+        static::assertNull($stream->getSize());
+        static::assertEmpty($stream->getMetadata());
+        static::assertNull($stream->getMetadata("key"));
     }
 
     //---
@@ -224,7 +227,7 @@ class StreamTest extends TestCase
     {
         $handle = fopen('php://temp', 'w+');
         $stream = Stream::create($handle);
-        $this->assertNull($stream->getMetadata('KeyNonExist'));
+        static::assertNull($stream->getMetadata('KeyNonExist'));
     }
 
     public function testCreateRaiseException(): void

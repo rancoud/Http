@@ -17,52 +17,50 @@ class FactoryTest extends TestCase
     public function testCreateRequest(): void
     {
         $r = (new Factory())->createRequest('GET', '/');
-        $this->assertEquals('/', $r->getUri());
+        static::assertEquals('/', $r->getUri());
     }
 
     public function testCreateResponse(): void
     {
         $r = (new Factory())->createResponse();
-        $this->assertSame(200, $r->getStatusCode());
-        $this->assertSame('1.1', $r->getProtocolVersion());
-        $this->assertSame('OK', $r->getReasonPhrase());
-        $this->assertSame([], $r->getHeaders());
-        $this->assertInstanceOf(StreamInterface::class, $r->getBody());
-        $this->assertSame('', (string) $r->getBody());
+        static::assertSame(200, $r->getStatusCode());
+        static::assertSame('1.1', $r->getProtocolVersion());
+        static::assertSame('OK', $r->getReasonPhrase());
+        static::assertSame([], $r->getHeaders());
+        static::assertInstanceOf(StreamInterface::class, $r->getBody());
+        static::assertSame('', (string) $r->getBody());
     }
 
     public function testCreateResponseBody(): void
     {
         $r = (new Factory())->createResponseBody(201, 'yolo');
-        $this->assertSame(201, $r->getStatusCode());
-        $this->assertSame('1.1', $r->getProtocolVersion());
-        $this->assertSame('Created', $r->getReasonPhrase());
-        $this->assertSame([], $r->getHeaders());
-        $this->assertInstanceOf(StreamInterface::class, $r->getBody());
-        $this->assertSame('yolo', (string) $r->getBody());
+        static::assertSame(201, $r->getStatusCode());
+        static::assertSame('1.1', $r->getProtocolVersion());
+        static::assertSame('Created', $r->getReasonPhrase());
+        static::assertSame([], $r->getHeaders());
+        static::assertSame('yolo', (string) $r->getBody());
     }
 
     public function testCreateRedirection(): void
     {
         $r = (new Factory())->createRedirection('/blog/');
-        $this->assertSame(301, $r->getStatusCode());
-        $this->assertSame('1.1', $r->getProtocolVersion());
-        $this->assertSame('Moved Permanently', $r->getReasonPhrase());
-        $this->assertEquals(['Location' => ['/blog/']], $r->getHeaders());
-        $this->assertInstanceOf(StreamInterface::class, $r->getBody());
-        $this->assertSame('', (string) $r->getBody());
+        static::assertSame(301, $r->getStatusCode());
+        static::assertSame('1.1', $r->getProtocolVersion());
+        static::assertSame('Moved Permanently', $r->getReasonPhrase());
+        static::assertEquals(['Location' => ['/blog/']], $r->getHeaders());
+        static::assertSame('', (string) $r->getBody());
     }
 
     public function testCreateServerRequest(): void
     {
         $r = (new Factory())->createServerRequest('POST', '/');
-        $this->assertEquals('/', $r->getUri());
+        static::assertEquals('/', $r->getUri());
     }
 
     public function testCreateServerRequestFromArray(): void
     {
         $r = (new Factory())->createServerRequestFromArray(array_merge($_SERVER, ['REQUEST_METHOD' => 'DELETE']));
-        $this->assertEquals('DELETE', $r->getMethod());
+        static::assertEquals('DELETE', $r->getMethod());
     }
 
     public function testCreateServerRequestFromArrayRaiseExceptionMethod(): void
@@ -70,7 +68,7 @@ class FactoryTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot determine HTTP method');
 
-        $r = (new Factory())->createServerRequestFromArray($_SERVER);
+        (new Factory())->createServerRequestFromArray($_SERVER);
     }
     
     /** @runInSeparateProcess  */
@@ -78,14 +76,14 @@ class FactoryTest extends TestCase
     {
         $_SERVER = array_merge($_SERVER, ['REQUEST_METHOD' => 'POST']);
         $r = (new Factory())->createServerRequestFromGlobals();
-        $this->assertEquals('POST', $r->getMethod());
+        static::assertEquals('POST', $r->getMethod());
     }
 
     /** @runInSeparateProcess  */
     public function testCreateServerRequestFromGlobalsWithoutRequestMethod(): void
     {
         $r = (new Factory())->createServerRequestFromGlobals();
-        $this->assertEquals('GET', $r->getMethod());
+        static::assertEquals('GET', $r->getMethod());
     }
 
     /** @runInSeparateProcess  */
@@ -93,16 +91,16 @@ class FactoryTest extends TestCase
     {
         $_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'en-gb,en;q=0.5';
         $r = (new Factory())->createServerRequestFromGlobals();
-        $this->assertEquals('GET', $r->getMethod());
+        static::assertEquals('GET', $r->getMethod());
     }
     
     public function testCreateUri(): void
     {
         $r = (new Factory())->createUri('/rty/');
-        $this->assertEquals('/rty/', $r->getPath());
+        static::assertEquals('/rty/', $r->getPath());
         
         $r = (new Factory())->createUri(new Uri('/aze/'));
-        $this->assertEquals('/aze/', $r->getPath());
+        static::assertEquals('/aze/', $r->getPath());
     }
 
     public function testCreateUriFromServer(): void
@@ -140,19 +138,19 @@ class FactoryTest extends TestCase
         ];
 
         $r = (new Factory())->createUriFromArray($server);
-        $this->assertEquals('http', $r->getScheme());
+        static::assertEquals('http', $r->getScheme());
     }
 
     public function testCreateStreamFromFile(): void
     {
         $s = (new Factory())->createStreamFromFile(__FILE__);
-        $this->assertEquals(__FILE__, $s->getMetadata()['uri']);
+        static::assertEquals(__FILE__, $s->getMetadata()['uri']);
     }
 
     public function testCreateStreamFromResource(): void
     {
         $s = (new Factory())->createStreamFromResource(fopen(__FILE__, 'r'));
-        $this->assertEquals(__FILE__, $s->getMetadata()['uri']);
+        static::assertEquals(__FILE__, $s->getMetadata()['uri']);
     }
 
     public function testCreateStreamFromFileRaiseExceptionFileNotExist(): void
@@ -174,6 +172,6 @@ class FactoryTest extends TestCase
     public function testCreateUploadedFile(): void
     {
         $u = (new Factory())->createUploadedFile((new Factory())->createStream('writing to tempfile'));
-        $this->assertEquals('writing to tempfile', (string) $u->getStream());
+        static::assertEquals('writing to tempfile', (string) $u->getStream());
     }
 }

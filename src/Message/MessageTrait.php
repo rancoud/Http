@@ -51,7 +51,7 @@ trait MessageTrait
     {
         $this->validateProtocolVersion($version);
 
-        if ($version === $this->protocol) {
+        if ($this->protocol === $version) {
             return $this;
         }
 
@@ -206,7 +206,7 @@ trait MessageTrait
      */
     public function getBody(): StreamInterface
     {
-        if (!$this->stream) {
+        if ($this->stream === null) {
             $this->stream = Stream::create('');
         }
 
@@ -220,7 +220,7 @@ trait MessageTrait
      */
     public function withBody(StreamInterface $body): self
     {
-        if ($body === $this->stream) {
+        if ($this->stream === $body) {
             return $this;
         }
 
@@ -298,7 +298,7 @@ trait MessageTrait
     protected function validateProtocolVersion(string $protocolVersion): string
     {
         if (!\in_array($protocolVersion, static::$validProtocols, true)) {
-            throw new \InvalidArgumentException('Protocol Version must be 0.9 or 1.0 or 1.1 or 2');
+            throw new \InvalidArgumentException('Protocol Version must be ' . \implode(' or ', static::$validProtocols));
         }
 
         return $protocolVersion;
