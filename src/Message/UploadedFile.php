@@ -26,26 +26,26 @@ class UploadedFile implements UploadedFileInterface
     /** @var int */
     protected const DEFAULT_MAX_BYTES_LENGTH = 1048576;
 
-    /** @var string */
-    protected $clientFilename;
-
-    /** @var string */
-    protected $clientMediaType;
-
-    /** @var int */
-    protected $error;
+    /** @var string|null */
+    protected ?string $clientFilename;
 
     /** @var string|null */
-    protected $file;
+    protected ?string $clientMediaType;
+
+    /** @var int */
+    protected int $error;
+
+    /** @var string|null */
+    protected ?string $file = null;
 
     /** @var bool */
-    protected $moved = false;
+    protected bool $moved = false;
 
     /** @var int|null */
-    protected $size;
+    protected ?int $size = null;
 
     /** @var StreamInterface|null */
-    protected $stream;
+    protected ?StreamInterface $stream = null;
 
     /**
      * @param StreamInterface|string|resource $streamOrFile
@@ -286,7 +286,7 @@ class UploadedFile implements UploadedFileInterface
      *
      * @throws \RuntimeException
      */
-    protected function copyToStream(StreamInterface $source, StreamInterface $dest)
+    protected function copyToStream(StreamInterface $source, StreamInterface $dest): void
     {
         while (!$source->eof()) {
             if (!$dest->write($source->read(static::DEFAULT_MAX_BYTES_LENGTH))) {

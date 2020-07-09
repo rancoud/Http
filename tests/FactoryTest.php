@@ -14,13 +14,13 @@ use Rancoud\Http\Message\Uri;
 
 class FactoryTest extends TestCase
 {
-    public function testCreateRequest()
+    public function testCreateRequest(): void
     {
         $r = (new Factory())->createRequest('GET', '/');
         $this->assertEquals('/', $r->getUri());
     }
 
-    public function testCreateResponse()
+    public function testCreateResponse(): void
     {
         $r = (new Factory())->createResponse();
         $this->assertSame(200, $r->getStatusCode());
@@ -31,7 +31,7 @@ class FactoryTest extends TestCase
         $this->assertSame('', (string) $r->getBody());
     }
 
-    public function testCreateResponseBody()
+    public function testCreateResponseBody(): void
     {
         $r = (new Factory())->createResponseBody(201, 'yolo');
         $this->assertSame(201, $r->getStatusCode());
@@ -42,7 +42,7 @@ class FactoryTest extends TestCase
         $this->assertSame('yolo', (string) $r->getBody());
     }
 
-    public function testCreateRedirection()
+    public function testCreateRedirection(): void
     {
         $r = (new Factory())->createRedirection('/blog/');
         $this->assertSame(301, $r->getStatusCode());
@@ -53,19 +53,19 @@ class FactoryTest extends TestCase
         $this->assertSame('', (string) $r->getBody());
     }
 
-    public function testCreateServerRequest()
+    public function testCreateServerRequest(): void
     {
         $r = (new Factory())->createServerRequest('POST', '/');
         $this->assertEquals('/', $r->getUri());
     }
 
-    public function testCreateServerRequestFromArray()
+    public function testCreateServerRequestFromArray(): void
     {
         $r = (new Factory())->createServerRequestFromArray(array_merge($_SERVER, ['REQUEST_METHOD' => 'DELETE']));
         $this->assertEquals('DELETE', $r->getMethod());
     }
 
-    public function testCreateServerRequestFromArrayRaiseExceptionMethod()
+    public function testCreateServerRequestFromArrayRaiseExceptionMethod(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot determine HTTP method');
@@ -74,7 +74,7 @@ class FactoryTest extends TestCase
     }
     
     /** @runInSeparateProcess  */
-    public function testCreateServerRequestFromGlobalsWithRequestMethod()
+    public function testCreateServerRequestFromGlobalsWithRequestMethod(): void
     {
         $_SERVER = array_merge($_SERVER, ['REQUEST_METHOD' => 'POST']);
         $r = (new Factory())->createServerRequestFromGlobals();
@@ -82,21 +82,21 @@ class FactoryTest extends TestCase
     }
 
     /** @runInSeparateProcess  */
-    public function testCreateServerRequestFromGlobalsWithoutRequestMethod()
+    public function testCreateServerRequestFromGlobalsWithoutRequestMethod(): void
     {
         $r = (new Factory())->createServerRequestFromGlobals();
         $this->assertEquals('GET', $r->getMethod());
     }
 
     /** @runInSeparateProcess  */
-    public function testCreateServerRequestFromGlobalsFakeNginx()
+    public function testCreateServerRequestFromGlobalsFakeNginx(): void
     {
         $_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'en-gb,en;q=0.5';
         $r = (new Factory())->createServerRequestFromGlobals();
         $this->assertEquals('GET', $r->getMethod());
     }
     
-    public function testCreateUri()
+    public function testCreateUri(): void
     {
         $r = (new Factory())->createUri('/rty/');
         $this->assertEquals('/rty/', $r->getPath());
@@ -105,7 +105,7 @@ class FactoryTest extends TestCase
         $this->assertEquals('/aze/', $r->getPath());
     }
 
-    public function testCreateUriFromServer()
+    public function testCreateUriFromServer(): void
     {
         $server = [
             'PHP_SELF' => '/blog/article.php',
@@ -143,19 +143,19 @@ class FactoryTest extends TestCase
         $this->assertEquals('http', $r->getScheme());
     }
 
-    public function testCreateStreamFromFile()
+    public function testCreateStreamFromFile(): void
     {
         $s = (new Factory())->createStreamFromFile(__FILE__);
         $this->assertEquals(__FILE__, $s->getMetadata()['uri']);
     }
 
-    public function testCreateStreamFromResource()
+    public function testCreateStreamFromResource(): void
     {
         $s = (new Factory())->createStreamFromResource(fopen(__FILE__, 'r'));
         $this->assertEquals(__FILE__, $s->getMetadata()['uri']);
     }
 
-    public function testCreateStreamFromFileRaiseExceptionFileNotExist()
+    public function testCreateStreamFromFileRaiseExceptionFileNotExist(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('The file azert doesn\'t exist.');
@@ -163,7 +163,7 @@ class FactoryTest extends TestCase
         (new Factory())->createStreamFromFile('azert', 'r');
     }
 
-    public function testCreateStreamFromFileRaiseExceptionModeInvalid()
+    public function testCreateStreamFromFileRaiseExceptionModeInvalid(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('The mode yolo is invalid.');
@@ -171,7 +171,7 @@ class FactoryTest extends TestCase
         (new Factory())->createStreamFromFile(__FILE__, 'yolo');
     }
     
-    public function testCreateUploadedFile()
+    public function testCreateUploadedFile(): void
     {
         $u = (new Factory())->createUploadedFile((new Factory())->createStream('writing to tempfile'));
         $this->assertEquals('writing to tempfile', (string) $u->getStream());

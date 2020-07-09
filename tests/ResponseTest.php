@@ -12,7 +12,7 @@ use Psr\Http\Message\StreamInterface;
  */
 class ResponseTest extends TestCase
 {
-    public function testDefaultConstructor()
+    public function testDefaultConstructor(): void
     {
         $r = new Response();
         $this->assertSame(200, $r->getStatusCode());
@@ -23,14 +23,14 @@ class ResponseTest extends TestCase
         $this->assertSame('', (string) $r->getBody());
     }
 
-    public function testCanConstructWithStatusCode()
+    public function testCanConstructWithStatusCode(): void
     {
         $r = new Response(404);
         $this->assertSame(404, $r->getStatusCode());
         $this->assertSame('Not Found', $r->getReasonPhrase());
     }
 
-    public function testConstructorDoesNotReadStreamBody()
+    public function testConstructorDoesNotReadStreamBody(): void
     {
         $body = $this->getMockBuilder(StreamInterface::class)->getMock();
         $body->expects($this->never())
@@ -40,7 +40,7 @@ class ResponseTest extends TestCase
         $this->assertSame($body, $r->getBody());
     }
 
-    public function testConstructStatusCantBeNumericString()
+    public function testConstructStatusCantBeNumericString(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Status code has to be an integer');
@@ -48,7 +48,7 @@ class ResponseTest extends TestCase
         $r = new Response('-404.4');
     }
 
-    public function testWithStatusCantBeNumericString()
+    public function testWithStatusCantBeNumericString(): void
     {
         $r = new Response(404);
         $this->assertSame(404, $r->getStatusCode());
@@ -59,7 +59,7 @@ class ResponseTest extends TestCase
         $r->withStatus('201');
     }
 
-    public function testCanConstructWithHeaders()
+    public function testCanConstructWithHeaders(): void
     {
         $r = new Response(200, ['Foo' => 'Bar']);
         $this->assertSame(['Foo' => ['Bar']], $r->getHeaders());
@@ -67,7 +67,7 @@ class ResponseTest extends TestCase
         $this->assertSame(['Bar'], $r->getHeader('Foo'));
     }
 
-    public function testCanConstructWithHeadersAsArray()
+    public function testCanConstructWithHeadersAsArray(): void
     {
         $r = new Response(200, [
             'Foo' => ['baz', 'bar'],
@@ -77,28 +77,28 @@ class ResponseTest extends TestCase
         $this->assertSame(['baz', 'bar'], $r->getHeader('Foo'));
     }
 
-    public function testCanConstructWithBody()
+    public function testCanConstructWithBody(): void
     {
         $r = new Response(200, [], 'baz');
         $this->assertInstanceOf(StreamInterface::class, $r->getBody());
         $this->assertSame('baz', (string) $r->getBody());
     }
 
-    public function testNullBody()
+    public function testNullBody(): void
     {
         $r = new Response(200, [], null);
         $this->assertInstanceOf(StreamInterface::class, $r->getBody());
         $this->assertSame('', (string) $r->getBody());
     }
 
-    public function testFalseyBody()
+    public function testFalseyBody(): void
     {
         $r = new Response(200, [], '0');
         $this->assertInstanceOf(StreamInterface::class, $r->getBody());
         $this->assertSame('0', (string) $r->getBody());
     }
 
-    public function testCanConstructWithReason()
+    public function testCanConstructWithReason(): void
     {
         $r = new Response(200, [], null, '1.1', 'bar');
         $this->assertSame('bar', $r->getReasonPhrase());
@@ -107,13 +107,13 @@ class ResponseTest extends TestCase
         $this->assertSame('0', $r->getReasonPhrase(), 'Falsey reason works');
     }
 
-    public function testCanConstructWithProtocolVersion()
+    public function testCanConstructWithProtocolVersion(): void
     {
         $r = new Response(200, [], null, '1.0');
         $this->assertSame('1.0', $r->getProtocolVersion());
     }
 
-    public function testRaiseExceptionConstructWithProtocolVersion()
+    public function testRaiseExceptionConstructWithProtocolVersion(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Protocol Version must be 0.9 or 1.0 or 1.1 or 2');
@@ -121,14 +121,14 @@ class ResponseTest extends TestCase
         $r = new Response(200, [], null, '1000');
     }
     
-    public function testWithStatusCodeAndNoReason()
+    public function testWithStatusCodeAndNoReason(): void
     {
         $r = (new Response())->withStatus(201);
         $this->assertSame(201, $r->getStatusCode());
         $this->assertSame('Created', $r->getReasonPhrase());
     }
 
-    public function testWithStatusCodeAndReason()
+    public function testWithStatusCodeAndReason(): void
     {
         $r = (new Response())->withStatus(201, 'Foo');
         $this->assertSame(201, $r->getStatusCode());
@@ -139,19 +139,19 @@ class ResponseTest extends TestCase
         $this->assertSame('0', $r->getReasonPhrase(), 'Falsey reason works');
     }
 
-    public function testWithProtocolVersion()
+    public function testWithProtocolVersion(): void
     {
         $r = (new Response())->withProtocolVersion('1.0');
         $this->assertSame('1.0', $r->getProtocolVersion());
     }
 
-    public function testSameInstanceWhenSameProtocol()
+    public function testSameInstanceWhenSameProtocol(): void
     {
         $r = new Response();
         $this->assertSame($r, $r->withProtocolVersion('1.1'));
     }
 
-    public function testWithBody()
+    public function testWithBody(): void
     {
         $b = (new Factory())->createStream('0');
         $r = (new Response())->withBody($b);
@@ -159,14 +159,14 @@ class ResponseTest extends TestCase
         $this->assertSame('0', (string) $r->getBody());
     }
 
-    public function testSameInstanceWhenSameBody()
+    public function testSameInstanceWhenSameBody(): void
     {
         $r = new Response();
         $b = $r->getBody();
         $this->assertSame($r, $r->withBody($b));
     }
 
-    public function testWithHeader()
+    public function testWithHeader(): void
     {
         $r = new Response(200, ['Foo' => 'Bar']);
         $r2 = $r->withHeader('baZ', 'Bam');
@@ -176,7 +176,7 @@ class ResponseTest extends TestCase
         $this->assertSame(['Bam'], $r2->getHeader('baz'));
     }
 
-    public function testWithHeaderAsArray()
+    public function testWithHeaderAsArray(): void
     {
         $r = new Response(200, ['Foo' => 'Bar']);
         $r2 = $r->withHeader('baZ', ['Bam', 'Bar']);
@@ -186,7 +186,7 @@ class ResponseTest extends TestCase
         $this->assertSame(['Bam', 'Bar'], $r2->getHeader('baz'));
     }
 
-    public function testWithHeaderReplacesDifferentCase()
+    public function testWithHeaderReplacesDifferentCase(): void
     {
         $r = new Response(200, ['Foo' => 'Bar']);
         $r2 = $r->withHeader('foO', 'Bam');
@@ -196,7 +196,7 @@ class ResponseTest extends TestCase
         $this->assertSame(['Bam'], $r2->getHeader('foo'));
     }
 
-    public function testWithAddedHeader()
+    public function testWithAddedHeader(): void
     {
         $r = new Response(200, ['Foo' => 'Bar']);
         $r2 = $r->withAddedHeader('foO', 'Baz');
@@ -206,7 +206,7 @@ class ResponseTest extends TestCase
         $this->assertSame(['Bar', 'Baz'], $r2->getHeader('foo'));
     }
 
-    public function testWithAddedHeaderAsArray()
+    public function testWithAddedHeaderAsArray(): void
     {
         $r = new Response(200, ['Foo' => 'Bar']);
         $r2 = $r->withAddedHeader('foO', ['Baz', 'Bam']);
@@ -216,7 +216,7 @@ class ResponseTest extends TestCase
         $this->assertSame(['Bar', 'Baz', 'Bam'], $r2->getHeader('foo'));
     }
 
-    public function testWithAddedHeaderThatDoesNotExist()
+    public function testWithAddedHeaderThatDoesNotExist(): void
     {
         $r = new Response(200, ['Foo' => 'Bar']);
         $r2 = $r->withAddedHeader('nEw', 'Baz');
@@ -226,7 +226,7 @@ class ResponseTest extends TestCase
         $this->assertSame(['Baz'], $r2->getHeader('new'));
     }
 
-    public function testWithoutHeaderThatExists()
+    public function testWithoutHeaderThatExists(): void
     {
         $r = new Response(200, ['Foo' => 'Bar', 'Baz' => 'Bam']);
         $r2 = $r->withoutHeader('foO');
@@ -236,7 +236,7 @@ class ResponseTest extends TestCase
         $this->assertSame(['Baz' => ['Bam']], $r2->getHeaders());
     }
 
-    public function testWithoutHeaderThatDoesNotExist()
+    public function testWithoutHeaderThatDoesNotExist(): void
     {
         $r = new Response(200, ['Baz' => 'Bam']);
         $r2 = $r->withoutHeader('foO');
@@ -245,13 +245,13 @@ class ResponseTest extends TestCase
         $this->assertSame(['Baz' => ['Bam']], $r2->getHeaders());
     }
 
-    public function testSameInstanceWhenRemovingMissingHeader()
+    public function testSameInstanceWhenRemovingMissingHeader(): void
     {
         $r = new Response();
         $this->assertSame($r, $r->withoutHeader('foo'));
     }
 
-    public function trimmedHeaderValues()
+    public function trimmedHeaderValues(): array
     {
         return [
             [new Response(200, ['OWS' => " \t \tFoo\t \t "])],
@@ -260,7 +260,7 @@ class ResponseTest extends TestCase
         ];
     }
 
-    public function testHasHeaderMustHaveCorrectType()
+    public function testHasHeaderMustHaveCorrectType(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Header name must be a string');
@@ -269,7 +269,7 @@ class ResponseTest extends TestCase
         $this->assertSame($r, $r->hasHeader(null));
     }
 
-    public function testGetHeaderMustHaveCorrectType()
+    public function testGetHeaderMustHaveCorrectType(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Header name must be a string');
@@ -278,7 +278,7 @@ class ResponseTest extends TestCase
         $this->assertSame($r, $r->getHeader(null));
     }
 
-    public function testGetHeaderLineMustHaveCorrectType()
+    public function testGetHeaderLineMustHaveCorrectType(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Header name must be a string');
@@ -287,7 +287,7 @@ class ResponseTest extends TestCase
         $this->assertSame($r, $r->getHeaderLine(null));
     }
 
-    public function testWithHeaderNameMustHaveCorrectType()
+    public function testWithHeaderNameMustHaveCorrectType(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Header name must be non-empty string');
@@ -296,7 +296,7 @@ class ResponseTest extends TestCase
         $this->assertSame($r, $r->withHeader('', ''));
     }
 
-    public function testWithHeaderValueArrayMustHaveCorrectType()
+    public function testWithHeaderValueArrayMustHaveCorrectType(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Header values must be a string or an array of strings, empty array given.');
@@ -305,7 +305,7 @@ class ResponseTest extends TestCase
         $this->assertSame($r, $r->withHeader('aze', []));
     }
 
-    public function testWithHeaderValueStringMustHaveCorrectType()
+    public function testWithHeaderValueStringMustHaveCorrectType(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Header values must be RFC 7230 compatible strings.');
@@ -314,7 +314,7 @@ class ResponseTest extends TestCase
         $this->assertSame($r, $r->withHeader('aze', [null]));
     }
 
-    public function testWithAddedHeaderNameMustHaveCorrectType()
+    public function testWithAddedHeaderNameMustHaveCorrectType(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Header name must be non-empty string');
@@ -323,7 +323,7 @@ class ResponseTest extends TestCase
         $this->assertSame($r, $r->withAddedHeader('', ''));
     }
 
-    public function testWithAddedHeaderNameMustHaveCorrectTypeRFC()
+    public function testWithAddedHeaderNameMustHaveCorrectTypeRFC(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Header name must be RFC 7230 compatible string.');
@@ -332,7 +332,7 @@ class ResponseTest extends TestCase
         $this->assertSame($r, $r->withAddedHeader("a\t", ''));
     }
 
-    public function testWithAddedHeaderValueMustHaveCorrectTypeRFC()
+    public function testWithAddedHeaderValueMustHaveCorrectTypeRFC(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Header value must be RFC 7230 compatible string.');
@@ -341,7 +341,7 @@ class ResponseTest extends TestCase
         $this->assertSame($r, $r->withAddedHeader("a", null));
     }
     
-    public function testWithAddedHeaderValueArrayMustHaveCorrectType()
+    public function testWithAddedHeaderValueArrayMustHaveCorrectType(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Header values must be a string or an array of strings, empty array given.');
@@ -350,7 +350,7 @@ class ResponseTest extends TestCase
         $this->assertSame($r, $r->withAddedHeader('aze', []));
     }
 
-    public function testWithAddedHeaderValueStringMustHaveCorrectType()
+    public function testWithAddedHeaderValueStringMustHaveCorrectType(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Header values must be RFC 7230 compatible strings.');
@@ -359,7 +359,7 @@ class ResponseTest extends TestCase
         $this->assertSame($r, $r->withAddedHeader('aze', [null]));
     }
 
-    public function testWithoutHeaderNameMustHaveCorrectType()
+    public function testWithoutHeaderNameMustHaveCorrectType(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Header name must be non-empty string');
@@ -371,14 +371,14 @@ class ResponseTest extends TestCase
     /**
      * @dataProvider trimmedHeaderValues
      */
-    public function testHeaderValuesAreTrimmed($r)
+    public function testHeaderValuesAreTrimmed($r): void
     {
         $this->assertSame(['OWS' => ['Foo']], $r->getHeaders());
         $this->assertSame('Foo', $r->getHeaderLine('OWS'));
         $this->assertSame(['Foo'], $r->getHeader('OWS'));
     }
 
-    public function testWithStatusCodeMustHaveCorrectType()
+    public function testWithStatusCodeMustHaveCorrectType(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Status code has to be an integer');
@@ -387,7 +387,7 @@ class ResponseTest extends TestCase
         $r->withStatus([]);
     }
 
-    public function testWithStatusReasonPhraseMustHaveCorrectType()
+    public function testWithStatusReasonPhraseMustHaveCorrectType(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Status code has to be an integer between 100 and 799');
@@ -399,7 +399,7 @@ class ResponseTest extends TestCase
     /**
      * @runInSeparateProcess
      */
-    public function testSend()
+    public function testSend(): void
     {
         $r = new Response(
             200,
@@ -418,7 +418,7 @@ class ResponseTest extends TestCase
         $this->assertSame($body, $infos['body']);
     }
     
-    private function captureSend(Response $response)
+    private function captureSend(Response $response): array
     {
         ob_start();
         $response->send();

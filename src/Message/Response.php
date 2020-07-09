@@ -175,10 +175,10 @@ class Response implements ResponseInterface
     ];
 
     /** @var string */
-    protected $reasonPhrase = '';
+    protected string $reasonPhrase = '';
 
     /** @var int */
-    protected $statusCode = 200;
+    protected int $statusCode = 200;
 
     /**
      * @param int                                  $status

@@ -9,20 +9,20 @@ use Psr\Http\Message\StreamInterface;
 
 class RequestTest extends TestCase
 {
-    public function testRequestUriMayBeString()
+    public function testRequestUriMayBeString(): void
     {
         $r = new Request('GET', '/');
         $this->assertEquals('/', (string) $r->getUri());
     }
 
-    public function testRequestUriMayBeUri()
+    public function testRequestUriMayBeUri(): void
     {
         $uri = new Uri('/');
         $r = new Request('GET', $uri);
         $this->assertSame($uri, $r->getUri());
     }
 
-    public function testValidateRequestUri()
+    public function testValidateRequestUri(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Unable to parse URI: ///');
@@ -30,28 +30,28 @@ class RequestTest extends TestCase
         new Request('GET', '///');
     }
 
-    public function testCanConstructWithBody()
+    public function testCanConstructWithBody(): void
     {
         $r = new Request('GET', '/', [], 'baz');
         $this->assertInstanceOf(StreamInterface::class, $r->getBody());
         $this->assertEquals('baz', (string) $r->getBody());
     }
 
-    public function testNullBody()
+    public function testNullBody(): void
     {
         $r = new Request('GET', '/', [], null);
         $this->assertInstanceOf(StreamInterface::class, $r->getBody());
         $this->assertSame('', (string) $r->getBody());
     }
 
-    public function testFalseyBody()
+    public function testFalseyBody(): void
     {
         $r = new Request('GET', '/', [], '0');
         $this->assertInstanceOf(StreamInterface::class, $r->getBody());
         $this->assertSame('0', (string) $r->getBody());
     }
 
-    public function testConstructorDoesNotReadStreamBody()
+    public function testConstructorDoesNotReadStreamBody(): void
     {
         $body = $this->getMockBuilder(StreamInterface::class)->getMock();
         $body->expects($this->never())
@@ -61,7 +61,7 @@ class RequestTest extends TestCase
         $this->assertSame($body, $r->getBody());
     }
 
-    public function testWithUri()
+    public function testWithUri(): void
     {
         $r1 = new Request('GET', '/');
         $u1 = $r1->getUri();
@@ -72,14 +72,14 @@ class RequestTest extends TestCase
         $this->assertSame($u1, $r1->getUri());
     }
 
-    public function testSameInstanceWhenSameUri()
+    public function testSameInstanceWhenSameUri(): void
     {
         $r1 = new Request('GET', 'http://foo.com');
         $r2 = $r1->withUri($r1->getUri());
         $this->assertSame($r1, $r2);
     }
 
-    public function testWithRequestTarget()
+    public function testWithRequestTarget(): void
     {
         $r1 = new Request('GET', '/');
         $r2 = $r1->withRequestTarget('*');
@@ -87,7 +87,7 @@ class RequestTest extends TestCase
         $this->assertEquals('/', $r1->getRequestTarget());
     }
 
-    public function testRequestTargetDoesNotAllowSpaces()
+    public function testRequestTargetDoesNotAllowSpaces(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid request target provided; cannot contain whitespace');
@@ -96,7 +96,7 @@ class RequestTest extends TestCase
         $r1->withRequestTarget('/foo bar');
     }
 
-    public function testRequestTargetDefaultsToSlash()
+    public function testRequestTargetDefaultsToSlash(): void
     {
         $r1 = new Request('GET', '');
         $this->assertEquals('/', $r1->getRequestTarget());
@@ -106,19 +106,19 @@ class RequestTest extends TestCase
         $this->assertEquals('/bar%20baz/', $r3->getRequestTarget());
     }
 
-    public function testBuildsRequestTarget()
+    public function testBuildsRequestTarget(): void
     {
         $r1 = new Request('GET', 'http://foo.com/baz?bar=bam');
         $this->assertEquals('/baz?bar=bam', $r1->getRequestTarget());
     }
 
-    public function testBuildsRequestTargetWithFalseyQuery()
+    public function testBuildsRequestTargetWithFalseyQuery(): void
     {
         $r1 = new Request('GET', 'http://foo.com/baz?0');
         $this->assertEquals('/baz?0', $r1->getRequestTarget());
     }
 
-    public function testHostIsAddedFirst()
+    public function testHostIsAddedFirst(): void
     {
         $r = new Request('GET', 'http://foo.com/baz?bar=bam', ['Foo' => 'Bar']);
         $this->assertEquals([
@@ -127,7 +127,7 @@ class RequestTest extends TestCase
         ], $r->getHeaders());
     }
 
-    public function testCanGetHeaderAsCsv()
+    public function testCanGetHeaderAsCsv(): void
     {
         $r = new Request('GET', 'http://foo.com/baz?bar=bam', [
             'Foo' => ['a', 'b', 'c'],
@@ -136,7 +136,7 @@ class RequestTest extends TestCase
         $this->assertEquals('', $r->getHeaderLine('Bar'));
     }
 
-    public function testHostIsNotOverwrittenWhenPreservingHost()
+    public function testHostIsNotOverwrittenWhenPreservingHost(): void
     {
         $r = new Request('GET', 'http://foo.com/baz?bar=bam', ['Host' => 'a.com']);
         $this->assertEquals(['Host' => ['a.com']], $r->getHeaders());
@@ -144,7 +144,7 @@ class RequestTest extends TestCase
         $this->assertEquals('a.com', $r2->getHeaderLine('Host'));
     }
 
-    public function testOverridesHostWithUri()
+    public function testOverridesHostWithUri(): void
     {
         $r = new Request('GET', 'http://foo.com/baz?bar=bam');
         $this->assertEquals(['Host' => ['foo.com']], $r->getHeaders());
@@ -152,7 +152,7 @@ class RequestTest extends TestCase
         $this->assertEquals('www.baz.com', $r2->getHeaderLine('Host'));
     }
 
-    public function testAggregatesHeaders()
+    public function testAggregatesHeaders(): void
     {
         $r = new Request('GET', '', [
             'ZOO' => 'zoobar',
@@ -162,7 +162,7 @@ class RequestTest extends TestCase
         $this->assertEquals('zoobar, foobar, zoobar', $r->getHeaderLine('zoo'));
     }
 
-    public function testSupportNumericHeaders()
+    public function testSupportNumericHeaders(): void
     {
         $r = new Request('GET', '', [
             'Content-Length' => 200,
@@ -171,27 +171,27 @@ class RequestTest extends TestCase
         $this->assertSame('200', $r->getHeaderLine('Content-Length'));
     }
 
-    public function testAddsPortToHeader()
+    public function testAddsPortToHeader(): void
     {
         $r = new Request('GET', 'http://foo.com:8124/bar');
         $this->assertEquals('foo.com:8124', $r->getHeaderLine('host'));
     }
 
-    public function testAddsPortToHeaderAndReplacePreviousPort()
+    public function testAddsPortToHeaderAndReplacePreviousPort(): void
     {
         $r = new Request('GET', 'http://foo.com:8124/bar');
         $r = $r->withUri(new Uri('http://foo.com:8125/bar'));
         $this->assertEquals('foo.com:8125', $r->getHeaderLine('host'));
     }
 
-    public function testWithMethod()
+    public function testWithMethod(): void
     {
         $r = new Request('GET', 'http://foo.com:8124/bar');
         $r = $r->withMethod('PATCH');
         $this->assertEquals('PATCH', $r->getMethod());
     }
 
-    public function testWithUriPreserveHostMustHaveCorrectType()
+    public function testWithUriPreserveHostMustHaveCorrectType(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Preserve Host must be a boolean');
@@ -200,7 +200,7 @@ class RequestTest extends TestCase
         $r->withUri(new Uri(), null);
     }
 
-    public function testWithMethodMustHaveCorrectType()
+    public function testWithMethodMustHaveCorrectType(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Method must be a string');
@@ -209,7 +209,7 @@ class RequestTest extends TestCase
         $r->withMethod(null);
     }
 
-    public function testWithMethodMustBeValidMethod()
+    public function testWithMethodMustBeValidMethod(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Method NULL_METHOD is invalid');
@@ -218,7 +218,7 @@ class RequestTest extends TestCase
         $r->withMethod('NULL_METHOD');
     }
 
-    public function testCanHaveHeaderWithEmptyValue()
+    public function testCanHaveHeaderWithEmptyValue(): void
     {
         $r = new Request('GET', 'https://example.com/');
         $r = $r->withHeader('Foo', '');

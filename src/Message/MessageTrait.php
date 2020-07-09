@@ -12,25 +12,25 @@ use Psr\Http\Message\StreamInterface;
 trait MessageTrait
 {
     /** @var string */
-    protected static $patternHeaderName = "@^[!#$%&'*+.^_`|~0-9A-Za-z-]+$@";
+    protected static string $patternHeaderName = "@^[!#$%&'*+.^_`|~0-9A-Za-z-]+$@";
 
     /** @var string */
-    protected static $patternHeaderValue = "@^[ \t\x21-\x7E\x80-\xFF]*$@";
+    protected static string $patternHeaderValue = "@^[ \t\x21-\x7E\x80-\xFF]*$@";
 
     /** @var array */
-    protected static $validProtocols = ['0.9', '1.0', '1.1', '2'];
+    protected static array $validProtocols = ['0.9', '1.0', '1.1', '2'];
 
     /** @var array */
-    protected $headers = [];
+    protected array $headers = [];
 
     /** @var array */
-    protected $headerNames = [];
+    protected array $headerNames = [];
 
     /** @var string */
-    protected $protocol = '1.1';
+    protected string $protocol = '1.1';
 
     /** @var StreamInterface|null */
-    protected $stream;
+    protected ?StreamInterface $stream = null;
 
     /**
      * @return string

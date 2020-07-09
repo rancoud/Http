@@ -15,19 +15,19 @@ class Stream implements StreamInterface
     protected $stream;
 
     /** @var bool */
-    protected $seekable;
+    protected bool $seekable;
 
     /** @var bool */
-    protected $readable;
+    protected bool $readable;
 
     /** @var bool */
-    protected $writable;
+    protected bool $writable;
 
     /** @var array|mixed|void|null */
     protected $uri;
 
     /** @var int|null */
-    protected $size;
+    protected ?int $size = null;
 
     /** @var array Hash of readable and writable stream types */
     protected const READ_WRITE_HASH = [
@@ -170,7 +170,9 @@ class Stream implements StreamInterface
 
         if (!$this->seekable) {
             throw new \RuntimeException('Stream is not seekable');
-        } elseif (\fseek($this->stream, $offset, $whence) === -1) {
+        }
+
+        if (\fseek($this->stream, $offset, $whence) === -1) {
             $whenceStr = \var_export($whence, true);
             $message = \sprintf('Unable to seek to stream position %d with whence %d', $offset, $whenceStr);
             throw new \RuntimeException($message);

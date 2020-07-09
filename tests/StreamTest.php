@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class StreamTest extends TestCase
 {
-    public function testConstructorInitializesProperties()
+    public function testConstructorInitializesProperties(): void
     {
         $handle = fopen('php://temp', 'r+');
         fwrite($handle, 'data');
@@ -22,7 +22,7 @@ class StreamTest extends TestCase
         $stream->close();
     }
 
-    public function testStreamClosesHandleOnDestruct()
+    public function testStreamClosesHandleOnDestruct(): void
     {
         $handle = fopen('php://temp', 'r');
         $stream = Stream::create($handle);
@@ -30,7 +30,7 @@ class StreamTest extends TestCase
         $this->assertFalse(is_resource($handle));
     }
 
-    public function testConvertsToString()
+    public function testConvertsToString(): void
     {
         $handle = fopen('php://temp', 'w+');
         fwrite($handle, 'data');
@@ -40,7 +40,7 @@ class StreamTest extends TestCase
         $stream->close();
     }
 
-    public function testGetsContents()
+    public function testGetsContents(): void
     {
         $handle = fopen('php://temp', 'w+');
         fwrite($handle, 'data');
@@ -51,7 +51,7 @@ class StreamTest extends TestCase
         $this->assertEquals('', $stream->getContents());
     }
 
-    public function testChecksEof()
+    public function testChecksEof(): void
     {
         $handle = fopen('php://temp', 'w+');
         fwrite($handle, 'data');
@@ -62,7 +62,7 @@ class StreamTest extends TestCase
         $stream->close();
     }
 
-    public function testGetSize()
+    public function testGetSize(): void
     {
         $size = filesize(__FILE__);
         $handle = fopen(__FILE__, 'r');
@@ -73,7 +73,7 @@ class StreamTest extends TestCase
         $stream->close();
     }
 
-    public function testEnsuresSizeIsConsistent()
+    public function testEnsuresSizeIsConsistent(): void
     {
         $h = fopen('php://temp', 'w+');
         $this->assertEquals(3, fwrite($h, 'foo'));
@@ -85,7 +85,7 @@ class StreamTest extends TestCase
         $stream->close();
     }
 
-    public function testProvidesStreamPosition()
+    public function testProvidesStreamPosition(): void
     {
         $handle = fopen('php://temp', 'w+');
         $stream = Stream::create($handle);
@@ -98,7 +98,7 @@ class StreamTest extends TestCase
         $stream->close();
     }
 
-    public function testCanDetachStream()
+    public function testCanDetachStream(): void
     {
         $r = fopen('php://temp', 'w+');
         $stream = Stream::create($r);
@@ -144,7 +144,7 @@ class StreamTest extends TestCase
         $stream->close();
     }
 
-    public function testCloseClearProperties()
+    public function testCloseClearProperties(): void
     {
         $handle = fopen('php://temp', 'r+');
         $stream = Stream::create($handle);
@@ -160,7 +160,7 @@ class StreamTest extends TestCase
 
     //---
 
-    public function testSeekRaiseExceptionOffset()
+    public function testSeekRaiseExceptionOffset(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Offset must be a int');
@@ -170,7 +170,7 @@ class StreamTest extends TestCase
         $stream->seek('string');
     }
 
-    public function testSeekRaiseExceptionWhence()
+    public function testSeekRaiseExceptionWhence(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Whence must be a int');
@@ -180,7 +180,7 @@ class StreamTest extends TestCase
         $stream->seek(1, 'string');
     }
 
-    public function testSeekRaiseExceptionUnableToSeek()
+    public function testSeekRaiseExceptionUnableToSeek(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Unable to seek to stream position 1 with whence 90909090');
@@ -190,7 +190,7 @@ class StreamTest extends TestCase
         $stream->seek(1, 90909090);
     }
 
-    public function testWriteRaiseExceptionData()
+    public function testWriteRaiseExceptionData(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Data must be a string');
@@ -200,7 +200,7 @@ class StreamTest extends TestCase
         $stream->write(0);
     }
 
-    public function testReadRaiseExceptionLength()
+    public function testReadRaiseExceptionLength(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Length must be a int');
@@ -210,7 +210,7 @@ class StreamTest extends TestCase
         $stream->read('string');
     }
 
-    public function testGetMetadataRaiseExceptionKey()
+    public function testGetMetadataRaiseExceptionKey(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Key must be a string or NULL');
@@ -220,14 +220,14 @@ class StreamTest extends TestCase
         $stream->getMetadata(45);
     }
 
-    public function testGetMetadataKeyNonExist()
+    public function testGetMetadataKeyNonExist(): void
     {
         $handle = fopen('php://temp', 'w+');
         $stream = Stream::create($handle);
         $this->assertNull($stream->getMetadata('KeyNonExist'));
     }
 
-    public function testCreateRaiseException()
+    public function testCreateRaiseException(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('First argument to Stream::create() must be a string, resource or StreamInterface.');

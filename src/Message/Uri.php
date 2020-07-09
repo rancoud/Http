@@ -24,25 +24,25 @@ class Uri implements UriInterface
     protected const CHAR_SUB_DELIMS = '!\$&\'\(\)\*\+,;=';
 
     /** @var string Uri scheme. */
-    protected $scheme = '';
+    protected string $scheme = '';
 
     /** @var string Uri user info. */
-    protected $userInfo = '';
+    protected string $userInfo = '';
 
     /** @var string Uri host. */
-    protected $host = '';
+    protected string $host = '';
 
     /** @var int|null Uri port. */
-    protected $port;
+    protected ?int $port = null;
 
     /** @var string Uri path. */
-    protected $path = '';
+    protected string $path = '';
 
     /** @var string Uri query string. */
-    protected $query = '';
+    protected string $query = '';
 
     /** @var string Uri fragment. */
-    protected $fragment = '';
+    protected string $fragment = '';
 
     /**
      * @param string $uri

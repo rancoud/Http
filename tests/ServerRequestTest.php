@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 
 class ServerRequestTest extends TestCase
 {
-    public function dataNormalizeFiles()
+    public function dataNormalizeFiles(): array
     {
         return [
             'Single file' => [
@@ -256,7 +256,7 @@ class ServerRequestTest extends TestCase
         ];
     }
 
-    public function testConstruct()
+    public function testConstruct(): void
     {
         $serverRequest = new ServerRequest('GET', '/', [], 'string');
 
@@ -266,7 +266,7 @@ class ServerRequestTest extends TestCase
     /**
      * @dataProvider dataNormalizeFiles
      */
-    public function testNormalizeFiles($files, $expected)
+    public function testNormalizeFiles($files, $expected): void
     {
         $result = (new Factory())
             ->createServerRequestFromArrays(['REQUEST_METHOD' => 'POST'], [], [], [], [], $files)
@@ -275,7 +275,7 @@ class ServerRequestTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testNormalizeFilesRaisesException()
+    public function testNormalizeFilesRaisesException(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid value in files specification');
@@ -283,7 +283,7 @@ class ServerRequestTest extends TestCase
         (new Factory())->createServerRequestFromArrays(['REQUEST_METHOD' => 'POST'], [], [], [], [], ['test' => 'something']);
     }
 
-    public function dataGetUriFromGlobals()
+    public function dataGetUriFromGlobals(): array
     {
         $server = [
             'PHP_SELF' => '/blog/article.php',
@@ -347,12 +347,12 @@ class ServerRequestTest extends TestCase
     /**
      * @dataProvider dataGetUriFromGlobals
      */
-    public function testGetUriFromGlobals($expected, $serverParams)
+    public function testGetUriFromGlobals($expected, $serverParams): void
     {
         $this->assertEquals(new Uri($expected), (new Factory())->createUriFromArray($serverParams));
     }
 
-    public function testFromGlobals()
+    public function testFromGlobals(): void
     {
         $server = [
             'PHP_SELF' => '/blog/article.php',
@@ -437,7 +437,7 @@ class ServerRequestTest extends TestCase
         $this->assertEquals($expectedFiles, $server->getUploadedFiles());
     }
 
-    public function testUploadedFiles()
+    public function testUploadedFiles(): void
     {
         $request1 = new ServerRequest('GET', '/');
 
@@ -452,7 +452,7 @@ class ServerRequestTest extends TestCase
         $this->assertSame($files, $request2->getUploadedFiles());
     }
 
-    public function testServerParams()
+    public function testServerParams(): void
     {
         $params = ['name' => 'value'];
 
@@ -460,7 +460,7 @@ class ServerRequestTest extends TestCase
         $this->assertSame($params, $request->getServerParams());
     }
 
-    public function testCookieParams()
+    public function testCookieParams(): void
     {
         $request1 = new ServerRequest('GET', '/');
 
@@ -473,7 +473,7 @@ class ServerRequestTest extends TestCase
         $this->assertSame($params, $request2->getCookieParams());
     }
 
-    public function testQueryParams()
+    public function testQueryParams(): void
     {
         $request1 = new ServerRequest('GET', '/');
 
@@ -486,7 +486,7 @@ class ServerRequestTest extends TestCase
         $this->assertSame($params, $request2->getQueryParams());
     }
 
-    public function testParsedBody()
+    public function testParsedBody(): void
     {
         $request1 = new ServerRequest('GET', '/');
 
@@ -499,7 +499,7 @@ class ServerRequestTest extends TestCase
         $this->assertSame($params, $request2->getParsedBody());
     }
 
-    public function testAttributes()
+    public function testAttributes(): void
     {
         $request1 = new ServerRequest('GET', '/');
 
@@ -527,7 +527,7 @@ class ServerRequestTest extends TestCase
         $this->assertEquals(['name' => 'value'], $request4->getAttributes());
     }
 
-    public function testNullAttribute()
+    public function testNullAttribute(): void
     {
         $request = (new ServerRequest('GET', '/'))->withAttribute('name', null);
 
@@ -540,7 +540,7 @@ class ServerRequestTest extends TestCase
         $this->assertSame('different-default', $requestWithoutAttribute->getAttribute('name', 'different-default'));
     }
 
-    public function testGetAttributeMustHaveCorrectType()
+    public function testGetAttributeMustHaveCorrectType(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Name must be a string');
@@ -548,7 +548,7 @@ class ServerRequestTest extends TestCase
         (new ServerRequest('GET', '/'))->getAttribute([], null);
     }
 
-    public function testWithAttributeMustHaveCorrectType()
+    public function testWithAttributeMustHaveCorrectType(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Name must be a string');
@@ -556,7 +556,7 @@ class ServerRequestTest extends TestCase
         (new ServerRequest('GET', '/'))->withAttribute([], null);
     }
 
-    public function testWithoutAttributeMustHaveCorrectType()
+    public function testWithoutAttributeMustHaveCorrectType(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Name must be a string');
@@ -564,7 +564,7 @@ class ServerRequestTest extends TestCase
         (new ServerRequest('GET', '/'))->withoutAttribute([]);
     }
 
-    public function testWithParsedBodyMustHaveCorrectType()
+    public function testWithParsedBodyMustHaveCorrectType(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('First parameter to withParsedBody MUST be object, array or null');
