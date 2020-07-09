@@ -1,6 +1,12 @@
 # Http Package
 
-[![Build Status](https://travis-ci.org/rancoud/Http.svg?branch=master)](https://travis-ci.org/rancoud/Http) [![Coverage Status](https://coveralls.io/repos/github/rancoud/Http/badge.svg?branch=master)](https://coveralls.io/github/rancoud/Http?branch=master)
+![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/rancoud/http)
+[![Packagist Version](https://img.shields.io/packagist/v/rancoud/http)](https://packagist.org/packages/rancoud/http)
+[![Packagist Downloads](https://img.shields.io/packagist/dt/rancoud/http)](https://packagist.org/packages/rancoud/http)
+[![Composer dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](https://github.com/rancoud/http/blob/master/composer.json)
+[![Test workflow](https://img.shields.io/github/workflow/status/rancoud/http/test?label=test&logo=github)](https://github.com/rancoud/http/actions?workflow=test)
+[![Codecov](https://img.shields.io/codecov/c/github/rancoud/http?logo=codecov)](https://codecov.io/gh/rancoud/http)
+[![composer.lock](https://poser.pugx.org/rancoud/http/composerlock)](https://packagist.org/packages/rancoud/http)
 
 Heavily based on [Nyholm](https://github.com/nyholm) works from the psr7 repository [https://github.com/nyholm/psr7](https://github.com/nyholm/psr7)
 
@@ -446,5 +452,6 @@ $stream = (new Rancoud\Http\Message\Factory())->createStream('foobar');
 * withUserInfo(user: string, [password: string|null = null]): self  
 
 ## How to Dev
-`./run_all_commands.sh` for php-cs-fixer and phpunit and coverage  
-`./run_php_unit_coverage.sh` for phpunit and coverage  
+`composer ci` for php-cs-fixer and phpunit and coverage  
+`composer lint` for php-cs-fixer  
+`composer test` for phpunit and coverage  

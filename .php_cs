@@ -30,7 +30,9 @@ return PhpCsFixer\Config::create()
         'strict_param' => true,
         'concat_space' => ['spacing' => 'one'],
         'trailing_comma_in_multiline_array' => false,
-        'yoda_style' => null
+        'yoda_style' => null,
+        'single_line_throw' => false,
+        'no_superfluous_phpdoc_tags' => false
     ])
     ->setFinder($finder)
     ->setCacheFile(__DIR__.'/.php_cs.cache');

@@ -24,25 +24,25 @@ class Uri implements UriInterface
     protected const CHAR_SUB_DELIMS = '!\$&\'\(\)\*\+,;=';
 
     /** @var string Uri scheme. */
-    protected $scheme = '';
+    protected string $scheme = '';
 
     /** @var string Uri user info. */
-    protected $userInfo = '';
+    protected string $userInfo = '';
 
     /** @var string Uri host. */
-    protected $host = '';
+    protected string $host = '';
 
     /** @var int|null Uri port. */
-    protected $port;
+    protected ?int $port = null;
 
     /** @var string Uri path. */
-    protected $path = '';
+    protected string $path = '';
 
     /** @var string Uri query string. */
-    protected $query = '';
+    protected string $query = '';
 
     /** @var string Uri fragment. */
-    protected $fragment = '';
+    protected string $fragment = '';
 
     /**
      * @param string $uri
@@ -150,7 +150,7 @@ class Uri implements UriInterface
     {
         $scheme = $this->filterScheme($scheme);
 
-        if ($scheme === $this->scheme) {
+        if ($this->scheme === $scheme) {
             return $this;
         }
 
@@ -178,7 +178,7 @@ class Uri implements UriInterface
             $info .= ':' . $password;
         }
 
-        if ($info === $this->userInfo) {
+        if ($this->userInfo === $info) {
             return $this;
         }
 
@@ -199,7 +199,7 @@ class Uri implements UriInterface
     {
         $host = $this->filterHost($host);
 
-        if ($host === $this->host) {
+        if ($this->host === $host) {
             return $this;
         }
 
@@ -220,7 +220,7 @@ class Uri implements UriInterface
     {
         $port = $this->filterPort($port);
 
-        if ($port === $this->port) {
+        if ($this->port === $port) {
             return $this;
         }
 
@@ -241,7 +241,7 @@ class Uri implements UriInterface
     {
         $path = $this->filterPath($path);
 
-        if ($path === $this->path) {
+        if ($this->path === $path) {
             return $this;
         }
 
@@ -262,7 +262,7 @@ class Uri implements UriInterface
     {
         $query = $this->filterQueryAndFragment($query);
 
-        if ($query === $this->query) {
+        if ($this->query === $query) {
             return $this;
         }
 
@@ -283,7 +283,7 @@ class Uri implements UriInterface
     {
         $fragment = $this->filterQueryAndFragment($fragment);
 
-        if ($fragment === $this->fragment) {
+        if ($this->fragment === $fragment) {
             return $this;
         }
 

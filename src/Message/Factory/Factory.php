@@ -412,7 +412,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
         $headers = [];
 
         foreach ($_SERVER as $name => $value) {
-            if (\mb_substr($name, 0, 5) === 'HTTP_') {
+            if (\mb_strpos($name, 'HTTP_') === 0) {
                 $treatedName = \mb_substr($name, 5);
                 $treatedName = \ucwords(\mb_strtolower(\str_replace('_', ' ', $treatedName)));
                 $treatedName = \str_replace(' ', '-', $treatedName);

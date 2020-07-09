@@ -11,8 +11,8 @@ use Rancoud\Http\Message\Response;
 
 class Client implements ClientInterface
 {
-    protected $CAInfosPath = ['info' => null, 'path' => null];
-    protected $hasSSLVerification = true;
+    protected array $CAInfosPath = ['info' => null, 'path' => null];
+    protected bool $hasSSLVerification = true;
 
     public function disableSSLVerification(): void
     {
@@ -46,9 +46,8 @@ class Client implements ClientInterface
     {
         $curlHandle = $this->createCurlSimple($request);
         $infos = $this->sendCurlSimple($curlHandle, $request);
-        $response = $this->convertCurlSimpleResponse($infos);
 
-        return $response;
+        return $this->convertCurlSimpleResponse($infos);
     }
 
     /**
@@ -138,7 +137,7 @@ class Client implements ClientInterface
                 if ($bodySize !== null) {
                     \curl_setopt($curlHandle, CURLOPT_INFILESIZE, $bodySize);
                 }
-                \curl_setopt($curlHandle, CURLOPT_READFUNCTION, function ($curlRes, $streamRes, $length) use ($body) {
+                \curl_setopt($curlHandle, CURLOPT_READFUNCTION, static function ($curlRes, $streamRes, $length) use ($body) {
                     return $body->read($length);
                 });
             } else {
@@ -181,6 +180,7 @@ class Client implements ClientInterface
             }
 
             if (!$this->hasSSLVerification) {
+                /* @noinspection CurlSslServerSpoofingInspection */
                 \curl_setopt($curlHandle, CURLOPT_SSL_VERIFYPEER, false);
             }
         }
@@ -248,7 +248,7 @@ class Client implements ClientInterface
                 continue;
             }
 
-            list($key, $value) = \explode(': ', $line);
+            [$key, $value] = \explode(': ', $line);
             $headers[$key] = $value;
         }
 
@@ -267,7 +267,7 @@ class Client implements ClientInterface
      *
      * @return Response
      */
-    protected function convertCurlSimpleResponse(array $infos)
+    protected function convertCurlSimpleResponse(array $infos): Response
     {
         return new Response($infos['status'], $infos['headers'], $infos['body']);
     }

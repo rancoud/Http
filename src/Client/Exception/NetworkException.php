@@ -12,7 +12,7 @@ class NetworkException extends \Exception implements NetworkExceptionInterface
     /**
      * @var RequestInterface
      */
-    protected $request;
+    protected RequestInterface $request;
 
     public function __construct(RequestInterface $request, string $message = '', int $code = 0, \Throwable $previous = null)
     {

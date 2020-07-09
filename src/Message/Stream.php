@@ -1,5 +1,7 @@
 <?php
 
+/** @noinspection FopenBinaryUnsafeUsageInspection */
+
 declare(strict_types=1);
 
 namespace Rancoud\Http\Message;
@@ -15,19 +17,19 @@ class Stream implements StreamInterface
     protected $stream;
 
     /** @var bool */
-    protected $seekable;
+    protected bool $seekable;
 
     /** @var bool */
-    protected $readable;
+    protected bool $readable;
 
     /** @var bool */
-    protected $writable;
+    protected bool $writable;
 
     /** @var array|mixed|void|null */
     protected $uri;
 
     /** @var int|null */
-    protected $size;
+    protected ?int $size = null;
 
     /** @var array Hash of readable and writable stream types */
     protected const READ_WRITE_HASH = [
@@ -50,6 +52,8 @@ class Stream implements StreamInterface
     }
 
     /**
+     * @throws \Throwable
+     *
      * @return string
      */
     public function __toString(): string
@@ -60,8 +64,8 @@ class Stream implements StreamInterface
             }
 
             return $this->getContents();
-        } catch (\Exception $e) {
-            return '';
+        } catch (\Throwable $e) {
+            throw $e;
         }
     }
 
@@ -170,7 +174,9 @@ class Stream implements StreamInterface
 
         if (!$this->seekable) {
             throw new \RuntimeException('Stream is not seekable');
-        } elseif (\fseek($this->stream, $offset, $whence) === -1) {
+        }
+
+        if (\fseek($this->stream, $offset, $whence) === -1) {
             $whenceStr = \var_export($whence, true);
             $message = \sprintf('Unable to seek to stream position %d with whence %d', $offset, $whenceStr);
             throw new \RuntimeException($message);
@@ -316,7 +322,13 @@ class Stream implements StreamInterface
 
         if (\is_string($content)) {
             $resource = \fopen('php://temp', 'rw+');
-            \fwrite($resource, $content);
+            if ($resource === false) {
+                throw new \InvalidArgumentException('Error fopen in php://temp');
+            }
+            $bytesWritten = \fwrite($resource, $content);
+            if ($bytesWritten === false) {
+                throw new \InvalidArgumentException('Error fwrite in php://temp');
+            }
             $content = $resource;
         }
 
@@ -324,7 +336,7 @@ class Stream implements StreamInterface
             $obj = new self();
             $obj->stream = $content;
             $meta = \stream_get_meta_data($obj->stream);
-            $obj->seekable = $meta['seekable'];
+            $obj->seekable = $meta['seekable'] && 0 === \fseek($obj->stream, 0, \SEEK_CUR);
             $obj->readable = isset(static::READ_WRITE_HASH['read'][$meta['mode']]);
             $obj->writable = isset(static::READ_WRITE_HASH['write'][$meta['mode']]);
             $obj->uri = $obj->getMetadata('uri');

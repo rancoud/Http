@@ -15,22 +15,22 @@ class ServerRequest implements ServerRequestInterface
     use RequestTrait;
 
     /** @var array */
-    protected $attributes = [];
+    protected array $attributes = [];
 
     /** @var array */
-    protected $cookieParams = [];
+    protected array $cookieParams = [];
 
     /** @var array|object|null */
     protected $parsedBody;
 
     /** @var array */
-    protected $queryParams = [];
+    protected array $queryParams = [];
 
     /** @var array */
-    protected $serverParams;
+    protected array $serverParams;
 
     /** @var UploadedFileInterface[] */
-    protected $uploadedFiles = [];
+    protected array $uploadedFiles = [];
 
     /**
      * @param string                               $method       HTTP method

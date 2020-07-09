@@ -11,7 +11,7 @@ use Psr\Http\Message\UriInterface;
  */
 trait RequestTrait
 {
-    public static $methods = [
+    public static array $methods = [
         'ACL',
         'BASELINE-CONTROL',
         'BCOPY',
@@ -67,13 +67,13 @@ trait RequestTrait
     ];
 
     /** @var string */
-    protected $method;
+    protected string $method;
 
     /** @var string|null */
-    protected $requestTarget;
+    protected ?string $requestTarget = null;
 
     /** @var UriInterface|null */
-    protected $uri;
+    protected ?UriInterface $uri = null;
 
     /**
      * @return string
@@ -164,7 +164,7 @@ trait RequestTrait
             throw new \InvalidArgumentException('Preserve Host must be a boolean');
         }
 
-        if ($uri === $this->uri) {
+        if ($this->uri === $uri) {
             return $this;
         }
 
