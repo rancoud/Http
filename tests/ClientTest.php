@@ -96,7 +96,6 @@ class ClientTest extends TestCase
     public function testNetworkException(): void
     {
         $this->expectException(NetworkException::class);
-        $this->expectExceptionMessage('Could not resolve host: labo.rancoud.com');
 
         $client = new Client();
 
