@@ -193,7 +193,7 @@ class ResponseTest extends TestCase
     public function testWithAddedHeader(): void
     {
         $r = new Response(200, ['Foo' => 'Bar']);
-        $r2 = $r->withAddedHeader('foO', 'Baz');
+        $r2 = $r->addHeader('foO', 'Baz');
         static::assertSame(['Foo' => ['Bar']], $r->getHeaders());
         static::assertSame(['Foo' => ['Bar', 'Baz']], $r2->getHeaders());
         static::assertSame('Bar, Baz', $r2->getHeaderLine('foo'));
@@ -203,7 +203,7 @@ class ResponseTest extends TestCase
     public function testWithAddedHeaderAsArray(): void
     {
         $r = new Response(200, ['Foo' => 'Bar']);
-        $r2 = $r->withAddedHeader('foO', ['Baz', 'Bam']);
+        $r2 = $r->addHeader('foO', ['Baz', 'Bam']);
         static::assertSame(['Foo' => ['Bar']], $r->getHeaders());
         static::assertSame(['Foo' => ['Bar', 'Baz', 'Bam']], $r2->getHeaders());
         static::assertSame('Bar, Baz, Bam', $r2->getHeaderLine('foo'));
@@ -213,7 +213,7 @@ class ResponseTest extends TestCase
     public function testWithAddedHeaderThatDoesNotExist(): void
     {
         $r = new Response(200, ['Foo' => 'Bar']);
-        $r2 = $r->withAddedHeader('nEw', 'Baz');
+        $r2 = $r->addHeader('nEw', 'Baz');
         static::assertSame(['Foo' => ['Bar']], $r->getHeaders());
         static::assertSame(['Foo' => ['Bar'], 'nEw' => ['Baz']], $r2->getHeaders());
         static::assertSame('Baz', $r2->getHeaderLine('new'));
@@ -223,7 +223,7 @@ class ResponseTest extends TestCase
     public function testWithoutHeaderThatExists(): void
     {
         $r = new Response(200, ['Foo' => 'Bar', 'Baz' => 'Bam']);
-        $r2 = $r->withoutHeader('foO');
+        $r2 = $r->removeHeader('foO');
         static::assertTrue($r->hasHeader('foo'));
         static::assertSame(['Foo' => ['Bar'], 'Baz' => ['Bam']], $r->getHeaders());
         static::assertFalse($r2->hasHeader('foo'));
@@ -233,7 +233,7 @@ class ResponseTest extends TestCase
     public function testWithoutHeaderThatDoesNotExist(): void
     {
         $r = new Response(200, ['Baz' => 'Bam']);
-        $r2 = $r->withoutHeader('foO');
+        $r2 = $r->removeHeader('foO');
         static::assertSame($r, $r2);
         static::assertFalse($r2->hasHeader('foo'));
         static::assertSame(['Baz' => ['Bam']], $r2->getHeaders());
@@ -242,7 +242,7 @@ class ResponseTest extends TestCase
     public function testSameInstanceWhenRemovingMissingHeader(): void
     {
         $r = new Response();
-        static::assertSame($r, $r->withoutHeader('foo'));
+        static::assertSame($r, $r->removeHeader('foo'));
     }
 
     public function trimmedHeaderValues(): array
@@ -250,7 +250,7 @@ class ResponseTest extends TestCase
         return [
             [new Response(200, ['OWS' => " \t \tFoo\t \t "])],
             [(new Response())->withHeader('OWS', " \t \tFoo\t \t ")],
-            [(new Response())->withAddedHeader('OWS', " \t \tFoo\t \t ")],
+            [(new Response())->addHeader('OWS', " \t \tFoo\t \t ")],
         ];
     }
 
@@ -314,7 +314,7 @@ class ResponseTest extends TestCase
         $this->expectExceptionMessage('Header name must be non-empty string');
 
         $r = new Response();
-        static::assertSame($r, $r->withAddedHeader('', ''));
+        static::assertSame($r, $r->addHeader('', ''));
     }
 
     public function testWithAddedHeaderNameMustHaveCorrectTypeRFC(): void
@@ -323,7 +323,7 @@ class ResponseTest extends TestCase
         $this->expectExceptionMessage('Header name must be RFC 7230 compatible string.');
 
         $r = new Response();
-        static::assertSame($r, $r->withAddedHeader("a\t", ''));
+        static::assertSame($r, $r->addHeader("a\t", ''));
     }
 
     public function testWithAddedHeaderValueMustHaveCorrectTypeRFC(): void
@@ -332,7 +332,7 @@ class ResponseTest extends TestCase
         $this->expectExceptionMessage('Header value must be RFC 7230 compatible string.');
 
         $r = new Response();
-        static::assertSame($r, $r->withAddedHeader("a", null));
+        static::assertSame($r, $r->addHeader("a", null));
     }
     
     public function testWithAddedHeaderValueArrayMustHaveCorrectType(): void
@@ -341,7 +341,7 @@ class ResponseTest extends TestCase
         $this->expectExceptionMessage('Header values must be a string or an array of strings, empty array given.');
 
         $r = new Response();
-        static::assertSame($r, $r->withAddedHeader('aze', []));
+        static::assertSame($r, $r->addHeader('aze', []));
     }
 
     public function testWithAddedHeaderValueStringMustHaveCorrectType(): void
@@ -350,7 +350,7 @@ class ResponseTest extends TestCase
         $this->expectExceptionMessage('Header values must be RFC 7230 compatible strings.');
 
         $r = new Response();
-        static::assertSame($r, $r->withAddedHeader('aze', [null]));
+        static::assertSame($r, $r->addHeader('aze', [null]));
     }
 
     public function testWithoutHeaderNameMustHaveCorrectType(): void
@@ -359,7 +359,7 @@ class ResponseTest extends TestCase
         $this->expectExceptionMessage('Header name must be non-empty string');
 
         $r = new Response();
-        static::assertSame($r, $r->withoutHeader(''));
+        static::assertSame($r, $r->removeHeader(''));
     }
 
     /**

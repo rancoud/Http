@@ -4,12 +4,7 @@ namespace Tests\Rancoud\Http;
 
 use Psr\Http\Message\StreamInterface;
 use Rancoud\Http\Message\Factory\Factory;
-use Rancoud\Http\Message\Factory\MessageFactory;
 use PHPUnit\Framework\TestCase;
-use Rancoud\Http\Message\Factory\ServerRequestFactory;
-use Rancoud\Http\Message\Factory\StreamFactory;
-use Rancoud\Http\Message\Factory\UploadedFileFactory;
-use Rancoud\Http\Message\Factory\UriFactory;
 use Rancoud\Http\Message\Uri;
 
 class FactoryTest extends TestCase
@@ -70,7 +65,7 @@ class FactoryTest extends TestCase
 
         (new Factory())->createServerRequestFromArray($_SERVER);
     }
-    
+
     /** @runInSeparateProcess  */
     public function testCreateServerRequestFromGlobalsWithRequestMethod(): void
     {
@@ -93,12 +88,12 @@ class FactoryTest extends TestCase
         $r = (new Factory())->createServerRequestFromGlobals();
         static::assertEquals('GET', $r->getMethod());
     }
-    
+
     public function testCreateUri(): void
     {
         $r = (new Factory())->createUri('/rty/');
         static::assertEquals('/rty/', $r->getPath());
-        
+
         $r = (new Factory())->createUri(new Uri('/aze/'));
         static::assertEquals('/aze/', $r->getPath());
     }
@@ -168,7 +163,7 @@ class FactoryTest extends TestCase
 
         (new Factory())->createStreamFromFile(__FILE__, 'yolo');
     }
-    
+
     public function testCreateUploadedFile(): void
     {
         $u = (new Factory())->createUploadedFile((new Factory())->createStream('writing to tempfile'));

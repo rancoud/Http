@@ -160,7 +160,7 @@ trait MessageTrait
      *
      * @return self
      */
-    public function withAddedHeader($name, $value): self
+    public function addHeader($name, $value): self
     {
         if (!\is_string($name) || $name === '') {
             throw new \InvalidArgumentException('Header name must be non-empty string');
@@ -179,7 +179,7 @@ trait MessageTrait
      *
      * @return self
      */
-    public function withoutHeader($name): self
+    public function removeHeader($name): self
     {
         if (!\is_string($name) || $name === '') {
             throw new \InvalidArgumentException('Header name must be non-empty string');

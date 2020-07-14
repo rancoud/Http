@@ -6,8 +6,6 @@ use Rancoud\Http\Message\Factory\Factory;
 use Rancoud\Http\Message\ServerRequest;
 use Rancoud\Http\Message\UploadedFile;
 use Rancoud\Http\Message\Uri;
-use Rancoud\Http\Message\Factory\ServerRequestFactory;
-use Rancoud\Http\Message\Factory\UriFactory;
 use PHPUnit\Framework\TestCase;
 
 class ServerRequestTest extends TestCase

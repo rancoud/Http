@@ -11,6 +11,11 @@ use Psr\Http\Message\UriInterface;
  */
 trait RequestTrait
 {
+    /**
+     * Use MessageTrait to use attributes headers and headerNames, methods related to headers
+     */
+    use MessageTrait;
+
     public static array $methods = [
         'ACL',
         'BASELINE-CONTROL',
@@ -134,10 +139,8 @@ trait RequestTrait
      */
     public function withMethod($method): self
     {
-        $method = $this->filterMethod($method);
-
         $new = clone $this;
-        $new->method = $method;
+        $new->method = $this->filterMethod($method);
 
         return $new;
     }
@@ -217,6 +220,6 @@ trait RequestTrait
             $this->headerNames['host'] = 'Host';
         }
 
-        $this->headers = [$header => [$host]] + $this->headers;
+        $this->headers[$header] = [$host];
     }
 }

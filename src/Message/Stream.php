@@ -58,15 +58,11 @@ class Stream implements StreamInterface
      */
     public function __toString(): string
     {
-        try {
-            if ($this->isSeekable()) {
-                $this->seek(0);
-            }
-
-            return $this->getContents();
-        } catch (\Throwable $e) {
-            throw $e;
+        if ($this->isSeekable()) {
+            $this->seek(0);
         }
+
+        return $this->getContents();
     }
 
     public function close(): void
@@ -144,7 +140,7 @@ class Stream implements StreamInterface
      */
     public function eof(): bool
     {
-        return $this->stream === false || \feof($this->stream) === true;
+        return $this->stream === false || \feof($this->stream);
     }
 
     /**
@@ -291,11 +287,7 @@ class Stream implements StreamInterface
         }
 
         if (!isset($this->stream)) {
-            if ($key) {
-                return null;
-            }
-
-            return [];
+            return empty($key) ? [] : null;
         }
 
         $meta = \stream_get_meta_data($this->stream);
@@ -332,19 +324,19 @@ class Stream implements StreamInterface
             $content = $resource;
         }
 
-        if (\is_resource($content)) {
-            $obj = new self();
-            $obj->stream = $content;
-            $meta = \stream_get_meta_data($obj->stream);
-            $obj->seekable = $meta['seekable'] && 0 === \fseek($obj->stream, 0, \SEEK_CUR);
-            $obj->readable = isset(static::READ_WRITE_HASH['read'][$meta['mode']]);
-            $obj->writable = isset(static::READ_WRITE_HASH['write'][$meta['mode']]);
-            $obj->uri = $obj->getMetadata('uri');
-
-            return $obj;
+        if (!\is_resource($content)) {
+            throw new \InvalidArgumentException('First argument to Stream::create() must be a string, resource or StreamInterface.');
         }
 
-        throw new \InvalidArgumentException('First argument to Stream::create() must be a string, resource or StreamInterface.');
+        $obj = new self();
+        $obj->stream = $content;
+        $meta = \stream_get_meta_data($obj->stream);
+        $obj->seekable = $meta['seekable'] && 0 === \fseek($obj->stream, 0, \SEEK_CUR);
+        $obj->readable = isset(static::READ_WRITE_HASH['read'][$meta['mode']]);
+        $obj->writable = isset(static::READ_WRITE_HASH['write'][$meta['mode']]);
+        $obj->uri = $obj->getMetadata('uri');
+
+        return $obj;
     }
 
     public function __destruct()

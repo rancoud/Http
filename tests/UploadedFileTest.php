@@ -3,7 +3,6 @@
 namespace Tests\Rancoud\Http;
 
 use PHPUnit\Framework\TestCase;
-use Rancoud\Http\Message\Factory\StreamFactory;
 use Rancoud\Http\Message\Stream;
 use Rancoud\Http\Message\UploadedFile;
 

@@ -15,7 +15,7 @@ class ClientTest extends TestCase
     public function testHead(): void
     {
         $client = new Client();
-        $client->disableSSLVerification();
+        $client->disableSslVerification();
 
         try {
             $res = $client->sendRequest(new Request("HEAD", "https://lab.rancoud.com/http-tests/get.php"));
@@ -31,7 +31,7 @@ class ClientTest extends TestCase
     public function testGet(): void
     {
         $client = new Client();
-        $client->disableSSLVerification();
+        $client->disableSslVerification();
 
         try {
             $res = $client->sendRequest(new Request("GET", "https://lab.rancoud.com/http-tests/get.php"));
@@ -47,7 +47,7 @@ class ClientTest extends TestCase
     public function testPost(): void
     {
         $client = new Client();
-        $client->disableSSLVerification();
+        $client->disableSslVerification();
 
         try {
             $res = $client->sendRequest(new Request("POST", "https://lab.rancoud.com/http-tests/post.php"));
@@ -63,7 +63,7 @@ class ClientTest extends TestCase
     public function testHeader(): void
     {
         $client = new Client();
-        $client->disableSSLVerification();
+        $client->disableSslVerification();
 
         try {
             $res = $client->sendRequest(new Request("GET", "https://lab.rancoud.com/http-tests/headers.php", ['X-yolo' => ['you', 'us']]));
@@ -141,13 +141,13 @@ class ClientTest extends TestCase
             static::assertEquals('SSL certificate problem: unable to get local issuer certificate', $e->getMessage());
         }
 
-        $client->disableSSLVerification();
+        $client->disableSslVerification();
         $res = $client->sendRequest($request);
         static::assertEquals(200, $res->getStatusCode());
         static::assertEquals('content from get', $res->getBody()->__toString());
 
         try {
-            $client->enableSSLVerification();
+            $client->enableSslVerification();
             $client->sendRequest($request);
         } catch (\Exception $e) {
             static::assertEquals(RequestException::class, get_class($e));
@@ -163,7 +163,7 @@ class ClientTest extends TestCase
     public function testProtocolVersion(): void
     {
         $client = new Client();
-        $client->disableSSLVerification();
+        $client->disableSslVerification();
         $res = $client->sendRequest((new Request("HEAD", "https://lab.rancoud.com/http-tests/get.php"))->withProtocolVersion('1.0'));
         static::assertEquals(200, $res->getStatusCode());
         static::assertEquals('', $res->getBody()->__toString());
@@ -183,7 +183,7 @@ class ClientTest extends TestCase
         $body = Stream::create('a=a');
         $request = (new Request("POST", "https://lab.rancoud.com/http-tests/small-body.php"))->withBody($body);
         $client = new Client();
-        $client->disableSSLVerification();
+        $client->disableSslVerification();
         $res = $client->sendRequest($request);
         static::assertEquals(200, $res->getStatusCode());
         static::assertEquals('a', $res->getBody()->__toString());
@@ -199,7 +199,7 @@ class ClientTest extends TestCase
         $body = Stream::create(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'noise.jpg'));
         $request = (new Request("PUT", "https://lab.rancoud.com/http-tests/big-body.php"))->withBody($body);
         $client = new Client();
-        $client->disableSSLVerification();
+        $client->disableSslVerification();
         $res = $client->sendRequest($request);
 
         static::assertEquals(200, $res->getStatusCode());
