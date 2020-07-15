@@ -82,7 +82,7 @@ class ClientTest extends TestCase
         $this->expectException(RequestException::class);
 
         $client = new Client();
-        $client->setCaInfosPath('/', '/');
+        $client->setCAInfosPath('/', '/');
 
         try {
             $client->sendRequest(new Request("GET", "https://lab.rancoud.com/http-tests/get.php"));
@@ -118,7 +118,7 @@ class ClientTest extends TestCase
     public function testCaInfos(): void
     {
         $client = new Client();
-        $client->setCaInfosPath(__DIR__ . DIRECTORY_SEPARATOR . 'cacert.pem', __DIR__ . DIRECTORY_SEPARATOR);
+        $client->setCAInfosPath(__DIR__ . DIRECTORY_SEPARATOR . 'cacert.pem', __DIR__ . DIRECTORY_SEPARATOR);
 
         $res = $client->sendRequest(new Request("GET", "https://lab.rancoud.com/http-tests/get.php"));
         static::assertEquals(200, $res->getStatusCode());
@@ -215,7 +215,7 @@ class ClientTest extends TestCase
         $request = new Request("GET", "https://lab.rancoud.com/http-tests/get.php");
         try {
             $client = new Client();
-            $client->setCaInfosPath('/', '/');
+            $client->setCAInfosPath('/', '/');
             $client->sendRequest($request);
         } catch (RequestException $e) {
             $req = $e->getRequest();
