@@ -9,14 +9,14 @@ use Psr\Http\Message\{RequestInterface, ResponseInterface};
 use Rancoud\Http\Client\Exception\{NetworkException, RequestException};
 use Rancoud\Http\Message\Response;
 
-class Client implements ClientInterface {
-
+class Client implements ClientInterface
+{
     protected array $CAInfosPath = ['info' => null, 'path' => null];
     protected bool $hasSSLVerification = true;
-    const curlHTTPVersionMap = [
+    protected static array $curlHTTPVersionMap = [
         '1.0' => CURL_HTTP_VERSION_1_0,
         '1.1' => CURL_HTTP_VERSION_1_1,
-        '2' => CURL_HTTP_VERSION_2_0,
+        '2'   => CURL_HTTP_VERSION_2_0,
         '2.0' => CURL_HTTP_VERSION_2_0,
     ];
 
@@ -89,12 +89,14 @@ class Client implements ClientInterface {
     /**
      * @param resource         $curlHandle
      * @param RequestInterface $request
+     *
+     * @return Client
      */
     protected function setProtocolVersion($curlHandle, RequestInterface $request): self
     {
         $version = $request->getProtocolVersion();
 
-        $curlVersion = self::curlHTTPVersionMap[$version] ?? null;
+        $curlVersion = static::$curlHTTPVersionMap[$version] ?? null;
         if ($curlVersion !== null) {
             \curl_setopt($curlHandle, CURLOPT_HTTP_VERSION, $curlVersion);
         }
@@ -105,6 +107,8 @@ class Client implements ClientInterface {
     /**
      * @param resource         $curlHandle
      * @param RequestInterface $request
+     *
+     * @return Client
      */
     protected function setMethod($curlHandle, RequestInterface $request): self
     {
@@ -123,6 +127,8 @@ class Client implements ClientInterface {
     /**
      * @param resource         $curlHandle
      * @param RequestInterface $request
+     *
+     * @return Client
      */
     protected function setUrl($curlHandle, RequestInterface $request): self
     {
@@ -136,6 +142,8 @@ class Client implements ClientInterface {
      * @param RequestInterface $request
      *
      * @throws \RuntimeException
+     *
+     * @return Client
      */
     protected function setBody($curlHandle, RequestInterface $request): self
     {
@@ -165,6 +173,8 @@ class Client implements ClientInterface {
     /**
      * @param resource         $curlHandle
      * @param RequestInterface $request
+     *
+     * @return Client
      */
     protected function setHeaders($curlHandle, RequestInterface $request): self
     {
@@ -185,6 +195,8 @@ class Client implements ClientInterface {
     /**
      * @param resource         $curlHandle
      * @param RequestInterface $request
+     *
+     * @return Client
      */
     protected function setSsl($curlHandle, RequestInterface $request): self
     {
@@ -291,5 +303,4 @@ class Client implements ClientInterface {
     {
         return new Response($infos['status'], $infos['headers'], $infos['body']);
     }
-
 }
