@@ -27,7 +27,7 @@ $stream = $factory->createStream('foobar');
 ## Client
 ### Methods
 * sendRequest(request: RequestInterface): ResponseInterface
-* setCaInfosPath([infos: string = null], [path: string = null]): self
+* setCAInfosPath([infos: string = null], [path: string = null]): self
 * disableSSLVerification(): self
 * enableSSLVerification(): self
 
