@@ -28,8 +28,8 @@ $stream = $factory->createStream('foobar');
 ### Methods
 * sendRequest(request: RequestInterface): ResponseInterface
 * setCaInfosPath([infos: string = null], [path: string = null]): self
-* disableSslVerification(): self
-* enableSslVerification(): self
+* disableSSLVerification(): self
+* enableSSLVerification(): self
 
 ## Factory
 ### Methods
