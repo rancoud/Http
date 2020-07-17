@@ -13,20 +13,32 @@ class Client implements ClientInterface
 {
     protected array $CAInfosPath = ['info' => null, 'path' => null];
     protected bool $hasSSLVerification = true;
+    protected static array $curlHTTPVersionMap = [
+        '1.0' => CURL_HTTP_VERSION_1_0,
+        '1.1' => CURL_HTTP_VERSION_1_1,
+        '2'   => CURL_HTTP_VERSION_2_0,
+        '2.0' => CURL_HTTP_VERSION_2_0,
+    ];
 
-    public function disableSSLVerification(): void
+    public function disableSSLVerification(): self
     {
         $this->hasSSLVerification = false;
+
+        return $this;
     }
 
-    public function enableSSLVerification(): void
+    public function enableSSLVerification(): self
     {
         $this->hasSSLVerification = true;
+
+        return $this;
     }
 
-    public function setCaInfosPath(string $infos = null, string $path = null): void
+    public function setCAInfosPath(string $infos = null, string $path = null): self
     {
         $this->CAInfosPath = ['info' => $infos, 'path' => $path];
+
+        return $this;
     }
 
     /**
@@ -64,13 +76,12 @@ class Client implements ClientInterface
         \curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
         \curl_setopt($curlHandle, CURLOPT_HEADER, true);
 
-        $this->setProtocolVersion($curlHandle, $request);
-        $this->setMethod($curlHandle, $request);
-        $this->setUrl($curlHandle, $request);
-        $this->setBody($curlHandle, $request);
-        $this->setHeaders($curlHandle, $request);
-
-        $this->setSSL($curlHandle, $request);
+        $this->setProtocolVersion($curlHandle, $request)
+            ->setMethod($curlHandle, $request)
+            ->setUrl($curlHandle, $request)
+            ->setBody($curlHandle, $request)
+            ->setHeaders($curlHandle, $request)
+            ->setSsl($curlHandle, $request);
 
         return $curlHandle;
     }
@@ -78,25 +89,28 @@ class Client implements ClientInterface
     /**
      * @param resource         $curlHandle
      * @param RequestInterface $request
+     *
+     * @return Client
      */
-    protected function setProtocolVersion($curlHandle, RequestInterface $request): void
+    protected function setProtocolVersion($curlHandle, RequestInterface $request): self
     {
         $version = $request->getProtocolVersion();
 
-        if ($version === '1.0') {
-            \curl_setopt($curlHandle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0);
-        } elseif ($version === '1.1') {
-            \curl_setopt($curlHandle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
-        } elseif ($version === '2' || $version === '2.0') {
-            \curl_setopt($curlHandle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_2_0);
+        $curlVersion = static::$curlHTTPVersionMap[$version] ?? null;
+        if ($curlVersion !== null) {
+            \curl_setopt($curlHandle, CURLOPT_HTTP_VERSION, $curlVersion);
         }
+
+        return $this;
     }
 
     /**
      * @param resource         $curlHandle
      * @param RequestInterface $request
+     *
+     * @return Client
      */
-    protected function setMethod($curlHandle, RequestInterface $request): void
+    protected function setMethod($curlHandle, RequestInterface $request): self
     {
         $method = $request->getMethod();
         if ($method === 'HEAD') {
@@ -106,15 +120,21 @@ class Client implements ClientInterface
         } else {
             \curl_setopt($curlHandle, CURLOPT_CUSTOMREQUEST, $method);
         }
+
+        return $this;
     }
 
     /**
      * @param resource         $curlHandle
      * @param RequestInterface $request
+     *
+     * @return Client
      */
-    protected function setUrl($curlHandle, RequestInterface $request): void
+    protected function setUrl($curlHandle, RequestInterface $request): self
     {
         \curl_setopt($curlHandle, CURLOPT_URL, $request->getUri()->__toString());
+
+        return $this;
     }
 
     /**
@@ -122,8 +142,10 @@ class Client implements ClientInterface
      * @param RequestInterface $request
      *
      * @throws \RuntimeException
+     *
+     * @return Client
      */
-    protected function setBody($curlHandle, RequestInterface $request): void
+    protected function setBody($curlHandle, RequestInterface $request): self
     {
         $body = $request->getBody();
         $bodySize = $body->getSize();
@@ -144,13 +166,17 @@ class Client implements ClientInterface
                 \curl_setopt($curlHandle, CURLOPT_POSTFIELDS, (string) $body);
             }
         }
+
+        return $this;
     }
 
     /**
      * @param resource         $curlHandle
      * @param RequestInterface $request
+     *
+     * @return Client
      */
-    protected function setHeaders($curlHandle, RequestInterface $request): void
+    protected function setHeaders($curlHandle, RequestInterface $request): self
     {
         $headersCurl = [];
 
@@ -162,13 +188,17 @@ class Client implements ClientInterface
         }
 
         \curl_setopt($curlHandle, CURLOPT_HTTPHEADER, $headersCurl);
+
+        return $this;
     }
 
     /**
      * @param resource         $curlHandle
      * @param RequestInterface $request
+     *
+     * @return Client
      */
-    protected function setSSL($curlHandle, RequestInterface $request): void
+    protected function setSsl($curlHandle, RequestInterface $request): self
     {
         if ($request->getUri()->getScheme() === 'https') {
             if ($this->CAInfosPath['info'] !== null) {
@@ -184,6 +214,8 @@ class Client implements ClientInterface
                 \curl_setopt($curlHandle, CURLOPT_SSL_VERIFYPEER, false);
             }
         }
+
+        return $this;
     }
 
     /**
@@ -248,7 +280,7 @@ class Client implements ClientInterface
                 continue;
             }
 
-            [$key, $value] = \explode(': ', $line);
+            [$key, $value] = \explode(': ', $line, 2);
             $headers[$key] = $value;
         }
 

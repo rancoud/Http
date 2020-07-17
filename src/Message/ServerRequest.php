@@ -11,7 +11,6 @@ use Psr\Http\Message\{ServerRequestInterface, StreamInterface, UploadedFileInter
  */
 class ServerRequest implements ServerRequestInterface
 {
-    use MessageTrait;
     use RequestTrait;
 
     /** @var array */

@@ -11,7 +11,6 @@ use Psr\Http\Message\{RequestInterface, StreamInterface, UriInterface};
  */
 class Request implements RequestInterface
 {
-    use MessageTrait;
     use RequestTrait;
 
     /**

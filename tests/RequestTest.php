@@ -220,4 +220,17 @@ class RequestTest extends TestCase
         $r = $r->withHeader('Foo', '');
         static::assertEquals([''], $r->getHeader('Foo'));
     }
+
+    public function testHostHeaderIsAlwaysFirstHeaders(): void
+    {
+        $r = new Request('GET', 'https://example.com/');
+        static::assertEquals(['Host' => [0 => 'example.com']], $r->getHeaders());
+        $r = $r->withoutHeader('Host');
+        static::assertEquals([], $r->getHeaders());
+        $r = $r->withHeader('Foo', 'Bar');
+        static::assertEquals(['Foo' => [0 => 'Bar']], $r->getHeaders());
+        $r = $r->withUri(new Uri('https://example.com/'));
+        static::assertNotSame(['Foo' => [0 => 'Bar'], 'Host' => [0 => 'example.com']], $r->getHeaders());
+        static::assertSame(['Host' => [0 => 'example.com'], 'Foo' => [0 => 'Bar']], $r->getHeaders());
+    }
 }

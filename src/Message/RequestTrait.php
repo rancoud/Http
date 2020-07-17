@@ -11,6 +11,8 @@ use Psr\Http\Message\UriInterface;
  */
 trait RequestTrait
 {
+    use MessageTrait;
+
     public static array $methods = [
         'ACL',
         'BASELINE-CONTROL',

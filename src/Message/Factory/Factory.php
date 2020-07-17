@@ -283,9 +283,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
     public function createServerRequestFromGlobals(): ServerRequest
     {
         $server = $_SERVER;
-        if (!\array_key_exists('REQUEST_METHOD', $server)) {
-            $server['REQUEST_METHOD'] = 'GET';
-        }
+        $server['REQUEST_METHOD'] = $server['REQUEST_METHOD'] ?? 'GET';
 
         if (\function_exists('\getallheaders')) {
             $headers = \getallheaders();
