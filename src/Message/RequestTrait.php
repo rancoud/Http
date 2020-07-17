@@ -11,9 +11,6 @@ use Psr\Http\Message\UriInterface;
  */
 trait RequestTrait
 {
-    /*
-     * Use MessageTrait to use attributes headers and headerNames, methods related to headers
-     */
     use MessageTrait;
 
     public static array $methods = [
