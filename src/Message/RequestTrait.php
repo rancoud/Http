@@ -139,8 +139,10 @@ trait RequestTrait
      */
     public function withMethod($method): self
     {
+        $method = $this->filterMethod($method);
+
         $new = clone $this;
-        $new->method = $this->filterMethod($method);
+        $new->method = $method;
 
         return $new;
     }
@@ -220,6 +222,6 @@ trait RequestTrait
             $this->headerNames['host'] = 'Host';
         }
 
-        $this->headers[$header] = [$host];
+        $this->headers = [$header => [$host]] + $this->headers;
     }
 }
