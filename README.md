@@ -452,8 +452,6 @@ $stream = $factory->createStream('foobar');
 * withUserInfo(user: string, [password: string|null = null]): self
 
 ## How to Dev
-`composer ci` for php-cs-fixer and phpunit and coverage
-
-`composer lint` for php-cs-fixer
-
+`composer ci` for php-cs-fixer and phpunit and coverage  
+`composer lint` for php-cs-fixer  
 `composer test` for phpunit and coverage
