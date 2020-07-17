@@ -287,7 +287,7 @@ class Stream implements StreamInterface
         }
 
         if (!isset($this->stream)) {
-            return empty($key) ? [] : null;
+            return ($key) ? null : [];
         }
 
         $meta = \stream_get_meta_data($this->stream);
