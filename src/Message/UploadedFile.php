@@ -163,6 +163,14 @@ class UploadedFile implements UploadedFileInterface
     }
 
     /**
+     * @return string|null
+     */
+    public function getFilename(): ?string
+    {
+        return $this->file;
+    }
+
+    /**
      * @param $streamOrFile
      *
      * @throws \InvalidArgumentException

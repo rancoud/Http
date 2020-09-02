@@ -160,6 +160,7 @@ class UploadedFileTest extends TestCase
         static::assertSame($stream->getSize(), $upload->getSize());
         static::assertSame('filename.txt', $upload->getClientFilename());
         static::assertSame('text/plain', $upload->getClientMediaType());
+        static::assertNull($upload->getFilename());
 
         $this->cleanup[] = $to = tempnam(sys_get_temp_dir(), 'successful');
         $upload->moveTo($to);
@@ -283,5 +284,19 @@ class UploadedFileTest extends TestCase
         $uploadedFile->moveTo($to);
 
         static::assertFileEquals(__FILE__, $to);
+    }
+
+    public function testConstructor(): void
+    {
+        $params = [
+            'filename' => 'my_filename',
+            'size' => 100,
+            'error' => UPLOAD_ERR_OK,
+        ];
+
+        $uploadedFile = new UploadedFile($params['filename'], $params['size'], $params['error']);
+        static::assertSame($params['filename'], $uploadedFile->getFilename());
+        static::assertSame($params['size'], $uploadedFile->getSize());
+        static::assertSame($params['error'], $uploadedFile->getError());
     }
 }
