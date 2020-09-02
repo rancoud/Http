@@ -414,6 +414,7 @@ $stream = $factory->createStream('foobar');
 * getError(): int
 * getSize(): ?int
 * getStream(): StreamInterface
+* getFilename(): ?string
 * moveTo(targetPath: string): void
 
 ### Upload errors supported
