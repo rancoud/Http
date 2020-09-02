@@ -18,7 +18,7 @@ trait MessageTrait
     protected static string $patternHeaderValue = "@^[ \t\x21-\x7E\x80-\xFF]*$@";
 
     /** @var array */
-    protected static array $validProtocols = ['0.9', '1.0', '1.1', '2'];
+    protected static array $validProtocols = ['0.9', '1.0', '1.1', '2', '2.0'];
 
     /** @var array */
     protected array $headers = [];
