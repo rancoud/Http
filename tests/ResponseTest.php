@@ -104,8 +104,20 @@ class ResponseTest extends TestCase
 
     public function testCanConstructWithProtocolVersion(): void
     {
+        $r = new Response(200, [], null, '0.9');
+        static::assertSame('0.9', $r->getProtocolVersion());
+
         $r = new Response(200, [], null, '1.0');
         static::assertSame('1.0', $r->getProtocolVersion());
+
+        $r = new Response(200, [], null, '1.1');
+        static::assertSame('1.1', $r->getProtocolVersion());
+
+        $r = new Response(200, [], null, '2.0');
+        static::assertSame('2.0', $r->getProtocolVersion());
+
+        $r = new Response(200, [], null, '2');
+        static::assertSame('2', $r->getProtocolVersion());
     }
 
     public function testRaiseExceptionConstructWithProtocolVersion(): void
