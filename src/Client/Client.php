@@ -14,10 +14,10 @@ class Client implements ClientInterface
     protected array $CAInfosPath = ['info' => null, 'path' => null];
     protected bool $hasSSLVerification = true;
     protected static array $curlHTTPVersionMap = [
-        '1.0' => CURL_HTTP_VERSION_1_0,
-        '1.1' => CURL_HTTP_VERSION_1_1,
-        '2'   => CURL_HTTP_VERSION_2_0,
-        '2.0' => CURL_HTTP_VERSION_2_0,
+        '1.0' => \CURL_HTTP_VERSION_1_0,
+        '1.1' => \CURL_HTTP_VERSION_1_1,
+        '2'   => \CURL_HTTP_VERSION_2_0,
+        '2.0' => \CURL_HTTP_VERSION_2_0,
     ];
 
     public function disableSSLVerification(): self
@@ -73,8 +73,8 @@ class Client implements ClientInterface
     {
         $curlHandle = \curl_init();
 
-        \curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
-        \curl_setopt($curlHandle, CURLOPT_HEADER, true);
+        \curl_setopt($curlHandle, \CURLOPT_RETURNTRANSFER, true);
+        \curl_setopt($curlHandle, \CURLOPT_HEADER, true);
 
         $this->setProtocolVersion($curlHandle, $request)
             ->setMethod($curlHandle, $request)
@@ -98,7 +98,7 @@ class Client implements ClientInterface
 
         $curlVersion = static::$curlHTTPVersionMap[$version] ?? null;
         if ($curlVersion !== null) {
-            \curl_setopt($curlHandle, CURLOPT_HTTP_VERSION, $curlVersion);
+            \curl_setopt($curlHandle, \CURLOPT_HTTP_VERSION, $curlVersion);
         }
 
         return $this;
@@ -114,11 +114,11 @@ class Client implements ClientInterface
     {
         $method = $request->getMethod();
         if ($method === 'HEAD') {
-            \curl_setopt($curlHandle, CURLOPT_NOBODY, true);
+            \curl_setopt($curlHandle, \CURLOPT_NOBODY, true);
         } elseif ($method === 'GET') {
-            \curl_setopt($curlHandle, CURLOPT_HTTPGET, true);
+            \curl_setopt($curlHandle, \CURLOPT_HTTPGET, true);
         } else {
-            \curl_setopt($curlHandle, CURLOPT_CUSTOMREQUEST, $method);
+            \curl_setopt($curlHandle, \CURLOPT_CUSTOMREQUEST, $method);
         }
 
         return $this;
@@ -132,7 +132,7 @@ class Client implements ClientInterface
      */
     protected function setUrl($curlHandle, RequestInterface $request): self
     {
-        \curl_setopt($curlHandle, CURLOPT_URL, $request->getUri()->__toString());
+        \curl_setopt($curlHandle, \CURLOPT_URL, $request->getUri()->__toString());
 
         return $this;
     }
@@ -155,15 +155,15 @@ class Client implements ClientInterface
             }
 
             if ($bodySize === null || $bodySize > 1024 * 1024) {
-                \curl_setopt($curlHandle, CURLOPT_UPLOAD, true);
+                \curl_setopt($curlHandle, \CURLOPT_UPLOAD, true);
                 if ($bodySize !== null) {
-                    \curl_setopt($curlHandle, CURLOPT_INFILESIZE, $bodySize);
+                    \curl_setopt($curlHandle, \CURLOPT_INFILESIZE, $bodySize);
                 }
-                \curl_setopt($curlHandle, CURLOPT_READFUNCTION, static function ($curlRes, $streamRes, $length) use ($body) {
+                \curl_setopt($curlHandle, \CURLOPT_READFUNCTION, static function ($curlRes, $streamRes, $length) use ($body) {
                     return $body->read($length);
                 });
             } else {
-                \curl_setopt($curlHandle, CURLOPT_POSTFIELDS, (string) $body);
+                \curl_setopt($curlHandle, \CURLOPT_POSTFIELDS, (string) $body);
             }
         }
 
@@ -187,7 +187,7 @@ class Client implements ClientInterface
             }
         }
 
-        \curl_setopt($curlHandle, CURLOPT_HTTPHEADER, $headersCurl);
+        \curl_setopt($curlHandle, \CURLOPT_HTTPHEADER, $headersCurl);
 
         return $this;
     }
@@ -202,16 +202,16 @@ class Client implements ClientInterface
     {
         if ($request->getUri()->getScheme() === 'https') {
             if ($this->CAInfosPath['info'] !== null) {
-                \curl_setopt($curlHandle, CURLOPT_CAINFO, $this->CAInfosPath['info']);
+                \curl_setopt($curlHandle, \CURLOPT_CAINFO, $this->CAInfosPath['info']);
             }
 
             if ($this->CAInfosPath['path'] !== null) {
-                \curl_setopt($curlHandle, CURLOPT_CAPATH, $this->CAInfosPath['path']);
+                \curl_setopt($curlHandle, \CURLOPT_CAPATH, $this->CAInfosPath['path']);
             }
 
             if (!$this->hasSSLVerification) {
                 /* @noinspection CurlSslServerSpoofingInspection */
-                \curl_setopt($curlHandle, CURLOPT_SSL_VERIFYPEER, false);
+                \curl_setopt($curlHandle, \CURLOPT_SSL_VERIFYPEER, false);
             }
         }
 
@@ -256,13 +256,13 @@ class Client implements ClientInterface
         $errno = \curl_errno($curlHandle);
 
         switch ($errno) {
-            case CURLE_OK:
+            case \CURLE_OK:
                 break;
-            case CURLE_COULDNT_RESOLVE_PROXY:
-            case CURLE_COULDNT_RESOLVE_HOST:
-            case CURLE_COULDNT_CONNECT:
-            case CURLE_OPERATION_TIMEOUTED:
-            case CURLE_SSL_CONNECT_ERROR:
+            case \CURLE_COULDNT_RESOLVE_PROXY:
+            case \CURLE_COULDNT_RESOLVE_HOST:
+            case \CURLE_COULDNT_CONNECT:
+            case \CURLE_OPERATION_TIMEOUTED:
+            case \CURLE_SSL_CONNECT_ERROR:
                 throw new NetworkException($request, \curl_error($curlHandle), $errno);
             default:
                 throw new RequestException($request, \curl_error($curlHandle), $errno);
