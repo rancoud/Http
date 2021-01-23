@@ -15,14 +15,14 @@ class UploadedFile implements UploadedFileInterface
 {
     /** @var array */
     protected const ERRORS = [
-        UPLOAD_ERR_OK         => 1,
-        UPLOAD_ERR_INI_SIZE   => 1,
-        UPLOAD_ERR_FORM_SIZE  => 1,
-        UPLOAD_ERR_PARTIAL    => 1,
-        UPLOAD_ERR_NO_FILE    => 1,
-        UPLOAD_ERR_NO_TMP_DIR => 1,
-        UPLOAD_ERR_CANT_WRITE => 1,
-        UPLOAD_ERR_EXTENSION  => 1,
+        \UPLOAD_ERR_OK         => 1,
+        \UPLOAD_ERR_INI_SIZE   => 1,
+        \UPLOAD_ERR_FORM_SIZE  => 1,
+        \UPLOAD_ERR_PARTIAL    => 1,
+        \UPLOAD_ERR_NO_FILE    => 1,
+        \UPLOAD_ERR_NO_TMP_DIR => 1,
+        \UPLOAD_ERR_CANT_WRITE => 1,
+        \UPLOAD_ERR_EXTENSION  => 1,
     ];
 
     /** @var int */
@@ -273,7 +273,7 @@ class UploadedFile implements UploadedFileInterface
      */
     protected function isUploadSuccess(): bool
     {
-        return $this->error === UPLOAD_ERR_OK;
+        return $this->error === \UPLOAD_ERR_OK;
     }
 
     /**

@@ -158,7 +158,7 @@ class Stream implements StreamInterface
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      */
-    public function seek($offset, $whence = SEEK_SET): void
+    public function seek($offset, $whence = \SEEK_SET): void
     {
         if (!\is_int($offset)) {
             throw new \InvalidArgumentException('Offset must be a int');
@@ -331,7 +331,7 @@ class Stream implements StreamInterface
         $obj = new self();
         $obj->stream = $content;
         $meta = \stream_get_meta_data($obj->stream);
-        $obj->seekable = $meta['seekable'] && 0 === \fseek($obj->stream, 0, SEEK_CUR);
+        $obj->seekable = $meta['seekable'] && 0 === \fseek($obj->stream, 0, \SEEK_CUR);
         $obj->readable = isset(static::READ_WRITE_HASH['read'][$meta['mode']]);
         $obj->writable = isset(static::READ_WRITE_HASH['write'][$meta['mode']]);
         $obj->uri = $obj->getMetadata('uri');
