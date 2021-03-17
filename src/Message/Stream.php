@@ -331,7 +331,7 @@ class Stream implements StreamInterface
         $obj = new self();
         $obj->stream = $content;
         $meta = \stream_get_meta_data($obj->stream);
-        $obj->seekable = $meta['seekable'] && 0 === \fseek($obj->stream, 0, \SEEK_CUR);
+        $obj->seekable = $meta['seekable'] && \fseek($obj->stream, 0, \SEEK_CUR) === 0;
         $obj->readable = isset(static::READ_WRITE_HASH['read'][$meta['mode']]);
         $obj->writable = isset(static::READ_WRITE_HASH['write'][$meta['mode']]);
         $obj->uri = $obj->getMetadata('uri');
