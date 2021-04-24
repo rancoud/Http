@@ -4,19 +4,24 @@ declare(strict_types=1);
 
 namespace Rancoud\Http\Message\Factory;
 
-use Psr\Http\Message\{RequestFactoryInterface,
-    RequestInterface,
-    ResponseFactoryInterface,
-    ResponseInterface,
-    ServerRequestFactoryInterface,
-    ServerRequestInterface,
-    StreamFactoryInterface,
-    StreamInterface,
-    UploadedFileFactoryInterface,
-    UploadedFileInterface,
-    UriFactoryInterface,
-    UriInterface};
-use Rancoud\Http\Message\{Request, Response, ServerRequest, Stream, UploadedFile, Uri};
+use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestFactoryInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\StreamFactoryInterface;
+use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\UploadedFileFactoryInterface;
+use Psr\Http\Message\UploadedFileInterface;
+use Psr\Http\Message\UriFactoryInterface;
+use Psr\Http\Message\UriInterface;
+use Rancoud\Http\Message\Request;
+use Rancoud\Http\Message\Response;
+use Rancoud\Http\Message\ServerRequest;
+use Rancoud\Http\Message\Stream;
+use Rancoud\Http\Message\UploadedFile;
+use Rancoud\Http\Message\Uri;
 
 /**
  * Class Factory.
@@ -97,20 +102,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
      */
     public function createStreamFromFile(string $filename, string $mode = 'r'): StreamInterface
     {
-        if (!\file_exists($filename)) {
-            throw new \RuntimeException(\sprintf('The file %s doesn\'t exist.', $filename));
-        }
-
-        if (!\in_array($mode[0], ['r', 'w', 'a', 'x', 'c'], true)) {
-            throw new \InvalidArgumentException(\sprintf('The mode %s is invalid.', $mode));
-        }
-
-        $resource = \fopen($filename, $mode);
-        if ($resource === false) {
-            throw new \RuntimeException(\sprintf('The file %s cannot be opened.', $filename));
-        }
-
-        return Stream::create($resource);
+        return Stream::createFromFile($filename, $mode);
     }
 
     /**
@@ -286,7 +278,11 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
         $server['REQUEST_METHOD'] = $server['REQUEST_METHOD'] ?? 'GET';
 
         if (\function_exists('\getallheaders')) {
+            // @codeCoverageIgnoreStart
+            /* Could not reach this statement without mocking the function
+             */
             $headers = \getallheaders();
+        // @codeCoverageIgnoreEnd
         } else {
             $headers = $this->getAllHeaders();
         }
@@ -345,8 +341,6 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
                 $normalized[$key] = static::createUploadedFileFromSpec($value);
             } elseif (\is_array($value)) {
                 $normalized[$key] = static::normalizeFiles($value);
-
-                continue;
             } else {
                 throw new \InvalidArgumentException('Invalid value in files specification');
             }

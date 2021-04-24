@@ -1,13 +1,13 @@
 <?php
 
-namespace Tests\Rancoud\Http;
+namespace tests;
 
-use Rancoud\Http\Message\Uri;
 use PHPUnit\Framework\TestCase;
+use Rancoud\Http\Message\Uri;
 
 class UriTest extends TestCase
 {
-    const RFC3986_BASE = 'http://a/b/c/d;p?q';
+    public const RFC3986_BASE = 'https://a/b/c/d;p?q';
 
     public function testParsesProvidedUri(): void
     {
@@ -48,6 +48,7 @@ class UriTest extends TestCase
 
     /**
      * @dataProvider getValidUris
+     *
      * @param $input
      */
     public function testValidUrisStayValid($input): void
@@ -88,6 +89,7 @@ class UriTest extends TestCase
 
     /**
      * @dataProvider getInvalidUris
+     *
      * @param $invalidUri
      */
     public function testInvalidUrisThrowException($invalidUri): void
@@ -227,60 +229,60 @@ class UriTest extends TestCase
     {
         return [
             [self::RFC3986_BASE, 'g:h',           'g:h'],
-            [self::RFC3986_BASE, 'g',             'http://a/b/c/g'],
-            [self::RFC3986_BASE, './g',           'http://a/b/c/g'],
-            [self::RFC3986_BASE, 'g/',            'http://a/b/c/g/'],
-            [self::RFC3986_BASE, '/g',            'http://a/g'],
-            [self::RFC3986_BASE, '//g',           'http://g'],
-            [self::RFC3986_BASE, '?y',            'http://a/b/c/d;p?y'],
-            [self::RFC3986_BASE, 'g?y',           'http://a/b/c/g?y'],
-            [self::RFC3986_BASE, '#s',            'http://a/b/c/d;p?q#s'],
-            [self::RFC3986_BASE, 'g#s',           'http://a/b/c/g#s'],
-            [self::RFC3986_BASE, 'g?y#s',         'http://a/b/c/g?y#s'],
-            [self::RFC3986_BASE, ';x',            'http://a/b/c/;x'],
-            [self::RFC3986_BASE, 'g;x',           'http://a/b/c/g;x'],
-            [self::RFC3986_BASE, 'g;x?y#s',       'http://a/b/c/g;x?y#s'],
+            [self::RFC3986_BASE, 'g',             'https://a/b/c/g'],
+            [self::RFC3986_BASE, './g',           'https://a/b/c/g'],
+            [self::RFC3986_BASE, 'g/',            'https://a/b/c/g/'],
+            [self::RFC3986_BASE, '/g',            'https://a/g'],
+            [self::RFC3986_BASE, '//g',           'https://g'],
+            [self::RFC3986_BASE, '?y',            'https://a/b/c/d;p?y'],
+            [self::RFC3986_BASE, 'g?y',           'https://a/b/c/g?y'],
+            [self::RFC3986_BASE, '#s',            'https://a/b/c/d;p?q#s'],
+            [self::RFC3986_BASE, 'g#s',           'https://a/b/c/g#s'],
+            [self::RFC3986_BASE, 'g?y#s',         'https://a/b/c/g?y#s'],
+            [self::RFC3986_BASE, ';x',            'https://a/b/c/;x'],
+            [self::RFC3986_BASE, 'g;x',           'https://a/b/c/g;x'],
+            [self::RFC3986_BASE, 'g;x?y#s',       'https://a/b/c/g;x?y#s'],
             [self::RFC3986_BASE, '',              self::RFC3986_BASE],
-            [self::RFC3986_BASE, '.',             'http://a/b/c/'],
-            [self::RFC3986_BASE, './',            'http://a/b/c/'],
-            [self::RFC3986_BASE, '..',            'http://a/b/'],
-            [self::RFC3986_BASE, '../',           'http://a/b/'],
-            [self::RFC3986_BASE, '../g',          'http://a/b/g'],
-            [self::RFC3986_BASE, '../..',         'http://a/'],
-            [self::RFC3986_BASE, '../../',        'http://a/'],
-            [self::RFC3986_BASE, '../../g',       'http://a/g'],
-            [self::RFC3986_BASE, '../../../g',    'http://a/g'],
-            [self::RFC3986_BASE, '../../../../g', 'http://a/g'],
-            [self::RFC3986_BASE, '/./g',          'http://a/g'],
-            [self::RFC3986_BASE, '/../g',         'http://a/g'],
-            [self::RFC3986_BASE, 'g.',            'http://a/b/c/g.'],
-            [self::RFC3986_BASE, '.g',            'http://a/b/c/.g'],
-            [self::RFC3986_BASE, 'g..',           'http://a/b/c/g..'],
-            [self::RFC3986_BASE, '..g',           'http://a/b/c/..g'],
-            [self::RFC3986_BASE, './../g',        'http://a/b/g'],
-            [self::RFC3986_BASE, 'foo////g',      'http://a/b/c/foo////g'],
-            [self::RFC3986_BASE, './g/.',         'http://a/b/c/g/'],
-            [self::RFC3986_BASE, 'g/./h',         'http://a/b/c/g/h'],
-            [self::RFC3986_BASE, 'g/../h',        'http://a/b/c/h'],
-            [self::RFC3986_BASE, 'g;x=1/./y',     'http://a/b/c/g;x=1/y'],
-            [self::RFC3986_BASE, 'g;x=1/../y',    'http://a/b/c/y'],
+            [self::RFC3986_BASE, '.',             'https://a/b/c/'],
+            [self::RFC3986_BASE, './',            'https://a/b/c/'],
+            [self::RFC3986_BASE, '..',            'https://a/b/'],
+            [self::RFC3986_BASE, '../',           'https://a/b/'],
+            [self::RFC3986_BASE, '../g',          'https://a/b/g'],
+            [self::RFC3986_BASE, '../..',         'https://a/'],
+            [self::RFC3986_BASE, '../../',        'https://a/'],
+            [self::RFC3986_BASE, '../../g',       'https://a/g'],
+            [self::RFC3986_BASE, '../../../g',    'https://a/g'],
+            [self::RFC3986_BASE, '../../../../g', 'https://a/g'],
+            [self::RFC3986_BASE, '/./g',          'https://a/g'],
+            [self::RFC3986_BASE, '/../g',         'https://a/g'],
+            [self::RFC3986_BASE, 'g.',            'https://a/b/c/g.'],
+            [self::RFC3986_BASE, '.g',            'https://a/b/c/.g'],
+            [self::RFC3986_BASE, 'g..',           'https://a/b/c/g..'],
+            [self::RFC3986_BASE, '..g',           'https://a/b/c/..g'],
+            [self::RFC3986_BASE, './../g',        'https://a/b/g'],
+            [self::RFC3986_BASE, 'foo////g',      'https://a/b/c/foo////g'],
+            [self::RFC3986_BASE, './g/.',         'https://a/b/c/g/'],
+            [self::RFC3986_BASE, 'g/./h',         'https://a/b/c/g/h'],
+            [self::RFC3986_BASE, 'g/../h',        'https://a/b/c/h'],
+            [self::RFC3986_BASE, 'g;x=1/./y',     'https://a/b/c/g;x=1/y'],
+            [self::RFC3986_BASE, 'g;x=1/../y',    'https://a/b/c/y'],
             // dot-segments in the query or fragment
-            [self::RFC3986_BASE, 'g?y/./x',       'http://a/b/c/g?y/./x'],
-            [self::RFC3986_BASE, 'g?y/../x',      'http://a/b/c/g?y/../x'],
-            [self::RFC3986_BASE, 'g#s/./x',       'http://a/b/c/g#s/./x'],
-            [self::RFC3986_BASE, 'g#s/../x',      'http://a/b/c/g#s/../x'],
-            [self::RFC3986_BASE, 'g#s/../x',      'http://a/b/c/g#s/../x'],
-            [self::RFC3986_BASE, '?y#s',          'http://a/b/c/d;p?y#s'],
-            ['http://a/b/c/d;p?q#s', '?y',        'http://a/b/c/d;p?y'],
-            ['http://u@a/b/c/d;p?q', '.',         'http://u@a/b/c/'],
-            ['http://u:p@a/b/c/d;p?q', '.',       'http://u:p@a/b/c/'],
-            ['http://a/b/c/d/', 'e',              'http://a/b/c/d/e'],
+            [self::RFC3986_BASE, 'g?y/./x',       'https://a/b/c/g?y/./x'],
+            [self::RFC3986_BASE, 'g?y/../x',      'https://a/b/c/g?y/../x'],
+            [self::RFC3986_BASE, 'g#s/./x',       'https://a/b/c/g#s/./x'],
+            [self::RFC3986_BASE, 'g#s/../x',      'https://a/b/c/g#s/../x'],
+            [self::RFC3986_BASE, 'g#s/../x',      'https://a/b/c/g#s/../x'],
+            [self::RFC3986_BASE, '?y#s',          'https://a/b/c/d;p?y#s'],
+            ['https://a/b/c/d;p?q#s', '?y',       'https://a/b/c/d;p?y'],
+            ['https://u@a/b/c/d;p?q', '.',        'https://u@a/b/c/'],
+            ['https://u:p@a/b/c/d;p?q', '.',      'https://u:p@a/b/c/'],
+            ['https://a/b/c/d/', 'e',             'https://a/b/c/d/e'],
             ['urn:no-slash', 'e',                 'urn:e'],
             // falsey relative parts
-            [self::RFC3986_BASE, '//0',           'http://0'],
-            [self::RFC3986_BASE, '0',             'http://a/b/c/0'],
-            [self::RFC3986_BASE, '?0',            'http://a/b/c/d;p?0'],
-            [self::RFC3986_BASE, '#0',            'http://a/b/c/d;p?q#0'],
+            [self::RFC3986_BASE, '//0',           'https://0'],
+            [self::RFC3986_BASE, '0',             'https://a/b/c/0'],
+            [self::RFC3986_BASE, '?0',            'https://a/b/c/d;p?0'],
+            [self::RFC3986_BASE, '#0',            'https://a/b/c/d;p?q#0'],
         ];
     }
 
@@ -397,6 +399,7 @@ class UriTest extends TestCase
 
     /**
      * @dataProvider uriComponentsEncodingProvider
+     *
      * @param $input
      * @param $path
      * @param $query
@@ -498,8 +501,8 @@ class UriTest extends TestCase
         //  should not use late static binding to access private static members.
         // If they do, this will fatal.
         static::assertInstanceOf(
-            '\Tests\Rancoud\Http\ExtendingClassTest',
-            new ExtendingClassTest('http://h:9/')
+            ExtendingClass::class,
+            new ExtendingClass('http://h:9/')
         );
     }
 
@@ -529,8 +532,4 @@ class UriTest extends TestCase
         static::assertSame($testDomain, $uri->getHost());
         static::assertSame('//' . $testDomain, (string) $uri);
     }
-}
-
-class ExtendingClassTest extends Uri
-{
 }

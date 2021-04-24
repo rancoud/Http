@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Rancoud\Http\Client;
 
 use Psr\Http\Client\ClientInterface;
-use Psr\Http\Message\{RequestInterface, ResponseInterface};
-use Rancoud\Http\Client\Exception\{NetworkException, RequestException};
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Rancoud\Http\Client\Exception\NetworkException;
+use Rancoud\Http\Client\Exception\RequestException;
 use Rancoud\Http\Message\Response;
 
 class Client implements ClientInterface
@@ -280,7 +282,7 @@ class Client implements ClientInterface
                 continue;
             }
 
-            [$key, $value] = \explode(': ', $line, 2);
+            [$key, $value] = \explode(':', $line, 2);
             $headers[$key] = $value;
         }
 

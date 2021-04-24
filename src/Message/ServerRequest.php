@@ -4,40 +4,40 @@ declare(strict_types=1);
 
 namespace Rancoud\Http\Message;
 
-use Psr\Http\Message\{ServerRequestInterface, StreamInterface, UploadedFileInterface, UriInterface};
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\UploadedFileInterface;
+use Psr\Http\Message\UriInterface;
 
 /**
  * Class ServerRequest.
  */
 class ServerRequest implements ServerRequestInterface
 {
+    use MessageTrait;
     use RequestTrait;
 
-    /** @var array */
     protected array $attributes = [];
 
-    /** @var array */
     protected array $cookieParams = [];
 
     /** @var array|object|null */
     protected $parsedBody;
 
-    /** @var array */
     protected array $queryParams = [];
 
-    /** @var array */
     protected array $serverParams;
 
     /** @var UploadedFileInterface[] */
     protected array $uploadedFiles = [];
 
     /**
-     * @param string                               $method       HTTP method
-     * @param string|UriInterface                  $uri          URI
-     * @param array                                $headers      Request headers
-     * @param string|resource|StreamInterface|null $body         Request body
-     * @param string                               $version      Protocol version
-     * @param array                                $serverParams Typically the $_SERVER superglobal
+     * @param string                               $method
+     * @param string|UriInterface                  $uri
+     * @param array                                $headers
+     * @param string|resource|StreamInterface|null $body
+     * @param string                               $version
+     * @param array                                $serverParams
      *
      * @throws \InvalidArgumentException
      */
@@ -49,17 +49,14 @@ class ServerRequest implements ServerRequestInterface
         string $version = '1.1',
         array $serverParams = []
     ) {
-        $this->serverParams = $serverParams;
+        $this->method = $this->filterMethod($method);
 
         if (($uri instanceof UriInterface) === false) {
             $uri = new Uri($uri);
         }
-
-        $this->method = $this->filterMethod($method);
         $this->uri = $uri;
-        $this->setHeaders($headers);
-        $this->protocol = $this->validateProtocolVersion($version);
 
+        $this->setHeaders($headers);
         if (!$this->hasHeader('Host')) {
             $this->updateHostFromUri();
         }
@@ -67,6 +64,10 @@ class ServerRequest implements ServerRequestInterface
         if ($body !== '' && $body !== null) {
             $this->stream = Stream::create($body);
         }
+
+        $this->protocol = $this->validateProtocolVersion($version);
+
+        $this->serverParams = $serverParams;
     }
 
     /**

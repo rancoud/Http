@@ -1,11 +1,11 @@
 <?php
 
-namespace Tests\Rancoud\Http;
+namespace tests;
 
-use Rancoud\Http\Message\Factory\Factory;
-use Rancoud\Http\Message\Response;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\StreamInterface;
+use Rancoud\Http\Message\Factory\Factory;
+use Rancoud\Http\Message\Response;
 
 /**
  * @backupGlobals disabled
@@ -127,7 +127,7 @@ class ResponseTest extends TestCase
 
         new Response(200, [], null, '1000');
     }
-    
+
     public function testWithStatusCodeAndNoReason(): void
     {
         $r = (new Response())->withStatus(201);
@@ -344,9 +344,9 @@ class ResponseTest extends TestCase
         $this->expectExceptionMessage('Header value must be RFC 7230 compatible string.');
 
         $r = new Response();
-        static::assertSame($r, $r->withAddedHeader("a", null));
+        static::assertSame($r, $r->withAddedHeader('a', null));
     }
-    
+
     public function testWithAddedHeaderValueArrayMustHaveCorrectType(): void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -376,6 +376,7 @@ class ResponseTest extends TestCase
 
     /**
      * @dataProvider trimmedHeaderValues
+     *
      * @param Response $r
      */
     public function testHeaderValuesAreTrimmed(Response $r): void
@@ -412,11 +413,11 @@ class ResponseTest extends TestCase
             200,
             [
                 'Content-Type' => 'text/plain;charset=UTF-8',
-                'customName' => 'mykey',
-                'empty' => ''
+                'customName'   => 'mykey',
+                'empty'        => ''
             ],
-            $body = uniqid(true),
-            $version = '2'
+            $body = \uniqid('', true),
+            '2'
         );
         $infos = $this->captureSend($r);
         static::assertSame('Content-Type: text/plain;charset=UTF-8', $infos['headers'][0]);
@@ -424,12 +425,13 @@ class ResponseTest extends TestCase
         static::assertSame('empty:', $infos['headers'][2]);
         static::assertSame($body, $infos['body']);
     }
-    
+
     private function captureSend(Response $response): array
     {
-        ob_start();
+        \ob_start();
         $response->send();
-        $output = ob_get_clean();
+        $output = \ob_get_clean();
+
         return ['headers' => xdebug_get_headers(), 'body' => $output];
     }
 }

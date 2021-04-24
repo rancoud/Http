@@ -11,8 +11,6 @@ use Psr\Http\Message\UriInterface;
  */
 trait RequestTrait
 {
-    use MessageTrait;
-
     public static array $methods = [
         'ACL',
         'BASELINE-CONTROL',
@@ -68,13 +66,10 @@ trait RequestTrait
         'X-MS-ENUMATTS'
     ];
 
-    /** @var string */
     protected string $method;
 
-    /** @var string|null */
     protected ?string $requestTarget = null;
 
-    /** @var UriInterface|null */
     protected ?UriInterface $uri = null;
 
     /**

@@ -11,25 +11,18 @@ use Psr\Http\Message\StreamInterface;
  */
 trait MessageTrait
 {
-    /** @var string */
     protected static string $patternHeaderName = "@^[!#$%&'*+.^_`|~0-9A-Za-z-]+$@";
 
-    /** @var string */
     protected static string $patternHeaderValue = "@^[ \t\x21-\x7E\x80-\xFF]*$@";
 
-    /** @var array */
     protected static array $validProtocols = ['0.9', '1.0', '1.1', '2', '2.0'];
 
-    /** @var array */
     protected array $headers = [];
 
-    /** @var array */
     protected array $headerNames = [];
 
-    /** @var string */
     protected string $protocol = '1.1';
 
-    /** @var StreamInterface|null */
     protected ?StreamInterface $stream = null;
 
     /**
@@ -118,10 +111,6 @@ trait MessageTrait
      */
     public function getHeaderLine($name): string
     {
-        if (!\is_string($name)) {
-            throw new \InvalidArgumentException('Header name must be a string');
-        }
-
         return \implode(', ', $this->getHeader($name));
     }
 
@@ -207,7 +196,7 @@ trait MessageTrait
     public function getBody(): StreamInterface
     {
         if ($this->stream === null) {
-            $this->stream = Stream::create('');
+            $this->stream = Stream::create();
         }
 
         return $this->stream;

@@ -1,19 +1,18 @@
 <?php
 
-/** @noinspection FopenBinaryUnsafeUsageInspection */
-
 declare(strict_types=1);
 
 namespace Rancoud\Http\Message;
 
-use Psr\Http\Message\{StreamInterface, UploadedFileInterface};
+use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\UploadedFileInterface;
 
 /**
  * Class UploadedFile.
  */
 class UploadedFile implements UploadedFileInterface
 {
-    /** @var array */
+    /** @var int[] */
     protected const ERRORS = [
         \UPLOAD_ERR_OK         => 1,
         \UPLOAD_ERR_INI_SIZE   => 1,
@@ -28,25 +27,18 @@ class UploadedFile implements UploadedFileInterface
     /** @var int */
     protected const DEFAULT_MAX_BYTES_LENGTH = 1048576;
 
-    /** @var string|null */
     protected ?string $clientFilename;
 
-    /** @var string|null */
     protected ?string $clientMediaType;
 
-    /** @var int */
     protected int $error;
 
-    /** @var string|null */
     protected ?string $file = null;
 
-    /** @var bool */
     protected bool $moved = false;
 
-    /** @var int|null */
     protected ?int $size = null;
 
-    /** @var StreamInterface|null */
     protected ?StreamInterface $stream = null;
 
     /**
@@ -89,9 +81,7 @@ class UploadedFile implements UploadedFileInterface
             return $this->stream;
         }
 
-        $resource = \fopen($this->file, 'r');
-
-        return Stream::create($resource);
+        return Stream::createFromFile($this->file);
     }
 
     /**
@@ -120,13 +110,17 @@ class UploadedFile implements UploadedFileInterface
                 $stream->rewind();
             }
 
-            $destination = Stream::create(\fopen($targetPath, 'w'));
+            $destination = Stream::createFromFile($targetPath, 'w');
             $this->copyToStream($stream, $destination);
             $this->moved = true;
         }
 
         if (!$this->moved) {
+            // @codeCoverageIgnoreStart
+            /* Could not reach this statement without mocking the filesystem
+             */
             throw new \RuntimeException(\sprintf('Uploaded file could not be moved to %s', $targetPath));
+            // @codeCoverageIgnoreEnd
         }
     }
 
@@ -300,7 +294,11 @@ class UploadedFile implements UploadedFileInterface
     {
         while (!$source->eof()) {
             if (!$dest->write($source->read(static::DEFAULT_MAX_BYTES_LENGTH))) {
+                // @codeCoverageIgnoreStart
+                /* Could not reach this statement without mocking the filesystem
+                 */
                 break;
+                // @codeCoverageIgnoreEnd
             }
         }
     }

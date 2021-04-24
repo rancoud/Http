@@ -19,7 +19,7 @@ composer require rancoud/http
 
 ## How to use it?
 ```php
-$factory = new Rancoud\Http\Message\Factory();
+$factory = new Rancoud\Http\Message\Factory\Factory();
 $request = $factory->createRequest('GET', 'https://example.com');
 $stream = $factory->createStream('foobar');
 ```
@@ -51,17 +51,17 @@ $stream = $factory->createStream('foobar');
 ## Request
 ### Constructor
 #### Mandatory
-| Parameter | Type | Description |
-| --- | --- | --- |
-| method | string | HTTP method |
-| uri | mixed | Uri |
+| Parameter | Type   | Description |
+| --------- | ------ | ----------- |
+| method    | string | HTTP method |
+| uri       | mixed  | Uri         |
 
 #### Optionnals
-| Parameter | Type | Default value | Description |
-| --- | --- | --- | --- |
-| headers | array | [] | Request headers |
-| body | mixed | [] | Request body |
-| version | string | '1.1' | HTTP protocol version |
+| Parameter | Type   | Default value | Description           |
+| --------- | ------ | ------------- | --------------------- |
+| headers   | array  | []            | Request headers       |
+| body      | mixed  | []            | Request body          |
+| version   | string | '1.1'         | HTTP protocol version |
 
 ### Methods
 * getBody(): StreamInterface
@@ -139,13 +139,13 @@ $stream = $factory->createStream('foobar');
 ## Response
 ### Constructor
 #### Optionnals
-| Parameter | Type | Default value | Description |
-| --- | --- | --- | --- |
-| status | int | 200 | Status code |
-| headers | array | [] | Response headers |
-| body | mixed | [] | Response body |
-| version | string | '1.1' | HTTP protocol version |
-| reason | string | null | String send after status code |
+| Parameter | Type   | Default value | Description                   |
+| --------- | ------ | ------------- | ----------------------------- |
+| status    | int    | 200           | Status code                   |
+| headers   | array  | []            | Response headers              |
+| body      | mixed  | []            | Response body                 |
+| version   | string | '1.1'         | HTTP protocol version         |
+| reason    | string | null          | String send after status code |
 
 ### Methods
 * getBody(): StreamInterface
@@ -326,18 +326,18 @@ $stream = $factory->createStream('foobar');
 ## ServerRequest
 ### Constructor
 #### Mandatory
-| Parameter | Type | Description |
-| --- | --- | --- |
-| method | string | HTTP method |
-| uri | mixed | Uri |
+| Parameter | Type   | Description |
+| --------- | ------ | ----------- |
+| method    | string | HTTP method |
+| uri       | mixed  | Uri         |
 
 #### Optionnals
-| Parameter | Type | Default value | Description |
-| --- | --- | --- | --- |
-| headers | array | [] | Request headers |
-| body | mixed | [] | Request body |
-| version | string | '1.1' | HTTP protocol version |
-| serverParams | array | [] | Server parameters |
+| Parameter    | Type   | Default value | Description           |
+| ------------ | ------ | ------------- | --------------------- |
+| headers      | array  | []            | Request headers       |
+| body         | mixed  | []            | Request body          |
+| version      | string | '1.1'         | HTTP protocol version |
+| serverParams | array  | []            | Server parameters     |
 
 ### Methods
 * getAttribute(name: string, [default: mixed = null]): mixed|null
@@ -396,17 +396,17 @@ $stream = $factory->createStream('foobar');
 ## UploadedFile
 ### Constructor
 #### Mandatory
-| Parameter | Type | Description |
-| --- | --- | --- |
+| Parameter    | Type  | Description    |
+| ------------ | ----- | -------------- |
 | streamOrFile | mixed | Stream or file |
-| size | int | Filesize |
-| errorStatus | int | Upload errors |
+| size         | int   | Filesize       |
+| errorStatus  | int   | Upload errors  |
 
 #### Optionnals
-| Parameter | Type | Default value | Description |
-| --- | --- | --- | --- |
-| clientFilename | string\|null | null | Filename |
-| clientMediaType | string\|null | null | Media type |
+| Parameter       | Type         | Default value | Description |
+| --------------- | ------------ | ------------- | ----------- |
+| clientFilename  | string\|null | null          | Filename    |
+| clientMediaType | string\|null | null          | Media type  |
 
 ### Methods
 * getClientFilename(): ?string
@@ -430,9 +430,9 @@ $stream = $factory->createStream('foobar');
 ## Uri
 ### Constructor
 #### Optionnals
-| Parameter | Type | Default value | Description |
-| --- | --- | --- | --- |
-| uri | string | '' | Uri |
+| Parameter | Type   | Default value | Description |
+| --------- | ------ | ------------- | ----------- |
+| uri       | string | ''            | Uri         |
 
 ### Methods
 * __toString(): string
