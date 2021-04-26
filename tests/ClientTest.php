@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Rancoud\Http;
+namespace tests;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientExceptionInterface;
@@ -9,105 +9,140 @@ use Rancoud\Http\Client\Exception\NetworkException;
 use Rancoud\Http\Client\Exception\RequestException;
 use Rancoud\Http\Message\Request;
 use Rancoud\Http\Message\Stream;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 
 class ClientTest extends TestCase
 {
+    protected static Process $process;
+
+    protected static string $localPHPServer = 'localhost:9877';
+    protected string $goodURL = 'https://example.com';
+    protected string $badURL = 'https://bad-example.com';
+    protected string $localURL = 'http://localhost:9877/';
+
+    public static function setUpBeforeClass(): void
+    {
+        static::$process = new Process(['php', '-S', static::$localPHPServer, '-t', realpath(__DIR__ . \DIRECTORY_SEPARATOR .'fake_server')]);
+
+        static::$process->disableOutput();
+
+        static::$process->start(function($type, $data){
+            \sleep(1);
+
+            if (\mb_stripos($data, 'started') === false) {
+                static::$process->stop();
+            }
+        });
+
+        \sleep(1);
+    }
+
+    public static function tearDownAfterClass(): void
+    {
+        static::$process->stop();
+    }
+
+    /**
+     * @throws ClientExceptionInterface
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testHead(): void
     {
         $client = new Client();
-        $client->disableSSLVerification();
 
-        try {
-            $res = $client->sendRequest(new Request("HEAD", "https://lab.rancoud.com/http-tests/get.php"));
+        $res = $client->sendRequest(new Request('HEAD', $this->localURL . 'get.php'));
 
-            static::assertEquals(200, $res->getStatusCode());
-            static::assertEquals('', $res->getBody()->__toString());
-        } catch (NetworkException $e) {
-        } catch (RequestException $e) {
-        } catch (ClientExceptionInterface $e) {
-        }
+        static::assertSame(200, $res->getStatusCode());
+        static::assertSame('', (string) $res->getBody());
     }
 
+    /**
+     * @throws ClientExceptionInterface
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testGet(): void
     {
         $client = new Client();
-        $client->disableSSLVerification();
 
-        try {
-            $res = $client->sendRequest(new Request("GET", "https://lab.rancoud.com/http-tests/get.php"));
+        $res = $client->sendRequest(new Request('GET', $this->localURL . 'get.php'));
 
-            static::assertEquals(200, $res->getStatusCode());
-            static::assertEquals('content from get', $res->getBody()->__toString());
-        } catch (NetworkException $e) {
-        } catch (RequestException $e) {
-        } catch (ClientExceptionInterface $e) {
-        }
+        static::assertSame(200, $res->getStatusCode());
+        static::assertSame('content from get', (string) $res->getBody());
     }
 
+    /**
+     * @throws ClientExceptionInterface
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testPost(): void
     {
         $client = new Client();
-        $client->disableSSLVerification();
 
-        try {
-            $res = $client->sendRequest(new Request("POST", "https://lab.rancoud.com/http-tests/post.php"));
+        $res = $client->sendRequest(new Request('POST', $this->localURL . 'post.php'));
 
-            static::assertEquals(200, $res->getStatusCode());
-            static::assertEquals('content from post', $res->getBody()->__toString());
-        } catch (NetworkException $e) {
-        } catch (RequestException $e) {
-        } catch (ClientExceptionInterface $e) {
-        }
+        static::assertSame(200, $res->getStatusCode());
+        static::assertSame('content from post', (string) $res->getBody());
     }
 
+    /**
+     * @throws ClientExceptionInterface
+     * @throws NetworkException
+     * @throws RequestException
+     */
     public function testHeader(): void
     {
         $client = new Client();
-        $client->disableSSLVerification();
 
-        try {
-            $res = $client->sendRequest(new Request("GET", "https://lab.rancoud.com/http-tests/headers.php", ['X-yolo' => ['you', 'us']]));
+        $res = $client->sendRequest(new Request('GET', $this->localURL . 'headers.php', ['X-yolo' => ['content from header']]));
 
-            static::assertEquals(200, $res->getStatusCode());
-            static::assertEquals('you, us', $res->getBody()->__toString());
-            static::assertEquals(['hello'], $res->getHeader('X-my-custom-header'));
-        } catch (NetworkException $e) {
-        } catch (RequestException $e) {
-        } catch (ClientExceptionInterface $e) {
-        }
+        static::assertSame(200, $res->getStatusCode());
+        static::assertSame('content from header', (string) $res->getBody());
+        static::assertSame('hello', $res->getHeaderLine('X-my-custom-header'));
     }
 
-    public function testRequestException(): void
+    /**
+     * @throws ClientExceptionInterface
+     * @throws NetworkException
+     * @throws RequestException
+     */
+    public function testRequestExceptionBadCAInfos(): void
     {
         $this->expectException(RequestException::class);
+        $this->expectExceptionMessage(<<<MESSAGE
+error setting certificate verify locations:
+  CAfile: /
+  CApath: /
+MESSAGE);
 
         $client = new Client();
         $client->setCAInfosPath('/', '/');
-
+        $request = new Request('GET', $this->goodURL);
         try {
-            $client->sendRequest(new Request("GET", "https://lab.rancoud.com/http-tests/get.php"));
-        } catch (NetworkException $e) {
+            $client->sendRequest(new Request('GET', $this->goodURL));
         } catch (RequestException $e) {
+            $req = $e->getRequest();
+            static::assertSame($request->getMethod(), $req->getMethod());
+            static::assertSame((string) $request->getUri(), (string) $req->getUri());
             throw $e;
-        } catch (ClientExceptionInterface $e) {
         }
     }
 
-    public function testNetworkException(): void
+    /**
+     * @throws ClientExceptionInterface
+     * @throws NetworkException
+     * @throws RequestException
+     */
+    public function testNetworkExceptionBadURL(): void
     {
         $this->expectException(NetworkException::class);
+        $this->expectExceptionMessage('Could not resolve host: bad-example.com');
 
         $client = new Client();
-
-        try {
-            $client->sendRequest(new Request("GET", "https://labo.rancoud.com/http-tests/get.php"));
-        } catch (NetworkException $e) {
-            static::assertStringContainsStringIgnoringCase("Could not resolve", $e->getMessage());
-            static::assertStringContainsStringIgnoringCase("labo.rancoud.com", $e->getMessage());
-            throw $e;
-        } catch (RequestException $e) {
-        } catch (ClientExceptionInterface $e) {
-        }
+        $client->sendRequest(new Request('GET', $this->badURL));
     }
 
     /**
@@ -118,11 +153,10 @@ class ClientTest extends TestCase
     public function testCaInfos(): void
     {
         $client = new Client();
-        $client->setCAInfosPath(__DIR__ . DIRECTORY_SEPARATOR . 'cacert.pem', __DIR__ . DIRECTORY_SEPARATOR);
+        $client->setCAInfosPath(__DIR__ . \DIRECTORY_SEPARATOR . 'cacert.pem', __DIR__ . \DIRECTORY_SEPARATOR);
 
-        $res = $client->sendRequest(new Request("GET", "https://lab.rancoud.com/http-tests/get.php"));
-        static::assertEquals(200, $res->getStatusCode());
-        static::assertEquals('content from get', $res->getBody()->__toString());
+        $res = $client->sendRequest(new Request('GET', $this->goodURL));
+        static::assertSame(200, $res->getStatusCode());
     }
 
     /**
@@ -132,26 +166,27 @@ class ClientTest extends TestCase
      */
     public function testDisableEnableSSL(): void
     {
-        $request = new Request("GET", "https://lab.rancoud.com/http-tests/get.php");
+        $request = new Request('GET', $this->goodURL);
         $client = new Client();
+        $client->sendRequest($request);
+
         try {
             $client->sendRequest($request);
         } catch (\Exception $e) {
-            static::assertEquals(RequestException::class, get_class($e));
-            static::assertEquals('SSL certificate problem: unable to get local issuer certificate', $e->getMessage());
+            static::assertSame(RequestException::class, \get_class($e));
+            static::assertSame('SSL certificate problem: unable to get local issuer certificate', $e->getMessage());
         }
 
         $client->disableSSLVerification();
         $res = $client->sendRequest($request);
-        static::assertEquals(200, $res->getStatusCode());
-        static::assertEquals('content from get', $res->getBody()->__toString());
+        static::assertSame(200, $res->getStatusCode());
 
         try {
             $client->enableSSLVerification();
             $client->sendRequest($request);
         } catch (\Exception $e) {
-            static::assertEquals(RequestException::class, get_class($e));
-            static::assertEquals('SSL certificate problem: unable to get local issuer certificate', $e->getMessage());
+            static::assertSame(RequestException::class, \get_class($e));
+            static::assertSame('SSL certificate problem: unable to get local issuer certificate', $e->getMessage());
         }
     }
 
@@ -163,14 +198,14 @@ class ClientTest extends TestCase
     public function testProtocolVersion(): void
     {
         $client = new Client();
-        $client->disableSSLVerification();
-        $res = $client->sendRequest((new Request("HEAD", "https://lab.rancoud.com/http-tests/get.php"))->withProtocolVersion('1.0'));
-        static::assertEquals(200, $res->getStatusCode());
-        static::assertEquals('', $res->getBody()->__toString());
 
-        $res = $client->sendRequest((new Request("HEAD", "https://lab.rancoud.com/http-tests/get.php"))->withProtocolVersion('2'));
-        static::assertEquals(200, $res->getStatusCode());
-        static::assertEquals('', $res->getBody()->__toString());
+        $res = $client->sendRequest((new Request('HEAD', $this->localURL . 'get.php'))->withProtocolVersion('1.0'));
+        static::assertSame(200, $res->getStatusCode());
+        static::assertSame('', (string) $res->getBody());
+
+        $res = $client->sendRequest((new Request('HEAD', $this->goodURL))->withProtocolVersion('2'));
+        static::assertSame(200, $res->getStatusCode());
+        static::assertSame('', (string) $res->getBody());
     }
 
     /**
@@ -180,13 +215,13 @@ class ClientTest extends TestCase
      */
     public function testSmallBody(): void
     {
-        $body = Stream::create('a=a');
-        $request = (new Request("POST", "https://lab.rancoud.com/http-tests/small-body.php"))->withBody($body);
+        $body = Stream::create('a=b');
+        $request = (new Request('POST', $this->localURL . 'small-body.php'))->withBody($body);
         $client = new Client();
-        $client->disableSSLVerification();
+
         $res = $client->sendRequest($request);
-        static::assertEquals(200, $res->getStatusCode());
-        static::assertEquals('a', $res->getBody()->__toString());
+        static::assertSame(200, $res->getStatusCode());
+        static::assertSame('c', (string) $res->getBody());
     }
 
     /**
@@ -196,46 +231,13 @@ class ClientTest extends TestCase
      */
     public function testBigBody(): void
     {
-        $body = Stream::create(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'noise.jpg'));
-        $request = (new Request("PUT", "https://lab.rancoud.com/http-tests/big-body.php"))->withBody($body);
+        $body = Stream::create(\file_get_contents(__DIR__ . \DIRECTORY_SEPARATOR . 'noise.jpg'));
+        $request = (new Request('PUT', $this->localURL . 'big-body.php'))->withBody($body);
         $client = new Client();
-        $client->disableSSLVerification();
+
         $res = $client->sendRequest($request);
 
-        static::assertEquals(200, $res->getStatusCode());
-        static::assertEquals('a', $res->getBody()->__toString());
-    }
-
-    /**
-     * @throws ClientExceptionInterface
-     * @throws NetworkException
-     */
-    public function testRequestExceptionGetRequest(): void
-    {
-        $request = new Request("GET", "https://lab.rancoud.com/http-tests/get.php");
-        try {
-            $client = new Client();
-            $client->setCAInfosPath('/', '/');
-            $client->sendRequest($request);
-        } catch (RequestException $e) {
-            $req = $e->getRequest();
-            static::assertEquals($request, $req);
-        }
-    }
-
-    /**
-     * @throws ClientExceptionInterface
-     * @throws RequestException
-     */
-    public function testNetworkExceptionGetRequest(): void
-    {
-        $request = new Request("GET", "https://labo.rancoud.com/http-tests/get.php");
-        try {
-            $client = new Client();
-            $client->sendRequest($request);
-        } catch (NetworkException $e) {
-            $req = $e->getRequest();
-            static::assertEquals($request, $req);
-        }
+        static::assertSame(200, $res->getStatusCode());
+        static::assertSame('ok', (string) $res->getBody());
     }
 }

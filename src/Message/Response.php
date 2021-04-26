@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Rancoud\Http\Message;
 
-use Psr\Http\Message\{ResponseInterface, StreamInterface};
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * Class Response.
@@ -13,7 +14,7 @@ class Response implements ResponseInterface
 {
     use MessageTrait;
 
-    /** @var array */
+    /** @var string[] */
     public const PHRASES = [
         100 => 'Continue',
         101 => 'Switching Protocols',
@@ -127,6 +128,7 @@ class Response implements ResponseInterface
         735 => 'Fucking IE',
         736 => 'Fucking Race Conditions',
         737 => 'FuckThreadsing',
+        738 => 'Fucking Exactly-once Delivery',
         739 => 'Fucking Windows',
         740 => 'Got the brains trust on the case.',
         750 => 'Didn\'t bother to compile it',
@@ -174,10 +176,8 @@ class Response implements ResponseInterface
         799 => 'End of the world'
     ];
 
-    /** @var string */
     protected string $reasonPhrase = '';
 
-    /** @var int */
     protected int $statusCode = 200;
 
     /**
@@ -202,19 +202,19 @@ class Response implements ResponseInterface
 
         $this->statusCode = $status;
 
+        $this->setHeaders($headers);
+
         if ($body !== '' && $body !== null) {
             $this->stream = Stream::create($body);
         }
 
-        $this->setHeaders($headers);
+        $this->protocol = $this->validateProtocolVersion($version);
 
-        if (($reason === null || $reason === '')) {
+        if (($reason === null || $reason === '') && isset(static::PHRASES[$this->statusCode])) {
             $this->reasonPhrase = static::PHRASES[$status];
         } else {
             $this->reasonPhrase = $reason ?? '';
         }
-
-        $this->protocol = $this->validateProtocolVersion($version);
     }
 
     /**
@@ -245,10 +245,10 @@ class Response implements ResponseInterface
 
         $new = clone $this;
         $new->statusCode = $code;
-        if (($reasonPhrase === null || $reasonPhrase === '')) {
+        if (($reasonPhrase === null || $reasonPhrase === '') && isset(static::PHRASES[$this->statusCode])) {
             $reasonPhrase = static::PHRASES[$new->statusCode];
         }
-        $new->reasonPhrase = $reasonPhrase;
+        $new->reasonPhrase = $reasonPhrase ?? '';
 
         return $new;
     }

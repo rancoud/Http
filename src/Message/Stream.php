@@ -13,25 +13,21 @@ use Psr\Http\Message\StreamInterface;
  */
 class Stream implements StreamInterface
 {
-    /** @var resource */
+    /** @var resource|null */
     protected $stream;
 
-    /** @var bool */
     protected bool $seekable;
 
-    /** @var bool */
     protected bool $readable;
 
-    /** @var bool */
     protected bool $writable;
 
-    /** @var array|mixed|void|null */
+    /** @var array|mixed|void|bool|null */
     protected $uri;
 
-    /** @var int|null */
     protected ?int $size = null;
 
-    /** @var array Hash of readable and writable stream types */
+    /** @var array */
     protected const READ_WRITE_HASH = [
         'read' => [
             'r'   => true, 'w+' => true, 'r+' => true, 'x+' => true, 'c+' => true,
@@ -52,8 +48,6 @@ class Stream implements StreamInterface
     }
 
     /**
-     * @throws \Throwable
-     *
      * @return string
      */
     public function __toString(): string
@@ -116,7 +110,11 @@ class Stream implements StreamInterface
             return $this->size;
         }
 
+        // @codeCoverageIgnoreStart
+        /* Could not reach this statement without mocking the filesystem
+         */
         return null;
+        // @codeCoverageIgnoreEnd
     }
 
     /**
@@ -126,13 +124,17 @@ class Stream implements StreamInterface
      */
     public function tell(): int
     {
-        $result = \ftell($this->stream);
+        $positionInFile = \ftell($this->stream);
 
-        if ($result === false) {
+        if ($positionInFile === false) {
+            // @codeCoverageIgnoreStart
+            /* Could not reach this statement without mocking the filesystem
+             */
             throw new \RuntimeException('Unable to determine stream position');
+            // @codeCoverageIgnoreEnd
         }
 
-        return $result;
+        return $positionInFile;
     }
 
     /**
@@ -202,7 +204,7 @@ class Stream implements StreamInterface
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      *
-     * @return bool|int
+     * @return int
      */
     public function write($string)
     {
@@ -215,13 +217,17 @@ class Stream implements StreamInterface
         }
 
         $this->size = null;
-        $result = \fwrite($this->stream, $string);
+        $bytesWritten = \fwrite($this->stream, $string);
 
-        if ($result === false) {
+        if ($bytesWritten === false) {
+            // @codeCoverageIgnoreStart
+            /* Could not reach this statement without mocking the filesystem
+             */
             throw new \RuntimeException('Unable to write to stream');
+            // @codeCoverageIgnoreEnd
         }
 
-        return $result;
+        return $bytesWritten;
     }
 
     /**
@@ -250,7 +256,17 @@ class Stream implements StreamInterface
             throw new \RuntimeException('Cannot read from non-readable stream');
         }
 
-        return \fread($this->stream, $length);
+        $contents = \fread($this->stream, $length);
+
+        if ($contents === false) {
+            // @codeCoverageIgnoreStart
+            /* Could not reach this statement without mocking the filesystem
+             */
+            throw new \RuntimeException('Unable to read from stream');
+            // @codeCoverageIgnoreEnd
+        }
+
+        return $contents;
     }
 
     /**
@@ -267,7 +283,11 @@ class Stream implements StreamInterface
         $contents = \stream_get_contents($this->stream);
 
         if ($contents === false) {
+            // @codeCoverageIgnoreStart
+            /* Could not reach this statement without mocking the filesystem
+             */
             throw new \RuntimeException('Unable to read stream contents');
+            // @codeCoverageIgnoreEnd
         }
 
         return $contents;
@@ -287,7 +307,7 @@ class Stream implements StreamInterface
         }
 
         if (!isset($this->stream)) {
-            return ($key) ? null : [];
+            return $key ? null : [];
         }
 
         $meta = \stream_get_meta_data($this->stream);
@@ -315,11 +335,19 @@ class Stream implements StreamInterface
         if (\is_string($content)) {
             $resource = \fopen('php://temp', 'rw+');
             if ($resource === false) {
+                // @codeCoverageIgnoreStart
+                /* Could not reach this statement without mocking the filesystem
+                 */
                 throw new \InvalidArgumentException('Error fopen in php://temp');
+                // @codeCoverageIgnoreEnd
             }
             $bytesWritten = \fwrite($resource, $content);
             if ($bytesWritten === false) {
+                // @codeCoverageIgnoreStart
+                /* Could not reach this statement without mocking the filesystem
+                 */
                 throw new \InvalidArgumentException('Error fwrite in php://temp');
+                // @codeCoverageIgnoreEnd
             }
             $content = $resource;
         }
@@ -334,9 +362,46 @@ class Stream implements StreamInterface
         $obj->seekable = $meta['seekable'] && \fseek($obj->stream, 0, \SEEK_CUR) === 0;
         $obj->readable = isset(static::READ_WRITE_HASH['read'][$meta['mode']]);
         $obj->writable = isset(static::READ_WRITE_HASH['write'][$meta['mode']]);
-        $obj->uri = $obj->getMetadata('uri');
+        $obj->uri = $meta['uri'] ?? null;
 
         return $obj;
+    }
+
+    /**
+     * @param string $filename
+     * @param string $mode
+     *
+     * @return StreamInterface
+     */
+    public static function createFromFile(string $filename, string $mode = 'r'): StreamInterface
+    {
+        if (!\file_exists($filename)) {
+            throw new \RuntimeException(\sprintf('The file %s doesn\'t exist.', $filename));
+        }
+
+        if (!\in_array($mode[0], ['r', 'w', 'a', 'x', 'c'], true)) {
+            throw new \InvalidArgumentException(\sprintf('The mode %s is invalid.', $mode));
+        }
+
+        try {
+            $resource = \fopen($filename, $mode);
+            // @codeCoverageIgnoreStart
+        } catch (\Throwable $e) {
+            /* Could not reach this statement without mocking the filesystem
+             */
+            throw new \RuntimeException(\sprintf('The file %s cannot be opened.', $filename));
+            // @codeCoverageIgnoreEnd
+        }
+
+        if ($resource === false) {
+            // @codeCoverageIgnoreStart
+            /* Could not reach this statement without mocking the filesystem
+             */
+            throw new \RuntimeException(\sprintf('The file %s cannot be opened.', $filename));
+            // @codeCoverageIgnoreEnd
+        }
+
+        return static::create($resource);
     }
 
     public function __destruct()

@@ -1,15 +1,10 @@
 <?php
 
-namespace Tests\Rancoud\Http;
+namespace tests;
 
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\StreamInterface;
 use Rancoud\Http\Message\Factory\Factory;
-use Rancoud\Http\Message\Factory\MessageFactory;
-use PHPUnit\Framework\TestCase;
-use Rancoud\Http\Message\Factory\ServerRequestFactory;
-use Rancoud\Http\Message\Factory\StreamFactory;
-use Rancoud\Http\Message\Factory\UploadedFileFactory;
-use Rancoud\Http\Message\Factory\UriFactory;
 use Rancoud\Http\Message\Uri;
 
 class FactoryTest extends TestCase
@@ -17,7 +12,7 @@ class FactoryTest extends TestCase
     public function testCreateRequest(): void
     {
         $r = (new Factory())->createRequest('GET', '/');
-        static::assertEquals('/', $r->getUri());
+        static::assertSame('/', (string) $r->getUri());
     }
 
     public function testCreateResponse(): void
@@ -47,20 +42,20 @@ class FactoryTest extends TestCase
         static::assertSame(301, $r->getStatusCode());
         static::assertSame('1.1', $r->getProtocolVersion());
         static::assertSame('Moved Permanently', $r->getReasonPhrase());
-        static::assertEquals(['Location' => ['/blog/']], $r->getHeaders());
+        static::assertSame(['Location' => ['/blog/']], $r->getHeaders());
         static::assertSame('', (string) $r->getBody());
     }
 
     public function testCreateServerRequest(): void
     {
         $r = (new Factory())->createServerRequest('POST', '/');
-        static::assertEquals('/', $r->getUri());
+        static::assertSame('/', (string) $r->getUri());
     }
 
     public function testCreateServerRequestFromArray(): void
     {
-        $r = (new Factory())->createServerRequestFromArray(array_merge($_SERVER, ['REQUEST_METHOD' => 'DELETE']));
-        static::assertEquals('DELETE', $r->getMethod());
+        $r = (new Factory())->createServerRequestFromArray(\array_merge($_SERVER, ['REQUEST_METHOD' => 'DELETE']));
+        static::assertSame('DELETE', $r->getMethod());
     }
 
     public function testCreateServerRequestFromArrayRaiseExceptionMethod(): void
@@ -70,20 +65,20 @@ class FactoryTest extends TestCase
 
         (new Factory())->createServerRequestFromArray($_SERVER);
     }
-    
+
     /** @runInSeparateProcess  */
     public function testCreateServerRequestFromGlobalsWithRequestMethod(): void
     {
-        $_SERVER = array_merge($_SERVER, ['REQUEST_METHOD' => 'POST']);
+        $_SERVER = \array_merge($_SERVER, ['REQUEST_METHOD' => 'POST']);
         $r = (new Factory())->createServerRequestFromGlobals();
-        static::assertEquals('POST', $r->getMethod());
+        static::assertSame('POST', $r->getMethod());
     }
 
     /** @runInSeparateProcess  */
     public function testCreateServerRequestFromGlobalsWithoutRequestMethod(): void
     {
         $r = (new Factory())->createServerRequestFromGlobals();
-        static::assertEquals('GET', $r->getMethod());
+        static::assertSame('GET', $r->getMethod());
     }
 
     /** @runInSeparateProcess  */
@@ -91,66 +86,66 @@ class FactoryTest extends TestCase
     {
         $_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'en-gb,en;q=0.5';
         $r = (new Factory())->createServerRequestFromGlobals();
-        static::assertEquals('GET', $r->getMethod());
+        static::assertSame('GET', $r->getMethod());
     }
-    
+
     public function testCreateUri(): void
     {
         $r = (new Factory())->createUri('/rty/');
-        static::assertEquals('/rty/', $r->getPath());
-        
-        $r = (new Factory())->createUri(new Uri('/aze/'));
-        static::assertEquals('/aze/', $r->getPath());
+        static::assertSame('/rty/', $r->getPath());
+
+        $r = (new Factory())->createUri((string) new Uri('/aze/'));
+        static::assertSame('/aze/', $r->getPath());
     }
 
     public function testCreateUriFromServer(): void
     {
         $server = [
-            'PHP_SELF' => '/blog/article.php',
-            'GATEWAY_INTERFACE' => 'CGI/1.1',
-            'SERVER_ADDR' => 'Server IP: 217.112.82.20',
-            'SERVER_NAME' => 'www.blakesimpson.co.uk',
-            'SERVER_SOFTWARE' => 'Apache/2.2.15 (Win32) JRun/4.0 PHP/5.2.13',
-            'SERVER_PROTOCOL' => 'HTTP/1.0',
-            'REQUEST_METHOD' => 'POST',
-            'REQUEST_TIME' => 'Request start time: 1280149029',
-            'QUERY_STRING' => 'id=10&user=foo',
-            'DOCUMENT_ROOT' => '/path/to/your/server/root/',
-            'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-            'HTTP_ACCEPT_CHARSET' => 'ISO-8859-1,utf-8;q=0.7,*;q=0.7',
+            'PHP_SELF'             => '/blog/article.php',
+            'GATEWAY_INTERFACE'    => 'CGI/1.1',
+            'SERVER_ADDR'          => 'Server IP: 217.112.82.20',
+            'SERVER_NAME'          => 'www.blakesimpson.co.uk',
+            'SERVER_SOFTWARE'      => 'Apache/2.2.15 (Win32) JRun/4.0 PHP/5.2.13',
+            'SERVER_PROTOCOL'      => 'HTTP/1.0',
+            'REQUEST_METHOD'       => 'POST',
+            'REQUEST_TIME'         => 'Request start time: 1280149029',
+            'QUERY_STRING'         => 'id=10&user=foo',
+            'DOCUMENT_ROOT'        => '/path/to/your/server/root/',
+            'HTTP_ACCEPT'          => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'HTTP_ACCEPT_CHARSET'  => 'ISO-8859-1,utf-8;q=0.7,*;q=0.7',
             'HTTP_ACCEPT_ENCODING' => 'gzip,deflate',
             'HTTP_ACCEPT_LANGUAGE' => 'en-gb,en;q=0.5',
-            'HTTP_CONNECTION' => 'keep-alive',
-            'HTTP_HOST' => 'www.blakesimpson.co.uk',
-            'HTTP_REFERER' => 'http://previous.url.com',
-            'HTTP_USER_AGENT' => 'Mozilla/5.0 (Windows; U; Windows NT 6.0; en-GB; rv:1.9.2.6) Gecko/20100625 Firefox/3.6.6 ( .NET CLR 3.5.30729)',
-            'HTTPS' => '1',
-            'REMOTE_ADDR' => '193.60.168.69',
-            'REMOTE_HOST' => 'Client server\'s host name',
-            'REMOTE_PORT' => '5390',
-            'SCRIPT_FILENAME' => '/path/to/this/script.php',
-            'SERVER_ADMIN' => 'webmaster@blakesimpson.co.uk',
-            'SERVER_PORT' => '80',
-            'SERVER_SIGNATURE' => 'Version signature: 5.123',
-            'SCRIPT_NAME' => '/blog/article.php',
-            'REQUEST_URI' => '/blog/article.php?id=10&user=foo',
-            'REQUEST_SCHEME' => 'http'
+            'HTTP_CONNECTION'      => 'keep-alive',
+            'HTTP_HOST'            => 'www.blakesimpson.co.uk',
+            'HTTP_REFERER'         => 'https://previous.url.com',
+            'HTTP_USER_AGENT'      => 'Mozilla/5.0 (Windows; U; Windows NT 6.0; en-GB; rv:1.9.2.6) Gecko/20100625 Firefox/3.6.6 ( .NET CLR 3.5.30729)',
+            'HTTPS'                => '1',
+            'REMOTE_ADDR'          => '193.60.168.69',
+            'REMOTE_HOST'          => 'Client server\'s host name',
+            'REMOTE_PORT'          => '5390',
+            'SCRIPT_FILENAME'      => '/path/to/this/script.php',
+            'SERVER_ADMIN'         => 'webmaster@blakesimpson.co.uk',
+            'SERVER_PORT'          => '80',
+            'SERVER_SIGNATURE'     => 'Version signature: 5.123',
+            'SCRIPT_NAME'          => '/blog/article.php',
+            'REQUEST_URI'          => '/blog/article.php?id=10&user=foo',
+            'REQUEST_SCHEME'       => 'http'
         ];
 
         $r = (new Factory())->createUriFromArray($server);
-        static::assertEquals('http', $r->getScheme());
+        static::assertSame('http', $r->getScheme());
     }
 
     public function testCreateStreamFromFile(): void
     {
         $s = (new Factory())->createStreamFromFile(__FILE__);
-        static::assertEquals(__FILE__, $s->getMetadata()['uri']);
+        static::assertSame(__FILE__, $s->getMetadata()['uri']);
     }
 
     public function testCreateStreamFromResource(): void
     {
-        $s = (new Factory())->createStreamFromResource(fopen(__FILE__, 'r'));
-        static::assertEquals(__FILE__, $s->getMetadata()['uri']);
+        $s = (new Factory())->createStreamFromResource(\fopen(__FILE__, 'r'));
+        static::assertSame(__FILE__, $s->getMetadata()['uri']);
     }
 
     public function testCreateStreamFromFileRaiseExceptionFileNotExist(): void
@@ -158,7 +153,7 @@ class FactoryTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('The file azert doesn\'t exist.');
 
-        (new Factory())->createStreamFromFile('azert', 'r');
+        (new Factory())->createStreamFromFile('azert');
     }
 
     public function testCreateStreamFromFileRaiseExceptionModeInvalid(): void
@@ -168,10 +163,10 @@ class FactoryTest extends TestCase
 
         (new Factory())->createStreamFromFile(__FILE__, 'yolo');
     }
-    
+
     public function testCreateUploadedFile(): void
     {
         $u = (new Factory())->createUploadedFile((new Factory())->createStream('writing to tempfile'));
-        static::assertEquals('writing to tempfile', (string) $u->getStream());
+        static::assertSame('writing to tempfile', (string) $u->getStream());
     }
 }
