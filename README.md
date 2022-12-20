@@ -4,9 +4,8 @@
 [![Packagist Version](https://img.shields.io/packagist/v/rancoud/http)](https://packagist.org/packages/rancoud/http)
 [![Packagist Downloads](https://img.shields.io/packagist/dt/rancoud/http)](https://packagist.org/packages/rancoud/http)
 [![Composer dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](https://github.com/rancoud/http/blob/master/composer.json)
-[![Test workflow](https://img.shields.io/github/workflow/status/rancoud/http/test?label=test&logo=github)](https://github.com/rancoud/http/actions?workflow=test)
+[![Test workflow](https://img.shields.io/github/actions/workflow/status/rancoud/http/test.yml?branch=master)](https://github.com/rancoud/http/actions/workflows/test.yml)
 [![Codecov](https://img.shields.io/codecov/c/github/rancoud/http?logo=codecov)](https://codecov.io/gh/rancoud/http)
-[![composer.lock](https://poser.pugx.org/rancoud/http/composerlock)](https://packagist.org/packages/rancoud/http)
 
 Heavily based on [Nyholm](https://github.com/nyholm) works from the psr7 repository [https://github.com/nyholm/psr7](https://github.com/nyholm/psr7)
 
