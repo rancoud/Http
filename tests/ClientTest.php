@@ -112,11 +112,9 @@ class ClientTest extends TestCase
     public function testRequestExceptionBadCAInfos(): void
     {
         $this->expectException(RequestException::class);
-        $this->expectExceptionMessage(<<<MESSAGE
-error setting certificate verify locations:
-  CAfile: /
-  CApath: /
-MESSAGE);
+        $this->expectExceptionMessage('error setting');
+        $this->expectExceptionMessage('CAfile: /');
+        $this->expectExceptionMessage('CApath: /');
 
         $client = new Client();
         $client->setCAInfosPath('/', '/');
