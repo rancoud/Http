@@ -113,8 +113,6 @@ class ClientTest extends TestCase
     {
         $this->expectException(RequestException::class);
         $this->expectExceptionMessage('error setting');
-        $this->expectExceptionMessage('CAfile: /');
-        $this->expectExceptionMessage('CApath: /');
 
         $client = new Client();
         $client->setCAInfosPath('/', '/');
