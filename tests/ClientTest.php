@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace tests;
 
 use PHPUnit\Framework\TestCase;
@@ -9,7 +11,6 @@ use Rancoud\Http\Client\Exception\NetworkException;
 use Rancoud\Http\Client\Exception\RequestException;
 use Rancoud\Http\Message\Request;
 use Rancoud\Http\Message\Stream;
-use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
 class ClientTest extends TestCase
@@ -23,11 +24,11 @@ class ClientTest extends TestCase
 
     public static function setUpBeforeClass(): void
     {
-        static::$process = new Process(['php', '-S', static::$localPHPServer, '-t', realpath(__DIR__ . \DIRECTORY_SEPARATOR .'fake_server')]);
+        static::$process = new Process(['php', '-S', static::$localPHPServer, '-t', \realpath(__DIR__ . \DIRECTORY_SEPARATOR . 'fake_server')]);
 
         static::$process->disableOutput();
 
-        static::$process->start(function($type, $data){
+        static::$process->start(function ($type, $data) {
             \sleep(1);
 
             if (\mb_stripos($data, 'started') === false) {
