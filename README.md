@@ -51,13 +51,13 @@ $stream = $factory->createStream('foobar');
 ### Constructor
 #### Mandatory
 | Parameter | Type   | Description |
-| --------- | ------ | ----------- |
+|-----------|--------|-------------|
 | method    | string | HTTP method |
 | uri       | mixed  | Uri         |
 
 #### Optionnals
 | Parameter | Type   | Default value | Description           |
-| --------- | ------ | ------------- | --------------------- |
+|-----------|--------|---------------|-----------------------|
 | headers   | array  | []            | Request headers       |
 | body      | mixed  | []            | Request body          |
 | version   | string | '1.1'         | HTTP protocol version |
@@ -139,7 +139,7 @@ $stream = $factory->createStream('foobar');
 ### Constructor
 #### Optionnals
 | Parameter | Type   | Default value | Description                   |
-| --------- | ------ | ------------- | ----------------------------- |
+|-----------|--------|---------------|-------------------------------|
 | status    | int    | 200           | Status code                   |
 | headers   | array  | []            | Response headers              |
 | body      | mixed  | []            | Response body                 |
@@ -326,13 +326,13 @@ $stream = $factory->createStream('foobar');
 ### Constructor
 #### Mandatory
 | Parameter | Type   | Description |
-| --------- | ------ | ----------- |
+|-----------|--------|-------------|
 | method    | string | HTTP method |
 | uri       | mixed  | Uri         |
 
 #### Optionnals
 | Parameter    | Type   | Default value | Description           |
-| ------------ | ------ | ------------- | --------------------- |
+|--------------|--------|---------------|-----------------------|
 | headers      | array  | []            | Request headers       |
 | body         | mixed  | []            | Request body          |
 | version      | string | '1.1'         | HTTP protocol version |
@@ -396,14 +396,14 @@ $stream = $factory->createStream('foobar');
 ### Constructor
 #### Mandatory
 | Parameter    | Type  | Description    |
-| ------------ | ----- | -------------- |
+|--------------|-------|----------------|
 | streamOrFile | mixed | Stream or file |
 | size         | int   | Filesize       |
 | errorStatus  | int   | Upload errors  |
 
 #### Optionnals
 | Parameter       | Type         | Default value | Description |
-| --------------- | ------------ | ------------- | ----------- |
+|-----------------|--------------|---------------|-------------|
 | clientFilename  | string\|null | null          | Filename    |
 | clientMediaType | string\|null | null          | Media type  |
 
@@ -430,7 +430,7 @@ $stream = $factory->createStream('foobar');
 ### Constructor
 #### Optionnals
 | Parameter | Type   | Default value | Description |
-| --------- | ------ | ------------- | ----------- |
+|-----------|--------|---------------|-------------|
 | uri       | string | ''            | Uri         |
 
 ### Methods
@@ -454,4 +454,4 @@ $stream = $factory->createStream('foobar');
 ## How to Dev
 `composer ci` for php-cs-fixer and phpunit and coverage  
 `composer lint` for php-cs-fixer  
-`composer test` for phpunit and coverage
+`composer test` for phpunit and coverage  

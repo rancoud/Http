@@ -241,6 +241,8 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
      * @throws \InvalidArgumentException
      *
      * @return ServerRequest
+     *
+     * @noinspection PhpTooManyParametersInspection
      */
     public function createServerRequestFromArrays(
         array $server,
