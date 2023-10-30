@@ -284,7 +284,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
             /* Could not reach this statement without mocking the function
              */
             $headers = \getallheaders();
-            // @codeCoverageIgnoreEnd
+        // @codeCoverageIgnoreEnd
         } else {
             $headers = $this->getAllHeaders();
         }
