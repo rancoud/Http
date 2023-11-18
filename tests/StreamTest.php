@@ -53,6 +53,20 @@ class StreamTest extends TestCase
         static::assertSame('', $stream->getContents());
     }
 
+    public function testGetsContentsRaiseException(): void
+    {
+        $handle = \fopen(\tempnam(\sys_get_temp_dir(), 'rancoud/http'), 'r+');
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Unable to read stream contents');
+
+        $stream = Stream::create($handle);
+
+        \fclose($handle);
+
+        $stream->getContents();
+    }
+
     public function testChecksEof(): void
     {
         $handle = \fopen('php://temp', 'w+');
