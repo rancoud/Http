@@ -61,7 +61,9 @@ class StreamTest extends TestCase
         $this->expectExceptionMessage('Unable to read stream contents');
 
         $stream = Stream::create($handle);
+
         \fclose($handle);
+
         $stream->getContents();
     }
 
