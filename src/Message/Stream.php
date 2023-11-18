@@ -48,6 +48,8 @@ class Stream implements StreamInterface
     }
 
     /**
+     * @throws \Throwable
+     *
      * @return string
      */
     public function __toString(): string
@@ -271,6 +273,7 @@ class Stream implements StreamInterface
 
     /**
      * @throws \RuntimeException
+     * @throws \Throwable
      *
      * @return string
      */
@@ -280,14 +283,31 @@ class Stream implements StreamInterface
             throw new \RuntimeException('Unable to read stream contents');
         }
 
-        $contents = \stream_get_contents($this->stream);
+        $exception = null;
 
-        if ($contents === false) {
-            // @codeCoverageIgnoreStart
-            /* Could not reach this statement without mocking the filesystem
-             */
-            throw new \RuntimeException('Unable to read stream contents');
-            // @codeCoverageIgnoreEnd
+        \set_error_handler(static function ($type, $message) use (&$exception) {
+            throw $exception = new \RuntimeException('Unable to read stream contents: ' . $message);
+        });
+
+        try {
+            $contents = \stream_get_contents($this->stream);
+
+            if ($contents === false) {
+                // @codeCoverageIgnoreStart
+                /* Could not reach this statement without changing php-src
+                 * @info: https://github.com/php/php-src/blob/311cae03e730c76aed343312319ed8cf1c37ade0/main/streams/streams.c#L1512
+                 */
+                $exception = new \RuntimeException('Unable to read stream contents');
+                // @codeCoverageIgnoreEnd
+            }
+        } catch (\Throwable $e) {
+            $exception = new \RuntimeException('Unable to read stream contents: ' . $e->getMessage(), 0, $e);
+        }
+
+        \restore_error_handler();
+
+        if ($exception) {
+            throw $exception;
         }
 
         return $contents;
