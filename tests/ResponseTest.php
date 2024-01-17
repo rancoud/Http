@@ -126,7 +126,7 @@ class ResponseTest extends TestCase
     public function testRaiseExceptionConstructWithProtocolVersion(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Protocol Version must be 0.9 or 1.0 or 1.1 or 2 or 3');
+        $this->expectExceptionMessage('Protocol Version must be 0.9 or 1.0 or 1.1 or 2 or 2.0 or 3');
 
         new Response(200, [], null, '1000');
     }
