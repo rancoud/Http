@@ -194,7 +194,7 @@ class Response implements ResponseInterface
         array $headers = [],
         $body = null,
         string $version = '1.1',
-        string $reason = null
+        ?string $reason = null
     ) {
         if (!isset(static::PHRASES[$status])) {
             throw new \InvalidArgumentException('Status code has to be an integer between 100 and 799');

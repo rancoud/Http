@@ -36,7 +36,7 @@ class Client implements ClientInterface
         return $this;
     }
 
-    public function setCAInfosPath(string $infos = null, string $path = null): self
+    public function setCAInfosPath(?string $infos = null, ?string $path = null): self
     {
         $this->CAInfosPath = ['info' => $infos, 'path' => $path];
 
