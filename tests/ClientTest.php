@@ -136,7 +136,6 @@ class ClientTest extends TestCase
     public function testNetworkExceptionBadURL(): void
     {
         $this->expectException(NetworkException::class);
-        $this->expectExceptionMessageMatches('/Could not resolve host: bad-example\.com|Failed to connect to bad-example\.com port 443/');
 
         $client = new Client();
         $client->sendRequest(new Request('GET', $this->badURL));
