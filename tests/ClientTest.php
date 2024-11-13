@@ -19,7 +19,7 @@ class ClientTest extends TestCase
 
     protected static string $localPHPServer = 'localhost:9877';
     protected string $goodURL = 'https://example.com';
-    protected string $badURL = 'https://bad-example.com';
+    protected string $badURL = 'https://wrong.bad.invalid.example.com';
     protected string $localURL = 'http://localhost:9877/';
 
     public static function setUpBeforeClass(): void
