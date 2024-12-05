@@ -258,7 +258,7 @@ trait MessageTrait
                 throw new \InvalidArgumentException('Header value must be RFC 7230 compatible string.');
             }
 
-            return [\trim((string) $values, " \t")];
+            return [$this->trim((string) $values, " \t")];
         }
 
         if (empty($values)) {
@@ -271,10 +271,27 @@ trait MessageTrait
                 throw new \InvalidArgumentException('Header values must be RFC 7230 compatible strings.');
             }
 
-            $returnValues[] = \trim((string) $v, " \t");
+            $returnValues[] = $this->trim((string) $v, " \t");
         }
 
         return $returnValues;
+    }
+
+    /**
+     * Because of PHP 8.4.
+     *
+     * @param        $string
+     * @param string $characters
+     *
+     * @return string
+     */
+    protected function trim($string, string $characters = " \n\r\t\v\0"): string
+    {
+        if (\PHP_MAJOR_VERSION >= 8 && \PHP_MINOR_VERSION >= 4) {
+            return \mb_trim((string) $string, $characters);
+        }
+
+        return \trim((string) $string, $characters);
     }
 
     /**
