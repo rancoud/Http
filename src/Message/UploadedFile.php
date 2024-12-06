@@ -90,7 +90,7 @@ class UploadedFile implements UploadedFileInterface
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      */
-    public function moveTo($targetPath): void
+    public function moveTo(string $targetPath): void
     {
         $this->validateActive();
 

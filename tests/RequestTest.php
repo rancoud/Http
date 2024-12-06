@@ -189,24 +189,6 @@ class RequestTest extends TestCase
         static::assertSame('PATCH', $r->getMethod());
     }
 
-    public function testWithUriPreserveHostMustHaveCorrectType(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Preserve Host must be a boolean');
-
-        $r = new Request('GET', 'https://foo.com:8124/bar');
-        $r->withUri(new Uri(), null);
-    }
-
-    public function testWithMethodMustHaveCorrectType(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Method must be a string');
-
-        $r = new Request('GET', 'https://foo.com:8124/bar');
-        $r->withMethod(null);
-    }
-
     public function testWithMethodMustBeValidMethod(): void
     {
         $this->expectException(\InvalidArgumentException::class);

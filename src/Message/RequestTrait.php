@@ -129,7 +129,7 @@ trait RequestTrait
      *
      * @return self
      */
-    public function withMethod($method): self
+    public function withMethod(string $method): self
     {
         $method = $this->filterMethod($method);
 
@@ -155,12 +155,8 @@ trait RequestTrait
      *
      * @return self
      */
-    public function withUri(UriInterface $uri, $preserveHost = false): self
+    public function withUri(UriInterface $uri, bool $preserveHost = false): self
     {
-        if (!\is_bool($preserveHost)) {
-            throw new \InvalidArgumentException('Preserve Host must be a boolean');
-        }
-
         if ($this->uri === $uri) {
             return $this;
         }
@@ -182,12 +178,8 @@ trait RequestTrait
      *
      * @return string
      */
-    protected function filterMethod($method): string
+    protected function filterMethod(string $method): string
     {
-        if (!\is_string($method)) {
-            throw new \InvalidArgumentException('Method must be a string');
-        }
-
         if (!\in_array($method, static::$methods, true)) {
             throw new \InvalidArgumentException(\sprintf('Method %s is invalid', $method));
         }

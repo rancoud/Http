@@ -546,30 +546,6 @@ class ServerRequestTest extends TestCase
         static::assertSame('different-default', $requestWithoutAttribute->getAttribute('name', 'different-default'));
     }
 
-    public function testGetAttributeMustHaveCorrectType(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Name must be a string');
-
-        (new ServerRequest('GET', '/'))->getAttribute([]);
-    }
-
-    public function testWithAttributeMustHaveCorrectType(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Name must be a string');
-
-        (new ServerRequest('GET', '/'))->withAttribute([], null);
-    }
-
-    public function testWithoutAttributeMustHaveCorrectType(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Name must be a string');
-
-        (new ServerRequest('GET', '/'))->withoutAttribute([]);
-    }
-
     public function testWithParsedBodyMustHaveCorrectType(): void
     {
         $this->expectException(\InvalidArgumentException::class);

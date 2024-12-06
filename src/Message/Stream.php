@@ -208,12 +208,8 @@ class Stream implements StreamInterface
      *
      * @return int
      */
-    public function write($string)
+    public function write(string $string): int
     {
-        if (!\is_string($string)) {
-            throw new \InvalidArgumentException('Data must be a string');
-        }
-
         if (!$this->writable) {
             throw new \RuntimeException('Cannot write to a non-writable stream');
         }

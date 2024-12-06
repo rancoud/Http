@@ -137,62 +137,6 @@ class UriTest extends TestCase
         new Uri('//example.com:-1');
     }
 
-    public function testSchemeMustHaveCorrectType(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Scheme must be a string');
-
-        (new Uri())->withScheme([]);
-    }
-
-    public function testUserInfoUserMustHaveCorrectType(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('User must be a string');
-
-        (new Uri())->withUserInfo([]);
-    }
-
-    public function testUserInfoPasswordMustHaveCorrectType(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Password must be a string or NULL');
-
-        (new Uri())->withUserInfo('', []);
-    }
-
-    public function testHostMustHaveCorrectType(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Host must be a string');
-
-        (new Uri())->withHost([]);
-    }
-
-    public function testPathMustHaveCorrectType(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Path must be a string');
-
-        (new Uri())->withPath([]);
-    }
-
-    public function testQueryMustHaveCorrectType(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Query and fragment must be a string');
-
-        (new Uri())->withQuery([]);
-    }
-
-    public function testFragmentMustHaveCorrectType(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Query and fragment must be a string');
-
-        (new Uri())->withFragment([]);
-    }
-
     public function testCanParseFalseyUriParts(): void
     {
         $uri = new Uri('0://0:0@0/0?0#0');
@@ -351,14 +295,6 @@ class UriTest extends TestCase
 
         $uri = $uri->withScheme('https');
         static::assertNull($uri->getPort());
-    }
-
-    public function testPortPassedAsStringIsCastedToInt(): void
-    {
-        $uri = (new Uri('//example.com'))->withPort('8080');
-
-        static::assertSame(8080, $uri->getPort(), 'Port is returned as integer');
-        static::assertSame('example.com:8080', $uri->getAuthority());
     }
 
     public function testPortCanBeRemoved(): void

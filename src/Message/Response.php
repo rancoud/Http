@@ -233,12 +233,8 @@ class Response implements ResponseInterface
      *
      * @return Response
      */
-    public function withStatus($code, $reasonPhrase = ''): self
+    public function withStatus(int $code, string $reasonPhrase = ''): self
     {
-        if (!\is_int($code)) {
-            throw new \InvalidArgumentException('Status code has to be an integer');
-        }
-
         if (!isset(static::PHRASES[$code])) {
             throw new \InvalidArgumentException('Status code has to be an integer between 100 and 799');
         }

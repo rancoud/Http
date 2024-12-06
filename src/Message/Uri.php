@@ -139,7 +139,7 @@ class Uri implements UriInterface
      *
      * @return self
      */
-    public function withScheme($scheme): self
+    public function withScheme(string $scheme): self
     {
         $scheme = $this->filterScheme($scheme);
 
@@ -162,7 +162,7 @@ class Uri implements UriInterface
      *
      * @return self
      */
-    public function withUserInfo($user, $password = null): self
+    public function withUserInfo(string $user, ?string $password = null): self
     {
         $info = $this->filterUser($user);
         $password = $this->filterPass($password);
@@ -188,7 +188,7 @@ class Uri implements UriInterface
      *
      * @return self
      */
-    public function withHost($host): self
+    public function withHost(string $host): self
     {
         $host = $this->filterHost($host);
 
@@ -209,7 +209,7 @@ class Uri implements UriInterface
      *
      * @return self
      */
-    public function withPort($port): self
+    public function withPort(?int $port): self
     {
         $port = $this->filterPort($port);
 
@@ -230,7 +230,7 @@ class Uri implements UriInterface
      *
      * @return self
      */
-    public function withPath($path): self
+    public function withPath(string $path): self
     {
         $path = $this->filterPath($path);
 
@@ -251,7 +251,7 @@ class Uri implements UriInterface
      *
      * @return self
      */
-    public function withQuery($query): self
+    public function withQuery(string $query): self
     {
         $query = $this->filterQueryAndFragment($query);
 
@@ -272,7 +272,7 @@ class Uri implements UriInterface
      *
      * @return self
      */
-    public function withFragment($fragment): self
+    public function withFragment(string $fragment): self
     {
         $fragment = $this->filterQueryAndFragment($fragment);
 
@@ -436,12 +436,8 @@ class Uri implements UriInterface
      *
      * @return string
      */
-    protected function filterScheme($scheme): string
+    protected function filterScheme(string $scheme): string
     {
-        if (!\is_string($scheme)) {
-            throw new \InvalidArgumentException('Scheme must be a string');
-        }
-
         return \mb_strtolower($scheme);
     }
 
@@ -452,12 +448,8 @@ class Uri implements UriInterface
      *
      * @return string
      */
-    protected function filterUser($user): string
+    protected function filterUser(string $user): string
     {
-        if (!\is_string($user)) {
-            throw new \InvalidArgumentException('User must be a string');
-        }
-
         return $user;
     }
 
@@ -468,12 +460,8 @@ class Uri implements UriInterface
      *
      * @return string
      */
-    protected function filterPass($pass): ?string
+    protected function filterPass(?string $pass): ?string
     {
-        if ($pass !== null && !\is_string($pass)) {
-            throw new \InvalidArgumentException('Password must be a string or NULL');
-        }
-
         return $pass;
     }
 
@@ -484,12 +472,8 @@ class Uri implements UriInterface
      *
      * @return string
      */
-    protected function filterHost($host): string
+    protected function filterHost(string $host): string
     {
-        if (!\is_string($host)) {
-            throw new \InvalidArgumentException('Host must be a string');
-        }
-
         return \mb_strtolower($host);
     }
 
@@ -500,13 +484,12 @@ class Uri implements UriInterface
      *
      * @return int|null
      */
-    protected function filterPort($port): ?int
+    protected function filterPort(?int $port): ?int
     {
         if ($port === null) {
             return null;
         }
 
-        $port = (int) $port;
         if ($port < 1 || $port > 65535) {
             throw new \InvalidArgumentException(\sprintf('Invalid port: %d. Must be between 1 and 65535', $port));
         }
@@ -525,12 +508,8 @@ class Uri implements UriInterface
      *
      * @return string
      */
-    protected function filterPath($path): string
+    protected function filterPath(string $path): string
     {
-        if (!\is_string($path)) {
-            throw new \InvalidArgumentException('Path must be a string');
-        }
-
         return \preg_replace_callback(
             static::getPatternForFilteringPath(),
             [__CLASS__, 'rawurlencodeMatchZero'],
@@ -545,12 +524,8 @@ class Uri implements UriInterface
      *
      * @return string
      */
-    protected function filterQueryAndFragment($str): string
+    protected function filterQueryAndFragment(string $str): string
     {
-        if (!\is_string($str)) {
-            throw new \InvalidArgumentException('Query and fragment must be a string');
-        }
-
         return \preg_replace_callback(
             static::getPatternForFilteringQueryAndFragment(),
             [__CLASS__, 'rawurlencodeMatchZero'],

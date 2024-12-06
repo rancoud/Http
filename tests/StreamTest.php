@@ -209,16 +209,6 @@ class StreamTest extends TestCase
         $stream->seek(1, 90909090);
     }
 
-    public function testWriteRaiseExceptionData(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Data must be a string');
-
-        $handle = \fopen('php://temp', 'w+');
-        $stream = Stream::create($handle);
-        $stream->write(0);
-    }
-
     public function testReadRaiseExceptionLength(): void
     {
         $this->expectException(\InvalidArgumentException::class);

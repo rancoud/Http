@@ -184,14 +184,7 @@ class UploadedFileTest extends TestCase
     public function invalidMovePaths(): array
     {
         return [
-            'null'   => [null],
-            'true'   => [true],
-            'false'  => [false],
-            'int'    => [1],
-            'float'  => [1.1],
             'empty'  => [''],
-            'array'  => [['filename']],
-            'object' => [(object) ['filename']],
         ];
     }
 

@@ -46,17 +46,6 @@ class ResponseTest extends TestCase
         new Response('-404.4');
     }
 
-    public function testWithStatusCantBeNumericString(): void
-    {
-        $r = new Response(404);
-        static::assertSame(404, $r->getStatusCode());
-        static::assertSame('Not Found', $r->getReasonPhrase());
-
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Status code has to be an integer');
-        $r->withStatus('201');
-    }
-
     public function testCanConstructWithHeaders(): void
     {
         $r = new Response(200, ['Foo' => 'Bar']);
@@ -269,33 +258,6 @@ class ResponseTest extends TestCase
         ];
     }
 
-    public function testHasHeaderMustHaveCorrectType(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Header name must be a string');
-
-        $r = new Response();
-        static::assertSame($r, $r->hasHeader(null));
-    }
-
-    public function testGetHeaderMustHaveCorrectType(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Header name must be a string');
-
-        $r = new Response();
-        static::assertSame($r, $r->getHeader(null));
-    }
-
-    public function testGetHeaderLineMustHaveCorrectType(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Header name must be a string');
-
-        $r = new Response();
-        static::assertSame($r, $r->getHeaderLine(null));
-    }
-
     public function testWithHeaderNameMustHaveCorrectType(): void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -387,24 +349,6 @@ class ResponseTest extends TestCase
         static::assertSame(['OWS' => ['Foo']], $r->getHeaders());
         static::assertSame('Foo', $r->getHeaderLine('OWS'));
         static::assertSame(['Foo'], $r->getHeader('OWS'));
-    }
-
-    public function testWithStatusCodeMustHaveCorrectType(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Status code has to be an integer');
-
-        $r = new Response();
-        $r->withStatus([]);
-    }
-
-    public function testWithStatusReasonPhraseMustHaveCorrectType(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Status code has to be an integer between 100 and 799');
-
-        $r = new Response();
-        $r->withStatus(9, []);
     }
 
     /**
