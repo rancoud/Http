@@ -162,7 +162,7 @@ class Stream implements StreamInterface
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      */
-    public function seek(int $offset, int $whence = SEEK_SET): void
+    public function seek(int $offset, int $whence = \SEEK_SET): void
     {
         if (!$this->seekable) {
             throw new \RuntimeException('Stream is not seekable');
