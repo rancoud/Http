@@ -383,7 +383,7 @@ class Uri implements UriInterface
                 }
             } elseif (isset($charAtPosOne) && $charAtPosOne === '/') {
                 if ($authority === '') {
-                    $path = '/' . \ltrim($path, '/');
+                    $path = '/' . static::ltrim($path, '/');
                 }
             }
 
@@ -399,6 +399,23 @@ class Uri implements UriInterface
         }
 
         return $uri;
+    }
+
+    /**
+     * Because of PHP 8.4.
+     *
+     * @param        $string
+     * @param string $characters
+     *
+     * @return string
+     */
+    protected static function ltrim($string, string $characters = " \n\r\t\v\0"): string
+    {
+        if (\PHP_MAJOR_VERSION >= 8 && \PHP_MINOR_VERSION >= 4) {
+            return \mb_ltrim((string) $string, $characters);
+        }
+
+        return \ltrim((string) $string, $characters);
     }
 
     /**
