@@ -232,8 +232,8 @@ trait MessageTrait
     }
 
     /**
-     * @param string $header
-     * @param mixed  $values
+     * @param string|array $header
+     * @param mixed        $values
      *
      * @throws \InvalidArgumentException
      *
@@ -270,6 +270,22 @@ trait MessageTrait
     }
 
     /**
+     * @param string $protocolVersion
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return string
+     */
+    protected function validateProtocolVersion(string $protocolVersion): string
+    {
+        if (!\in_array($protocolVersion, static::$validProtocols, true)) {
+            throw new \InvalidArgumentException('Protocol Version must be ' . \implode(' or ', static::$validProtocols));
+        }
+
+        return $protocolVersion;
+    }
+
+    /**
      * Because of PHP 8.4.
      *
      * @param        $string
@@ -284,21 +300,5 @@ trait MessageTrait
         }
 
         return \trim((string) $string, $characters);
-    }
-
-    /**
-     * @param string $protocolVersion
-     *
-     * @throws \InvalidArgumentException
-     *
-     * @return string
-     */
-    protected function validateProtocolVersion(string $protocolVersion): string
-    {
-        if (!\in_array($protocolVersion, static::$validProtocols, true)) {
-            throw new \InvalidArgumentException('Protocol Version must be ' . \implode(' or ', static::$validProtocols));
-        }
-
-        return $protocolVersion;
     }
 }

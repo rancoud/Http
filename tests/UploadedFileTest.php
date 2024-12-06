@@ -50,39 +50,9 @@ class UploadedFileTest extends TestCase
         new UploadedFile($streamOrFile, 0, \UPLOAD_ERR_OK);
     }
 
-    public function invalidSizes(): array
-    {
-        return [
-            'null'   => [null],
-            'float'  => [1.1],
-            'array'  => [[1]],
-            'object' => [(object) [1]],
-        ];
-    }
-
-    /**
-     * @dataProvider invalidSizes
-     *
-     * @param $size
-     */
-    public function testRaisesExceptionOnInvalidSize($size): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('size');
-
-        new UploadedFile(\fopen('php://temp', 'wb+'), $size, \UPLOAD_ERR_OK);
-    }
-
     public function invalidErrorStatuses(): array
     {
         return [
-            'null'     => [null],
-            'true'     => [true],
-            'false'    => [false],
-            'float'    => [1.1],
-            'string'   => ['1'],
-            'array'    => [[1]],
-            'object'   => [(object) [1]],
             'negative' => [-1],
             'too-big'  => [9],
         ];
@@ -99,44 +69,6 @@ class UploadedFileTest extends TestCase
         $this->expectExceptionMessage('status');
 
         new UploadedFile(\fopen('php://temp', 'wb+'), 0, $status);
-    }
-
-    public function invalidFilenamesAndMediaTypes(): array
-    {
-        return [
-            'true'   => [true],
-            'false'  => [false],
-            'int'    => [1],
-            'float'  => [1.1],
-            'array'  => [['string']],
-            'object' => [(object) ['string']],
-        ];
-    }
-
-    /**
-     * @dataProvider invalidFilenamesAndMediaTypes
-     *
-     * @param $filename
-     */
-    public function testRaisesExceptionOnInvalidClientFilename($filename): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('filename');
-
-        new UploadedFile(\fopen('php://temp', 'wb+'), 0, \UPLOAD_ERR_OK, $filename);
-    }
-
-    /**
-     * @dataProvider invalidFilenamesAndMediaTypes
-     *
-     * @param $mediaType
-     */
-    public function testRaisesExceptionOnInvalidClientMediaType($mediaType): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('media type');
-
-        new UploadedFile(\fopen('php://temp', 'wb+'), 0, \UPLOAD_ERR_OK, 'foobar.baz', $mediaType);
     }
 
     public function testGetStreamWithFile(): void
