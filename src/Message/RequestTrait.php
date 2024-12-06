@@ -96,13 +96,13 @@ trait RequestTrait
     }
 
     /**
-     * @param $requestTarget
+     * @param string $requestTarget
      *
      * @throws \InvalidArgumentException
      *
      * @return self
      */
-    public function withRequestTarget($requestTarget): self
+    public function withRequestTarget(string $requestTarget): self
     {
         if (\preg_match('#\s#', $requestTarget)) {
             throw new \InvalidArgumentException('Invalid request target provided; cannot contain whitespace');

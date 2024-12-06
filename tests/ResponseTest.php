@@ -120,6 +120,15 @@ class ResponseTest extends TestCase
         new Response(200, [], null, '1000');
     }
 
+    public function testRaiseWithInvalidStatusCode(): void
+    {
+        $r = new Response();
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Status code has to be an integer between 100 and 799');
+        $r->withStatus(1);
+    }
+
     public function testWithStatusCodeAndNoReason(): void
     {
         $r = (new Response())->withStatus(201);

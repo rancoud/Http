@@ -179,26 +179,6 @@ class StreamTest extends TestCase
         static::assertNull($stream->getMetadata('key'));
     }
 
-    public function testSeekRaiseExceptionOffset(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Offset must be a int');
-
-        $handle = \fopen('php://temp', 'w+');
-        $stream = Stream::create($handle);
-        $stream->seek('string');
-    }
-
-    public function testSeekRaiseExceptionWhence(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Whence must be a int');
-
-        $handle = \fopen('php://temp', 'w+');
-        $stream = Stream::create($handle);
-        $stream->seek(1, 'string');
-    }
-
     public function testSeekRaiseExceptionUnableToSeek(): void
     {
         $this->expectException(\RuntimeException::class);
@@ -207,26 +187,6 @@ class StreamTest extends TestCase
         $handle = \fopen('php://temp', 'w+');
         $stream = Stream::create($handle);
         $stream->seek(1, 90909090);
-    }
-
-    public function testReadRaiseExceptionLength(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Length must be a int');
-
-        $handle = \fopen('php://temp', 'w+');
-        $stream = Stream::create($handle);
-        $stream->read('string');
-    }
-
-    public function testGetMetadataRaiseExceptionKey(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Key must be a string or NULL');
-
-        $handle = \fopen('php://temp', 'w+');
-        $stream = Stream::create($handle);
-        $stream->getMetadata(45);
     }
 
     public function testGetMetadataKeyNonExist(): void
