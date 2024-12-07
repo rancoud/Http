@@ -162,16 +162,8 @@ class Stream implements StreamInterface
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      */
-    public function seek($offset, $whence = \SEEK_SET): void
+    public function seek(int $offset, int $whence = \SEEK_SET): void
     {
-        if (!\is_int($offset)) {
-            throw new \InvalidArgumentException('Offset must be a int');
-        }
-
-        if (!\is_int($whence)) {
-            throw new \InvalidArgumentException('Whence must be a int');
-        }
-
         if (!$this->seekable) {
             throw new \RuntimeException('Stream is not seekable');
         }
@@ -208,12 +200,8 @@ class Stream implements StreamInterface
      *
      * @return int
      */
-    public function write($string)
+    public function write(string $string): int
     {
-        if (!\is_string($string)) {
-            throw new \InvalidArgumentException('Data must be a string');
-        }
-
         if (!$this->writable) {
             throw new \RuntimeException('Cannot write to a non-writable stream');
         }
@@ -241,19 +229,15 @@ class Stream implements StreamInterface
     }
 
     /**
-     * @param $length
+     * @param int $length
      *
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      *
      * @return string
      */
-    public function read($length): string
+    public function read(int $length): string
     {
-        if (!\is_int($length)) {
-            throw new \InvalidArgumentException('Length must be a int');
-        }
-
         if (!$this->readable) {
             throw new \RuntimeException('Cannot read from non-readable stream');
         }
@@ -318,14 +302,10 @@ class Stream implements StreamInterface
      *
      * @throws \InvalidArgumentException
      *
-     * @return array|null
+     * @return array|mixed|null
      */
-    public function getMetadata($key = null)
+    public function getMetadata(?string $key = null)
     {
-        if (!$this->isStringOrNull($key)) {
-            throw new \InvalidArgumentException('Key must be a string or NULL');
-        }
-
         if (!isset($this->stream)) {
             return $key ? null : [];
         }
@@ -427,15 +407,5 @@ class Stream implements StreamInterface
     public function __destruct()
     {
         $this->close();
-    }
-
-    /**
-     * @param $param
-     *
-     * @return bool
-     */
-    protected function isStringOrNull($param): bool
-    {
-        return $param === null || \is_string($param);
     }
 }

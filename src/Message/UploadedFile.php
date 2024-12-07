@@ -43,7 +43,7 @@ class UploadedFile implements UploadedFileInterface
 
     /**
      * @param StreamInterface|string|resource $streamOrFile
-     * @param int                             $size
+     * @param int|null                        $size
      * @param int                             $errorStatus
      * @param string|null                     $clientFilename
      * @param string|null                     $clientMediaType
@@ -52,10 +52,10 @@ class UploadedFile implements UploadedFileInterface
      */
     public function __construct(
         $streamOrFile,
-        $size,
-        $errorStatus,
-        $clientFilename = null,
-        $clientMediaType = null
+        ?int $size,
+        int $errorStatus,
+        ?string $clientFilename = null,
+        ?string $clientMediaType = null
     ) {
         $this->setError($errorStatus);
         $this->setSize($size);
@@ -90,7 +90,7 @@ class UploadedFile implements UploadedFileInterface
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      */
-    public function moveTo($targetPath): void
+    public function moveTo(string $targetPath): void
     {
         $this->validateActive();
 
@@ -187,12 +187,8 @@ class UploadedFile implements UploadedFileInterface
      *
      * @throws \InvalidArgumentException
      */
-    protected function setError($error): void
+    protected function setError(int $error): void
     {
-        if (!\is_int($error)) {
-            throw new \InvalidArgumentException('Upload file error status must be an integer');
-        }
-
         if (!isset(static::ERRORS[$error])) {
             throw new \InvalidArgumentException('Invalid error status for UploadedFile');
         }
@@ -201,27 +197,13 @@ class UploadedFile implements UploadedFileInterface
     }
 
     /**
-     * @param int $size
+     * @param int|null $size
      *
      * @throws \InvalidArgumentException
      */
-    protected function setSize($size): void
+    protected function setSize(?int $size): void
     {
-        if (!\is_int($size)) {
-            throw new \InvalidArgumentException('Upload file size must be an integer');
-        }
-
         $this->size = $size;
-    }
-
-    /**
-     * @param $param
-     *
-     * @return bool
-     */
-    protected function isStringOrNull($param): bool
-    {
-        return $param === null || \is_string($param);
     }
 
     /**
@@ -239,12 +221,8 @@ class UploadedFile implements UploadedFileInterface
      *
      * @throws \InvalidArgumentException
      */
-    protected function setClientFilename($clientFilename): void
+    protected function setClientFilename(?string $clientFilename): void
     {
-        if (!$this->isStringOrNull($clientFilename)) {
-            throw new \InvalidArgumentException('Upload file client filename must be a string or null');
-        }
-
         $this->clientFilename = $clientFilename;
     }
 
@@ -253,12 +231,8 @@ class UploadedFile implements UploadedFileInterface
      *
      * @throws \InvalidArgumentException
      */
-    protected function setClientMediaType($clientMediaType): void
+    protected function setClientMediaType(?string $clientMediaType): void
     {
-        if (!$this->isStringOrNull($clientMediaType)) {
-            throw new \InvalidArgumentException('Upload file client media type must be a string or null');
-        }
-
         $this->clientMediaType = $clientMediaType;
     }
 

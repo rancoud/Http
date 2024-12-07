@@ -182,12 +182,8 @@ class ServerRequest implements ServerRequestInterface
      *
      * @return mixed|null
      */
-    public function getAttribute($name, $default = null)
+    public function getAttribute(string $name, $default = null)
     {
-        if (!\is_string($name)) {
-            throw new \InvalidArgumentException('Name must be a string');
-        }
-
         if (!\array_key_exists($name, $this->attributes)) {
             return $default;
         }
@@ -203,12 +199,8 @@ class ServerRequest implements ServerRequestInterface
      *
      * @return self
      */
-    public function withAttribute($name, $value): self
+    public function withAttribute(string $name, $value): self
     {
-        if (!\is_string($name)) {
-            throw new \InvalidArgumentException('Name must be a string');
-        }
-
         $new = clone $this;
         $new->attributes[$name] = $value;
 
@@ -222,12 +214,8 @@ class ServerRequest implements ServerRequestInterface
      *
      * @return self
      */
-    public function withoutAttribute($name): self
+    public function withoutAttribute(string $name): self
     {
-        if (!\is_string($name)) {
-            throw new \InvalidArgumentException('Name must be a string');
-        }
-
         if (!\array_key_exists($name, $this->attributes)) {
             return $this;
         }

@@ -40,7 +40,7 @@ trait MessageTrait
      *
      * @return self
      */
-    public function withProtocolVersion($version): self
+    public function withProtocolVersion(string $version): self
     {
         $this->validateProtocolVersion($version);
 
@@ -69,12 +69,8 @@ trait MessageTrait
      *
      * @return bool
      */
-    public function hasHeader($name): bool
+    public function hasHeader(string $name): bool
     {
-        if (!\is_string($name)) {
-            throw new \InvalidArgumentException('Header name must be a string');
-        }
-
         return isset($this->headerNames[\mb_strtolower($name)]);
     }
 
@@ -85,12 +81,8 @@ trait MessageTrait
      *
      * @return array
      */
-    public function getHeader($name): array
+    public function getHeader(string $name): array
     {
-        if (!\is_string($name)) {
-            throw new \InvalidArgumentException('Header name must be a string');
-        }
-
         $name = \mb_strtolower($name);
 
         if (!isset($this->headerNames[$name])) {
@@ -109,7 +101,7 @@ trait MessageTrait
      *
      * @return string
      */
-    public function getHeaderLine($name): string
+    public function getHeaderLine(string $name): string
     {
         return \implode(', ', $this->getHeader($name));
     }
@@ -122,9 +114,9 @@ trait MessageTrait
      *
      * @return self
      */
-    public function withHeader($name, $value): self
+    public function withHeader(string $name, $value): self
     {
-        if (!\is_string($name) || $name === '') {
+        if ($name === '') {
             throw new \InvalidArgumentException('Header name must be non-empty string');
         }
 
@@ -149,9 +141,9 @@ trait MessageTrait
      *
      * @return self
      */
-    public function withAddedHeader($name, $value): self
+    public function withAddedHeader(string $name, $value): self
     {
-        if (!\is_string($name) || $name === '') {
+        if ($name === '') {
             throw new \InvalidArgumentException('Header name must be non-empty string');
         }
 
@@ -168,9 +160,9 @@ trait MessageTrait
      *
      * @return self
      */
-    public function withoutHeader($name): self
+    public function withoutHeader(string $name): self
     {
-        if (!\is_string($name) || $name === '') {
+        if ($name === '') {
             throw new \InvalidArgumentException('Header name must be non-empty string');
         }
 
@@ -240,8 +232,8 @@ trait MessageTrait
     }
 
     /**
-     * @param string $header
-     * @param mixed  $values
+     * @param string|array $header
+     * @param mixed        $values
      *
      * @throws \InvalidArgumentException
      *
@@ -278,6 +270,22 @@ trait MessageTrait
     }
 
     /**
+     * @param string $protocolVersion
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return string
+     */
+    protected function validateProtocolVersion(string $protocolVersion): string
+    {
+        if (!\in_array($protocolVersion, static::$validProtocols, true)) {
+            throw new \InvalidArgumentException('Protocol Version must be ' . \implode(' or ', static::$validProtocols));
+        }
+
+        return $protocolVersion;
+    }
+
+    /**
      * Because of PHP 8.4.
      *
      * @param        $string
@@ -292,21 +300,5 @@ trait MessageTrait
         }
 
         return \trim((string) $string, $characters);
-    }
-
-    /**
-     * @param string $protocolVersion
-     *
-     * @throws \InvalidArgumentException
-     *
-     * @return string
-     */
-    protected function validateProtocolVersion(string $protocolVersion): string
-    {
-        if (!\in_array($protocolVersion, static::$validProtocols, true)) {
-            throw new \InvalidArgumentException('Protocol Version must be ' . \implode(' or ', static::$validProtocols));
-        }
-
-        return $protocolVersion;
     }
 }

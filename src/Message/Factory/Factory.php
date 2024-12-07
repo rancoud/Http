@@ -182,7 +182,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
         }
 
         if (isset($server['SERVER_PORT'])) {
-            $uri = $uri->withPort($server['SERVER_PORT']);
+            $uri = $uri->withPort((int) $server['SERVER_PORT']);
         }
 
         if (isset($server['REQUEST_URI'])) {
