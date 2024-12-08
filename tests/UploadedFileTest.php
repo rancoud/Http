@@ -2,6 +2,7 @@
 
 namespace tests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Rancoud\Http\Message\Stream;
 use Rancoud\Http\Message\UploadedFile;
@@ -24,7 +25,7 @@ class UploadedFileTest extends TestCase
         }
     }
 
-    public function invalidStreams(): array
+    public static function invalidStreams(): array
     {
         return [
             'null'   => [null],
@@ -42,6 +43,7 @@ class UploadedFileTest extends TestCase
      *
      * @param $streamOrFile
      */
+    #[DataProvider('invalidStreams')]
     public function testRaisesExceptionOnInvalidStreamOrFile($streamOrFile): void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -50,7 +52,7 @@ class UploadedFileTest extends TestCase
         new UploadedFile($streamOrFile, 0, \UPLOAD_ERR_OK);
     }
 
-    public function invalidErrorStatuses(): array
+    public static function invalidErrorStatuses(): array
     {
         return [
             'negative' => [-1],
@@ -63,6 +65,7 @@ class UploadedFileTest extends TestCase
      *
      * @param $status
      */
+    #[DataProvider('invalidErrorStatuses')]
     public function testRaisesExceptionOnInvalidErrorStatus($status): void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -113,7 +116,7 @@ class UploadedFileTest extends TestCase
         static::assertSame($stream->__toString(), \file_get_contents($to));
     }
 
-    public function invalidMovePaths(): array
+    public static function invalidMovePaths(): array
     {
         return [
             'empty'  => [''],
@@ -125,6 +128,7 @@ class UploadedFileTest extends TestCase
      *
      * @param $path
      */
+    #[DataProvider('invalidMovePaths')]
     public function testMoveRaisesExceptionForInvalidPath($path): void
     {
         $stream = Stream::create('Foo bar!');
@@ -165,7 +169,7 @@ class UploadedFileTest extends TestCase
         $upload->getStream();
     }
 
-    public function nonOkErrorStatus(): array
+    public static function nonOkErrorStatus(): array
     {
         return [
             'UPLOAD_ERR_INI_SIZE'   => [\UPLOAD_ERR_INI_SIZE],
@@ -183,6 +187,7 @@ class UploadedFileTest extends TestCase
      *
      * @param $status
      */
+    #[DataProvider('nonOkErrorStatus')]
     public function testConstructorDoesNotRaiseExceptionForInvalidStreamWhenErrorStatusPresent($status): void
     {
         $uploadedFile = new UploadedFile('not ok', 0, $status);
@@ -194,6 +199,7 @@ class UploadedFileTest extends TestCase
      *
      * @param $status
      */
+    #[DataProvider('nonOkErrorStatus')]
     public function testMoveToRaisesExceptionWhenErrorStatusPresent($status): void
     {
         $uploadedFile = new UploadedFile('not ok', 0, $status);
@@ -207,6 +213,7 @@ class UploadedFileTest extends TestCase
      *
      * @param $status
      */
+    #[DataProvider('nonOkErrorStatus')]
     public function testGetStreamRaisesExceptionWhenErrorStatusPresent($status): void
     {
         $uploadedFile = new UploadedFile('not ok', 0, $status);
