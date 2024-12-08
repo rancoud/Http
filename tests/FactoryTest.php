@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace tests;
 
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\StreamInterface;
 use Rancoud\Http\Message\Factory\Factory;
@@ -69,6 +70,7 @@ class FactoryTest extends TestCase
     }
 
     /** @runInSeparateProcess  */
+    #[RunInSeparateProcess]
     public function testCreateServerRequestFromGlobalsWithRequestMethod(): void
     {
         $_SERVER = \array_merge($_SERVER, ['REQUEST_METHOD' => 'POST']);
@@ -77,6 +79,7 @@ class FactoryTest extends TestCase
     }
 
     /** @runInSeparateProcess  */
+    #[RunInSeparateProcess]
     public function testCreateServerRequestFromGlobalsWithoutRequestMethod(): void
     {
         $r = (new Factory())->createServerRequestFromGlobals();
@@ -84,6 +87,7 @@ class FactoryTest extends TestCase
     }
 
     /** @runInSeparateProcess  */
+    #[RunInSeparateProcess]
     public function testCreateServerRequestFromGlobalsFakeNginx(): void
     {
         $_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'en-gb,en;q=0.5';

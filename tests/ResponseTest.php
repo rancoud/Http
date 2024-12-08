@@ -2,6 +2,9 @@
 
 namespace tests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\PreserveGlobalState;
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\StreamInterface;
 use Rancoud\Http\Message\Factory\Factory;
@@ -10,6 +13,7 @@ use Rancoud\Http\Message\Response;
 /**
  * @backupGlobals disabled
  */
+#[PreserveGlobalState(false)]
 class ResponseTest extends TestCase
 {
     public function testDefaultConstructor(): void
@@ -258,7 +262,7 @@ class ResponseTest extends TestCase
         static::assertSame($r, $r->withoutHeader('foo'));
     }
 
-    public function trimmedHeaderValues(): array
+    public static function trimmedHeaderValues(): array
     {
         return [
             [new Response(200, ['OWS' => " \t \tFoo\t \t "])],
@@ -353,6 +357,7 @@ class ResponseTest extends TestCase
      *
      * @param Response $r
      */
+    #[DataProvider('trimmedHeaderValues')]
     public function testHeaderValuesAreTrimmed(Response $r): void
     {
         static::assertSame(['OWS' => ['Foo']], $r->getHeaders());
@@ -363,6 +368,7 @@ class ResponseTest extends TestCase
     /**
      * @runInSeparateProcess
      */
+    #[RunInSeparateProcess]
     public function testSend(): void
     {
         $r = new Response(

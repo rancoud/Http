@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace tests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Rancoud\Http\Message\Uri;
 
@@ -53,6 +54,7 @@ class UriTest extends TestCase
      *
      * @param $input
      */
+    #[DataProvider('getValidUris')]
     public function testValidUrisStayValid($input): void
     {
         $uri = new Uri($input);
@@ -60,7 +62,7 @@ class UriTest extends TestCase
         static::assertSame($input, (string) $uri);
     }
 
-    public function getValidUris(): array
+    public static function getValidUris(): array
     {
         return [
             ['urn:path-rootless'],
@@ -94,6 +96,7 @@ class UriTest extends TestCase
      *
      * @param $invalidUri
      */
+    #[DataProvider('getInvalidUris')]
     public function testInvalidUrisThrowException($invalidUri): void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -102,7 +105,7 @@ class UriTest extends TestCase
         new Uri($invalidUri);
     }
 
-    public function getInvalidUris(): array
+    public static function getInvalidUris(): array
     {
         return [
             // parse_url() requires the host component which makes sense for http(s)
@@ -313,7 +316,7 @@ class UriTest extends TestCase
         static::assertSame('', $uri->getAuthority());
     }
 
-    public function uriComponentsEncodingProvider(): array
+    public static function uriComponentsEncodingProvider(): array
     {
         $unreserved = 'a-zA-Z0-9.-_~!$&\'()*+,;=:@';
 
@@ -344,6 +347,7 @@ class UriTest extends TestCase
      * @param $fragment
      * @param $output
      */
+    #[DataProvider('uriComponentsEncodingProvider')]
     public function testUriComponentsGetEncodedProperly($input, $path, $query, $fragment, $output): void
     {
         $uri = new Uri($input);

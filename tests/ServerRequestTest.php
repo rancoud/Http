@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace tests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Rancoud\Http\Message\Factory\Factory;
 use Rancoud\Http\Message\ServerRequest;
@@ -12,7 +13,7 @@ use Rancoud\Http\Message\Uri;
 
 class ServerRequestTest extends TestCase
 {
-    public function dataNormalizeFiles(): array
+    public static function dataNormalizeFiles(): array
     {
         return [
             'Single file' => [
@@ -269,6 +270,7 @@ class ServerRequestTest extends TestCase
      * @param $files
      * @param $expected
      */
+    #[DataProvider('dataNormalizeFiles')]
     public function testNormalizeFiles($files, $expected): void
     {
         $result = (new Factory())
@@ -286,7 +288,7 @@ class ServerRequestTest extends TestCase
         (new Factory())->createServerRequestFromArrays(['REQUEST_METHOD' => 'POST'], [], [], [], [], ['test' => 'something']);
     }
 
-    public function dataGetUriFromGlobals(): array
+    public static function dataGetUriFromGlobals(): array
     {
         $server = [
             'PHP_SELF'             => '/blog/article.php',
@@ -353,6 +355,7 @@ class ServerRequestTest extends TestCase
      * @param $expected
      * @param $serverParams
      */
+    #[DataProvider('dataGetUriFromGlobals')]
     public function testGetUriFromGlobals($expected, $serverParams): void
     {
         static::assertEqualsCanonicalizing(new Uri($expected), (new Factory())->createUriFromArray($serverParams));
