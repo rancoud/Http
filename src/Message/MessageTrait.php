@@ -25,20 +25,13 @@ trait MessageTrait
 
     protected ?StreamInterface $stream = null;
 
-    /**
-     * @return string
-     */
     public function getProtocolVersion(): string
     {
         return $this->protocol;
     }
 
     /**
-     * @param string $version
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return self
      */
     public function withProtocolVersion(string $version): self
     {
@@ -54,20 +47,13 @@ trait MessageTrait
         return $new;
     }
 
-    /**
-     * @return array
-     */
     public function getHeaders(): array
     {
         return $this->headers;
     }
 
     /**
-     * @param string $name
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return bool
      */
     public function hasHeader(string $name): bool
     {
@@ -75,11 +61,7 @@ trait MessageTrait
     }
 
     /**
-     * @param string $name
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return array
      */
     public function getHeader(string $name): array
     {
@@ -95,11 +77,7 @@ trait MessageTrait
     }
 
     /**
-     * @param string $name
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return string
      */
     public function getHeaderLine(string $name): string
     {
@@ -107,12 +85,9 @@ trait MessageTrait
     }
 
     /**
-     * @param string                 $name
      * @param string|int|float|array $value
      *
      * @throws \InvalidArgumentException
-     *
-     * @return self
      */
     public function withHeader(string $name, $value): self
     {
@@ -134,12 +109,9 @@ trait MessageTrait
     }
 
     /**
-     * @param string                 $name
      * @param string|int|float|array $value
      *
      * @throws \InvalidArgumentException
-     *
-     * @return self
      */
     public function withAddedHeader(string $name, $value): self
     {
@@ -154,11 +126,7 @@ trait MessageTrait
     }
 
     /**
-     * @param string $name
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return self
      */
     public function withoutHeader(string $name): self
     {
@@ -182,8 +150,6 @@ trait MessageTrait
 
     /**
      * @throws \InvalidArgumentException
-     *
-     * @return StreamInterface
      */
     public function getBody(): StreamInterface
     {
@@ -194,11 +160,6 @@ trait MessageTrait
         return $this->stream;
     }
 
-    /**
-     * @param StreamInterface $body
-     *
-     * @return self
-     */
     public function withBody(StreamInterface $body): self
     {
         if ($this->stream === $body) {
@@ -212,8 +173,6 @@ trait MessageTrait
     }
 
     /**
-     * @param array $headers
-     *
      * @throws \InvalidArgumentException
      */
     protected function setHeaders(array $headers): void
@@ -233,11 +192,8 @@ trait MessageTrait
 
     /**
      * @param string|array $header
-     * @param mixed        $values
      *
      * @throws \InvalidArgumentException
-     *
-     * @return array
      */
     protected function validateAndTrimHeader($header, $values): array
     {
@@ -270,11 +226,7 @@ trait MessageTrait
     }
 
     /**
-     * @param string $protocolVersion
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return string
      */
     protected function validateProtocolVersion(string $protocolVersion): string
     {
@@ -287,11 +239,6 @@ trait MessageTrait
 
     /**
      * Because of PHP 8.4.
-     *
-     * @param        $string
-     * @param string $characters
-     *
-     * @return string
      */
     protected function trim($string, string $characters = " \n\r\t\v\0"): string
     {

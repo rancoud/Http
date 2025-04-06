@@ -29,12 +29,9 @@ use Rancoud\Http\Message\Uri;
 class Factory implements RequestFactoryInterface, ResponseFactoryInterface, ServerRequestFactoryInterface, StreamFactoryInterface, UploadedFileFactoryInterface, UriFactoryInterface
 {
     /**
-     * @param string              $method
      * @param string|UriInterface $uri
      *
      * @throws \InvalidArgumentException
-     *
-     * @return RequestInterface
      */
     public function createRequest(string $method, $uri): RequestInterface
     {
@@ -42,12 +39,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
     }
 
     /**
-     * @param int    $code
-     * @param string $reasonPhrase
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return ResponseInterface
      */
     public function createResponse(int $code = 200, string $reasonPhrase = ''): ResponseInterface
     {
@@ -55,12 +47,9 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
     }
 
     /**
-     * @param int                                  $code
      * @param string|resource|StreamInterface|null $body
      *
      * @throws \InvalidArgumentException
-     *
-     * @return Response
      */
     public function createResponseBody(int $code = 200, $body = null): Response
     {
@@ -68,11 +57,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
     }
 
     /**
-     * @param string $location
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return Response
      */
     public function createRedirection(string $location): Response
     {
@@ -80,11 +65,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
     }
 
     /**
-     * @param string $content
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return StreamInterface
      */
     public function createStream(string $content = ''): StreamInterface
     {
@@ -92,13 +73,8 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
     }
 
     /**
-     * @param string $filename
-     * @param string $mode
-     *
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
-     *
-     * @return StreamInterface
      */
     public function createStreamFromFile(string $filename, string $mode = 'r'): StreamInterface
     {
@@ -109,8 +85,6 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
      * @param resource $resource
      *
      * @throws \InvalidArgumentException
-     *
-     * @return StreamInterface
      */
     public function createStreamFromResource($resource): StreamInterface
     {
@@ -118,15 +92,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
     }
 
     /**
-     * @param StreamInterface $stream
-     * @param int|null        $size
-     * @param int             $error
-     * @param string|null     $clientFilename
-     * @param string|null     $clientMediaType
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return UploadedFileInterface
      */
     public function createUploadedFile(
         StreamInterface $stream,
@@ -143,11 +109,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
     }
 
     /**
-     * @param string $uri
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return UriInterface
      */
     public function createUri(string $uri = ''): UriInterface
     {
@@ -155,11 +117,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
     }
 
     /**
-     * @param array $server
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return Uri
      */
     public function createUriFromArray(array $server): Uri
     {
@@ -198,13 +156,9 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
     }
 
     /**
-     * @param string              $method
      * @param string|UriInterface $uri
-     * @param array               $serverParams
      *
      * @throws \InvalidArgumentException
-     *
-     * @return ServerRequestInterface
      */
     public function createServerRequest(string $method, $uri, array $serverParams = []): ServerRequestInterface
     {
@@ -212,11 +166,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
     }
 
     /**
-     * @param array $server
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return ServerRequest
      */
     public function createServerRequestFromArray(array $server): ServerRequest
     {
@@ -231,16 +181,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
     }
 
     /**
-     * @param array $server
-     * @param array $headers
-     * @param array $cookie
-     * @param array $get
-     * @param array $post
-     * @param array $files
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return ServerRequest
      *
      * @noinspection PhpTooManyParametersInspection
      */
@@ -271,8 +212,6 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
 
     /**
      * @throws \InvalidArgumentException
-     *
-     * @return ServerRequest
      */
     public function createServerRequestFromGlobals(): ServerRequest
     {
@@ -293,11 +232,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
     }
 
     /**
-     * @param array $environment
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return string
      */
     protected function getMethodFromEnvironment(array $environment): string
     {
@@ -309,11 +244,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
     }
 
     /**
-     * @param array $environment
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return UriInterface
      */
     protected function getUriFromEnvironmentWithHTTP(array $environment): UriInterface
     {
@@ -326,11 +257,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
     }
 
     /**
-     * @param array $files
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return array
      */
     protected static function normalizeFiles(array $files): array
     {
@@ -352,8 +279,6 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
     }
 
     /**
-     * @param array $value
-     *
      * @throws \InvalidArgumentException
      *
      * @return array|UploadedFile
@@ -374,11 +299,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
     }
 
     /**
-     * @param array $files
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return array
      */
     protected static function normalizeNestedFileSpec(array $files = []): array
     {
@@ -398,9 +319,6 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
         return $normalizedFiles;
     }
 
-    /**
-     * @return array
-     */
     protected function getAllHeaders(): array
     {
         $headers = [];

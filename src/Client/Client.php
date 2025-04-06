@@ -46,15 +46,11 @@ class Client implements ClientInterface
     /**
      * Sends a PSR-7 request and returns a PSR-7 response.
      *
-     * @param RequestInterface $request
-     *
      * @throws \Psr\Http\Client\ClientExceptionInterface
      * @throws RequestException
      * @throws NetworkException
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
-     *
-     * @return ResponseInterface
      */
     public function sendRequest(RequestInterface $request): ResponseInterface
     {
@@ -65,8 +61,6 @@ class Client implements ClientInterface
     }
 
     /**
-     * @param RequestInterface $request
-     *
      * @throws \RuntimeException
      *
      * @return false|resource
@@ -89,10 +83,7 @@ class Client implements ClientInterface
     }
 
     /**
-     * @param resource         $curlHandle
-     * @param RequestInterface $request
-     *
-     * @return Client
+     * @param resource $curlHandle
      */
     protected function setProtocolVersion($curlHandle, RequestInterface $request): self
     {
@@ -107,10 +98,7 @@ class Client implements ClientInterface
     }
 
     /**
-     * @param resource         $curlHandle
-     * @param RequestInterface $request
-     *
-     * @return Client
+     * @param resource $curlHandle
      */
     protected function setMethod($curlHandle, RequestInterface $request): self
     {
@@ -127,10 +115,7 @@ class Client implements ClientInterface
     }
 
     /**
-     * @param resource         $curlHandle
-     * @param RequestInterface $request
-     *
-     * @return Client
+     * @param resource $curlHandle
      */
     protected function setUrl($curlHandle, RequestInterface $request): self
     {
@@ -140,12 +125,9 @@ class Client implements ClientInterface
     }
 
     /**
-     * @param resource         $curlHandle
-     * @param RequestInterface $request
+     * @param resource $curlHandle
      *
      * @throws \RuntimeException
-     *
-     * @return Client
      */
     protected function setBody($curlHandle, RequestInterface $request): self
     {
@@ -173,10 +155,7 @@ class Client implements ClientInterface
     }
 
     /**
-     * @param resource         $curlHandle
-     * @param RequestInterface $request
-     *
-     * @return Client
+     * @param resource $curlHandle
      */
     protected function setHeaders($curlHandle, RequestInterface $request): self
     {
@@ -195,10 +174,7 @@ class Client implements ClientInterface
     }
 
     /**
-     * @param resource         $curlHandle
-     * @param RequestInterface $request
-     *
-     * @return Client
+     * @param resource $curlHandle
      */
     protected function setSsl($curlHandle, RequestInterface $request): self
     {
@@ -221,13 +197,10 @@ class Client implements ClientInterface
     }
 
     /**
-     * @param resource         $curlHandle
-     * @param RequestInterface $request
+     * @param resource $curlHandle
      *
      * @throws NetworkException
      * @throws RequestException
-     *
-     * @return array
      */
     protected function sendCurlSimple($curlHandle, RequestInterface $request): array
     {
@@ -247,8 +220,7 @@ class Client implements ClientInterface
     }
 
     /**
-     * @param resource         $curlHandle
-     * @param RequestInterface $request
+     * @param resource $curlHandle
      *
      * @throws NetworkException
      * @throws RequestException
@@ -295,11 +267,7 @@ class Client implements ClientInterface
     }
 
     /**
-     * @param array $infos
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return Response
      */
     protected function convertCurlSimpleResponse(array $infos): Response
     {

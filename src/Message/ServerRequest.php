@@ -32,12 +32,8 @@ class ServerRequest implements ServerRequestInterface
     protected array $uploadedFiles = [];
 
     /**
-     * @param string                               $method
      * @param string|UriInterface                  $uri
-     * @param array                                $headers
      * @param string|resource|StreamInterface|null $body
-     * @param string                               $version
-     * @param array                                $serverParams
      *
      * @throws \InvalidArgumentException
      */
@@ -70,27 +66,16 @@ class ServerRequest implements ServerRequestInterface
         $this->serverParams = $serverParams;
     }
 
-    /**
-     * @return array
-     */
     public function getServerParams(): array
     {
         return $this->serverParams;
     }
 
-    /**
-     * @return array
-     */
     public function getCookieParams(): array
     {
         return $this->cookieParams;
     }
 
-    /**
-     * @param array $cookies
-     *
-     * @return self
-     */
     public function withCookieParams(array $cookies): self
     {
         $new = clone $this;
@@ -99,19 +84,11 @@ class ServerRequest implements ServerRequestInterface
         return $new;
     }
 
-    /**
-     * @return array
-     */
     public function getQueryParams(): array
     {
         return $this->queryParams;
     }
 
-    /**
-     * @param array $query
-     *
-     * @return self
-     */
     public function withQueryParams(array $query): self
     {
         $new = clone $this;
@@ -120,19 +97,11 @@ class ServerRequest implements ServerRequestInterface
         return $new;
     }
 
-    /**
-     * @return array
-     */
     public function getUploadedFiles(): array
     {
         return $this->uploadedFiles;
     }
 
-    /**
-     * @param array $uploadedFiles
-     *
-     * @return self
-     */
     public function withUploadedFiles(array $uploadedFiles): self
     {
         $new = clone $this;
@@ -153,8 +122,6 @@ class ServerRequest implements ServerRequestInterface
      * @param array|object|null $data
      *
      * @throws \InvalidArgumentException
-     *
-     * @return self
      */
     public function withParsedBody($data): self
     {
@@ -166,18 +133,12 @@ class ServerRequest implements ServerRequestInterface
         return $new;
     }
 
-    /**
-     * @return array
-     */
     public function getAttributes(): array
     {
         return $this->attributes;
     }
 
     /**
-     * @param string $name
-     * @param mixed  $default
-     *
      * @throws \InvalidArgumentException
      *
      * @return mixed|null
@@ -192,12 +153,7 @@ class ServerRequest implements ServerRequestInterface
     }
 
     /**
-     * @param string $name
-     * @param mixed  $value
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return self
      */
     public function withAttribute(string $name, $value): self
     {
@@ -208,11 +164,7 @@ class ServerRequest implements ServerRequestInterface
     }
 
     /**
-     * @param string $name
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return self
      */
     public function withoutAttribute(string $name): self
     {
@@ -227,8 +179,6 @@ class ServerRequest implements ServerRequestInterface
     }
 
     /**
-     * @param mixed $data
-     *
      * @throws \InvalidArgumentException
      */
     protected function validateData($data): void

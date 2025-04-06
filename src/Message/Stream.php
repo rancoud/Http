@@ -49,8 +49,6 @@ class Stream implements StreamInterface
 
     /**
      * @throws \Throwable
-     *
-     * @return string
      */
     public function __toString(): string
     {
@@ -88,9 +86,6 @@ class Stream implements StreamInterface
         return $result;
     }
 
-    /**
-     * @return int|null
-     */
     public function getSize(): ?int
     {
         if ($this->size !== null) {
@@ -121,8 +116,6 @@ class Stream implements StreamInterface
 
     /**
      * @throws \RuntimeException
-     *
-     * @return int
      */
     public function tell(): int
     {
@@ -139,26 +132,17 @@ class Stream implements StreamInterface
         return $positionInFile;
     }
 
-    /**
-     * @return bool
-     */
     public function eof(): bool
     {
         return $this->stream === false || \feof($this->stream);
     }
 
-    /**
-     * @return bool
-     */
     public function isSeekable(): bool
     {
         return $this->seekable;
     }
 
     /**
-     * @param int $offset
-     * @param int $whence
-     *
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      */
@@ -184,21 +168,14 @@ class Stream implements StreamInterface
         $this->seek(0);
     }
 
-    /**
-     * @return bool
-     */
     public function isWritable(): bool
     {
         return $this->writable;
     }
 
     /**
-     * @param string $string
-     *
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
-     *
-     * @return int
      */
     public function write(string $string): int
     {
@@ -220,21 +197,14 @@ class Stream implements StreamInterface
         return $bytesWritten;
     }
 
-    /**
-     * @return bool
-     */
     public function isReadable(): bool
     {
         return $this->readable;
     }
 
     /**
-     * @param int $length
-     *
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
-     *
-     * @return string
      */
     public function read(int $length): string
     {
@@ -258,8 +228,6 @@ class Stream implements StreamInterface
     /**
      * @throws \RuntimeException
      * @throws \Throwable
-     *
-     * @return string
      */
     public function getContents(): string
     {
@@ -298,8 +266,6 @@ class Stream implements StreamInterface
     }
 
     /**
-     * @param string|null $key
-     *
      * @throws \InvalidArgumentException
      *
      * @return array|mixed|null
@@ -323,8 +289,6 @@ class Stream implements StreamInterface
      * @param string|resource|StreamInterface $content
      *
      * @throws \InvalidArgumentException
-     *
-     * @return StreamInterface
      */
     public static function create($content = ''): StreamInterface
     {
@@ -367,12 +331,6 @@ class Stream implements StreamInterface
         return $obj;
     }
 
-    /**
-     * @param string $filename
-     * @param string $mode
-     *
-     * @return StreamInterface
-     */
     public static function createFromFile(string $filename, string $mode = 'r'): StreamInterface
     {
         if (!\file_exists($filename)) {

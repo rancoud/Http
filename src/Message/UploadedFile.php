@@ -43,10 +43,6 @@ class UploadedFile implements UploadedFileInterface
 
     /**
      * @param StreamInterface|string|resource $streamOrFile
-     * @param int|null                        $size
-     * @param int                             $errorStatus
-     * @param string|null                     $clientFilename
-     * @param string|null                     $clientMediaType
      *
      * @throws \InvalidArgumentException
      */
@@ -70,8 +66,6 @@ class UploadedFile implements UploadedFileInterface
     /**
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
-     *
-     * @return StreamInterface
      */
     public function getStream(): StreamInterface
     {
@@ -85,8 +79,6 @@ class UploadedFile implements UploadedFileInterface
     }
 
     /**
-     * @param string $targetPath
-     *
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      */
@@ -124,49 +116,32 @@ class UploadedFile implements UploadedFileInterface
         }
     }
 
-    /**
-     * @return int|null
-     */
     public function getSize(): ?int
     {
         return $this->size;
     }
 
-    /**
-     * @return int
-     */
     public function getError(): int
     {
         return $this->error;
     }
 
-    /**
-     * @return string|null
-     */
     public function getClientFilename(): ?string
     {
         return $this->clientFilename;
     }
 
-    /**
-     * @return string|null
-     */
     public function getClientMediaType(): ?string
     {
         return $this->clientMediaType;
     }
 
-    /**
-     * @return string|null
-     */
     public function getFilename(): ?string
     {
         return $this->file;
     }
 
     /**
-     * @param $streamOrFile
-     *
      * @throws \InvalidArgumentException
      */
     protected function setStreamOrFile($streamOrFile): void
@@ -183,8 +158,6 @@ class UploadedFile implements UploadedFileInterface
     }
 
     /**
-     * @param int $error
-     *
      * @throws \InvalidArgumentException
      */
     protected function setError(int $error): void
@@ -197,8 +170,6 @@ class UploadedFile implements UploadedFileInterface
     }
 
     /**
-     * @param int|null $size
-     *
      * @throws \InvalidArgumentException
      */
     protected function setSize(?int $size): void
@@ -206,19 +177,12 @@ class UploadedFile implements UploadedFileInterface
         $this->size = $size;
     }
 
-    /**
-     * @param $param
-     *
-     * @return bool
-     */
     protected function isStringNotEmpty($param): bool
     {
         return \is_string($param) === true && $param !== '';
     }
 
     /**
-     * @param string|null $clientFilename
-     *
      * @throws \InvalidArgumentException
      */
     protected function setClientFilename(?string $clientFilename): void
@@ -227,8 +191,6 @@ class UploadedFile implements UploadedFileInterface
     }
 
     /**
-     * @param string|null $clientMediaType
-     *
      * @throws \InvalidArgumentException
      */
     protected function setClientMediaType(?string $clientMediaType): void
@@ -236,9 +198,6 @@ class UploadedFile implements UploadedFileInterface
         $this->clientMediaType = $clientMediaType;
     }
 
-    /**
-     * @return bool
-     */
     protected function isUploadSuccess(): bool
     {
         return $this->error === \UPLOAD_ERR_OK;
@@ -259,9 +218,6 @@ class UploadedFile implements UploadedFileInterface
     }
 
     /**
-     * @param StreamInterface $source
-     * @param StreamInterface $dest
-     *
      * @throws \RuntimeException
      */
     protected function copyToStream(StreamInterface $source, StreamInterface $dest): void

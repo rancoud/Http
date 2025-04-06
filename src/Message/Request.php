@@ -17,11 +17,8 @@ class Request implements RequestInterface
     use RequestTrait;
 
     /**
-     * @param string                               $method
      * @param string|UriInterface                  $uri
-     * @param array                                $headers
      * @param string|resource|StreamInterface|null $body
-     * @param string                               $version
      *
      * @throws \InvalidArgumentException
      */
