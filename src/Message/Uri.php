@@ -38,8 +38,6 @@ class Uri implements UriInterface
     protected string $fragment = '';
 
     /**
-     * @param string $uri
-     *
      * @throws \InvalidArgumentException
      */
     public function __construct(string $uri = '')
@@ -54,17 +52,11 @@ class Uri implements UriInterface
         }
     }
 
-    /**
-     * @return string
-     */
     public function getScheme(): string
     {
         return $this->scheme;
     }
 
-    /**
-     * @return string
-     */
     public function getAuthority(): string
     {
         if ($this->host === '') {
@@ -84,60 +76,38 @@ class Uri implements UriInterface
         return $authority;
     }
 
-    /**
-     * @return string
-     */
     public function getUserInfo(): string
     {
         return $this->userInfo;
     }
 
-    /**
-     * @return string
-     */
     public function getHost(): string
     {
         return $this->host;
     }
 
-    /**
-     * @return int|null
-     */
     public function getPort(): ?int
     {
         return $this->port;
     }
 
-    /**
-     * @return string
-     */
     public function getPath(): string
     {
         return $this->path;
     }
 
-    /**
-     * @return string
-     */
     public function getQuery(): string
     {
         return $this->query;
     }
 
-    /**
-     * @return string
-     */
     public function getFragment(): string
     {
         return $this->fragment;
     }
 
     /**
-     * @param string $scheme
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return self
      */
     public function withScheme(string $scheme): self
     {
@@ -155,12 +125,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * @param string      $user
-     * @param string|null $password
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return self
      */
     public function withUserInfo(string $user, ?string $password = null): self
     {
@@ -182,11 +147,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * @param string $host
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return self
      */
     public function withHost(string $host): self
     {
@@ -203,11 +164,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * @param int|null $port
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return self
      */
     public function withPort(?int $port): self
     {
@@ -224,11 +181,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * @param string $path
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return self
      */
     public function withPath(string $path): self
     {
@@ -245,11 +198,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * @param string $query
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return self
      */
     public function withQuery(string $query): self
     {
@@ -266,11 +215,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * @param string $fragment
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return self
      */
     public function withFragment(string $fragment): self
     {
@@ -286,9 +231,6 @@ class Uri implements UriInterface
         return $new;
     }
 
-    /**
-     * @return string
-     */
     public function __toString(): string
     {
         return static::createUriString(
@@ -301,8 +243,6 @@ class Uri implements UriInterface
     }
 
     /**
-     * @param array $parts
-     *
      * @throws \InvalidArgumentException
      */
     protected function applyParts(array $parts): void
@@ -348,15 +288,6 @@ class Uri implements UriInterface
         }
     }
 
-    /**
-     * @param string $scheme
-     * @param string $authority
-     * @param string $path
-     * @param string $query
-     * @param string $fragment
-     *
-     * @return string
-     */
     protected static function createUriString(
         string $scheme,
         string $authority,
@@ -401,23 +332,13 @@ class Uri implements UriInterface
         return $uri;
     }
 
-    /**
-     * @param string $scheme
-     * @param int    $port
-     *
-     * @return bool
-     */
     protected static function isNonStandardPort(string $scheme, int $port): bool
     {
         return !isset(static::SCHEMES[$scheme]) || $port !== static::SCHEMES[$scheme];
     }
 
     /**
-     * @param string $scheme
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return string
      */
     protected function filterScheme(string $scheme): string
     {
@@ -425,11 +346,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * @param string $user
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return string
      */
     protected function filterUser(string $user): string
     {
@@ -437,11 +354,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * @param ?string $pass
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return string
      */
     protected function filterPass(?string $pass): ?string
     {
@@ -449,11 +362,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * @param string $host
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return string
      */
     protected function filterHost(string $host): string
     {
@@ -461,11 +370,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * @param int|null $port
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return int|null
      */
     protected function filterPort(?int $port): ?int
     {
@@ -485,11 +390,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * @param string $path
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return string
      */
     protected function filterPath(string $path): string
     {
@@ -501,11 +402,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * @param string $str
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return string
      */
     protected function filterQueryAndFragment(string $str): string
     {
@@ -516,27 +413,16 @@ class Uri implements UriInterface
         );
     }
 
-    /**
-     * @param array $match
-     *
-     * @return string
-     */
     protected static function rawurlencodeMatchZero(array $match): string
     {
         return \rawurlencode($match[0]);
     }
 
-    /**
-     * @return string
-     */
     protected static function getPatternForFilteringPath(): string
     {
         return '/(?:[^' . static::CHAR_UNRESERVED . static::CHAR_SUB_DELIMS . '%:@\/]++|%(?![A-Fa-f0-9]{2}))/';
     }
 
-    /**
-     * @return string
-     */
     protected static function getPatternForFilteringQueryAndFragment(): string
     {
         return '/(?:[^' . static::CHAR_UNRESERVED . static::CHAR_SUB_DELIMS . '%:@\/\?]++|%(?![A-Fa-f0-9]{2}))/';
@@ -544,11 +430,6 @@ class Uri implements UriInterface
 
     /**
      * Because of PHP 8.4.
-     *
-     * @param        $string
-     * @param string $characters
-     *
-     * @return string
      */
     protected static function ltrim($string, string $characters = " \n\r\t\v\0"): string
     {

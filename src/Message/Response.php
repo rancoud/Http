@@ -181,11 +181,7 @@ class Response implements ResponseInterface
     protected int $statusCode = 200;
 
     /**
-     * @param int                                  $status
-     * @param array                                $headers
      * @param string|resource|StreamInterface|null $body
-     * @param string                               $version
-     * @param string|null                          $reason
      *
      * @throws \InvalidArgumentException
      */
@@ -217,21 +213,13 @@ class Response implements ResponseInterface
         }
     }
 
-    /**
-     * @return int
-     */
     public function getStatusCode(): int
     {
         return $this->statusCode;
     }
 
     /**
-     * @param int    $code
-     * @param string $reasonPhrase
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return Response
      */
     public function withStatus(int $code, string $reasonPhrase = ''): self
     {
@@ -249,17 +237,12 @@ class Response implements ResponseInterface
         return $new;
     }
 
-    /**
-     * @return string
-     */
     public function getReasonPhrase(): string
     {
         return $this->reasonPhrase;
     }
 
     /**
-     * @param int $bodyChunkSize
-     *
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      */

@@ -72,9 +72,6 @@ trait RequestTrait
 
     protected ?UriInterface $uri = null;
 
-    /**
-     * @return string
-     */
     public function getRequestTarget(): string
     {
         if ($this->requestTarget !== null) {
@@ -96,11 +93,7 @@ trait RequestTrait
     }
 
     /**
-     * @param string $requestTarget
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return self
      */
     public function withRequestTarget(string $requestTarget): self
     {
@@ -114,20 +107,13 @@ trait RequestTrait
         return $new;
     }
 
-    /**
-     * @return string
-     */
     public function getMethod(): string
     {
         return $this->method;
     }
 
     /**
-     * @param string $method
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return self
      */
     public function withMethod(string $method): self
     {
@@ -139,21 +125,13 @@ trait RequestTrait
         return $new;
     }
 
-    /**
-     * @return UriInterface
-     */
     public function getUri(): UriInterface
     {
         return $this->uri;
     }
 
     /**
-     * @param UriInterface $uri
-     * @param bool         $preserveHost
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return self
      */
     public function withUri(UriInterface $uri, bool $preserveHost = false): self
     {
@@ -172,11 +150,7 @@ trait RequestTrait
     }
 
     /**
-     * @param string $method
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return string
      */
     protected function filterMethod(string $method): string
     {

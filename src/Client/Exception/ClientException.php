@@ -8,9 +8,6 @@ use Psr\Http\Message\RequestInterface;
 
 abstract class ClientException extends \Exception
 {
-    /**
-     * @var RequestInterface
-     */
     protected RequestInterface $request;
 
     public function __construct(RequestInterface $request, string $message = '', int $code = 0, ?\Throwable $previous = null)
@@ -24,8 +21,6 @@ abstract class ClientException extends \Exception
      * Returns the request.
      *
      * The request object MAY be a different object from the one passed to ClientInterface::sendRequest()
-     *
-     * @return RequestInterface
      */
     public function getRequest(): RequestInterface
     {
