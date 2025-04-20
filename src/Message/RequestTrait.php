@@ -6,9 +6,6 @@ namespace Rancoud\Http\Message;
 
 use Psr\Http\Message\UriInterface;
 
-/**
- * Trait RequestTrait.
- */
 trait RequestTrait
 {
     public static array $methods = [

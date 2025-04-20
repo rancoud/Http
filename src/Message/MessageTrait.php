@@ -6,9 +6,6 @@ namespace Rancoud\Http\Message;
 
 use Psr\Http\Message\StreamInterface;
 
-/**
- * Trait MessageTrait.
- */
 trait MessageTrait
 {
     protected static string $patternHeaderName = "@^[!#$%&'*+.^_`|~0-9A-Za-z-]+$@";
@@ -176,12 +173,8 @@ trait MessageTrait
         }
     }
 
-    /**
-     * @param array|string $header
-     *
-     * @throws \InvalidArgumentException
-     */
-    protected function validateAndTrimHeader($header, $values): array
+    /** @throws \InvalidArgumentException */
+    protected function validateAndTrimHeader(array|string $header, $values): array
     {
         if (!\is_string($header) || \preg_match(static::$patternHeaderName, $header) !== 1) {
             throw new \InvalidArgumentException('Header name must be RFC 7230 compatible string.');

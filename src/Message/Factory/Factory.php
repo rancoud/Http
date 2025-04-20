@@ -23,9 +23,6 @@ use Rancoud\Http\Message\Stream;
 use Rancoud\Http\Message\UploadedFile;
 use Rancoud\Http\Message\Uri;
 
-/**
- * Class Factory.
- */
 class Factory implements RequestFactoryInterface, ResponseFactoryInterface, ServerRequestFactoryInterface, StreamFactoryInterface, UploadedFileFactoryInterface, UriFactoryInterface
 {
     /**
@@ -49,7 +46,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
      *
      * @throws \InvalidArgumentException
      */
-    public function createResponseBody(int $code = 200, $body = null): Response
+    public function createResponseBody(int $code = 200, mixed $body = null): Response
     {
         return new Response($code, [], $body, '1.1');
     }
@@ -255,12 +252,8 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
         return $normalized;
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     *
-     * @return array|UploadedFile
-     */
-    protected static function createUploadedFileFromSpec(array $value)
+    /** @throws \InvalidArgumentException */
+    protected static function createUploadedFileFromSpec(array $value): array|UploadedFile
     {
         if (\is_array($value['tmp_name'])) {
             return static::normalizeNestedFileSpec($value);

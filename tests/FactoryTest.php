@@ -10,9 +10,7 @@ use Psr\Http\Message\StreamInterface;
 use Rancoud\Http\Message\Factory\Factory;
 use Rancoud\Http\Message\Uri;
 
-/**
- * @internal
- */
+/** @internal */
 class FactoryTest extends TestCase
 {
     public function testCreateRequest(): void
@@ -72,7 +70,6 @@ class FactoryTest extends TestCase
         (new Factory())->createServerRequestFromArray($_SERVER);
     }
 
-    /** @runInSeparateProcess  */
     #[RunInSeparateProcess]
     public function testCreateServerRequestFromGlobalsWithRequestMethod(): void
     {
@@ -81,7 +78,6 @@ class FactoryTest extends TestCase
         static::assertSame('POST', $r->getMethod());
     }
 
-    /** @runInSeparateProcess  */
     #[RunInSeparateProcess]
     public function testCreateServerRequestFromGlobalsWithoutRequestMethod(): void
     {
@@ -89,7 +85,6 @@ class FactoryTest extends TestCase
         static::assertSame('GET', $r->getMethod());
     }
 
-    /** @runInSeparateProcess  */
     #[RunInSeparateProcess]
     public function testCreateServerRequestFromGlobalsFakeNginx(): void
     {

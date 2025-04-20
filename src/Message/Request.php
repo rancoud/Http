@@ -8,25 +8,21 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 
-/**
- * Class Request.
- */
 class Request implements RequestInterface
 {
     use MessageTrait;
     use RequestTrait;
 
     /**
-     * @param string|UriInterface                  $uri
      * @param resource|StreamInterface|string|null $body
      *
      * @throws \InvalidArgumentException
      */
     public function __construct(
         string $method,
-        $uri,
+        string|UriInterface $uri,
         array $headers = [],
-        $body = null,
+        mixed $body = null,
         string $version = '1.1'
     ) {
         $this->method = $this->filterMethod($method);

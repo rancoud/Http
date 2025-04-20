@@ -7,15 +7,12 @@ namespace Rancoud\Http\Message;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
-/**
- * Class Response.
- */
 class Response implements ResponseInterface
 {
     use MessageTrait;
 
     /** @var string[] */
-    public const PHRASES = [
+    public const array PHRASES = [
         100 => 'Continue',
         101 => 'Switching Protocols',
         102 => 'Processing',
@@ -188,7 +185,7 @@ class Response implements ResponseInterface
     public function __construct(
         int $status = 200,
         array $headers = [],
-        $body = null,
+        mixed $body = null,
         string $version = '1.1',
         ?string $reason = null
     ) {

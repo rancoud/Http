@@ -7,9 +7,7 @@ namespace tests;
 use PHPUnit\Framework\TestCase;
 use Rancoud\Http\Message\Stream;
 
-/**
- * @internal
- */
+/** @internal */
 class StreamTest extends TestCase
 {
     public function testConstructorInitializesProperties(): void
@@ -136,7 +134,7 @@ class StreamTest extends TestCase
             try {
                 $fn($stream);
                 static::fail();
-            } catch (\Exception $e) {
+            } catch (\Exception) {
             }
         };
 
