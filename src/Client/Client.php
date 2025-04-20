@@ -67,9 +67,12 @@ class Client implements ClientInterface
     {
         $curlHandle = \curl_init();
 
+        // @codeCoverageIgnoreStart
+        // Not possible to arrive here
         if ($curlHandle === false) {
             throw new \RuntimeException();
         }
+        // @codeCoverageIgnoreEnd
 
         \curl_setopt($curlHandle, \CURLOPT_RETURNTRANSFER, true);
         \curl_setopt($curlHandle, \CURLOPT_HEADER, true);
