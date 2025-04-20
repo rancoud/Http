@@ -6,22 +6,19 @@ namespace Rancoud\Http\Message;
 
 use Psr\Http\Message\UriInterface;
 
-/**
- * Class Uri.
- */
 class Uri implements UriInterface
 {
     /** @var array */
-    protected const SCHEMES = [
+    protected const array SCHEMES = [
         'http'  => 80,
         'https' => 443,
     ];
 
     /** @var string */
-    protected const CHAR_UNRESERVED = 'a-zA-Z0-9_\-\.~';
+    protected const string CHAR_UNRESERVED = 'a-zA-Z0-9_\-\.~';
 
     /** @var string */
-    protected const CHAR_SUB_DELIMS = '!\$&\'\(\)\*\+,;=';
+    protected const string CHAR_SUB_DELIMS = '!\$&\'\(\)\*\+,;=';
 
     protected string $scheme = '';
 

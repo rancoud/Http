@@ -7,13 +7,10 @@ namespace Rancoud\Http\Message;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 
-/**
- * Class UploadedFile.
- */
 class UploadedFile implements UploadedFileInterface
 {
     /** @var int[] */
-    protected const ERRORS = [
+    protected const array ERRORS = [
         \UPLOAD_ERR_OK         => 1,
         \UPLOAD_ERR_INI_SIZE   => 1,
         \UPLOAD_ERR_FORM_SIZE  => 1,
@@ -25,7 +22,7 @@ class UploadedFile implements UploadedFileInterface
     ];
 
     /** @var int */
-    protected const DEFAULT_MAX_BYTES_LENGTH = 1048576;
+    protected const int DEFAULT_MAX_BYTES_LENGTH = 1048576;
 
     protected ?string $clientFilename;
 
@@ -47,7 +44,7 @@ class UploadedFile implements UploadedFileInterface
      * @throws \InvalidArgumentException
      */
     public function __construct(
-        $streamOrFile,
+        mixed $streamOrFile,
         ?int $size,
         int $errorStatus,
         ?string $clientFilename = null,
@@ -140,9 +137,7 @@ class UploadedFile implements UploadedFileInterface
         return $this->file;
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     protected function setStreamOrFile($streamOrFile): void
     {
         if (\is_string($streamOrFile)) {

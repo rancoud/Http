@@ -12,9 +12,7 @@ use Psr\Http\Message\StreamInterface;
 use Rancoud\Http\Message\Factory\Factory;
 use Rancoud\Http\Message\Response;
 
-/**
- * @internal
- */
+/** @internal */
 #[\PHPUnit\Framework\Attributes\BackupGlobals(false)]
 #[PreserveGlobalState(false)]
 class ResponseTest extends TestCase

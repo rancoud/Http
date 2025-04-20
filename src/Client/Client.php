@@ -62,14 +62,17 @@ class Client implements ClientInterface
         return $this->convertCurlSimpleResponse($infos);
     }
 
-    /**
-     * @throws \RuntimeException
-     *
-     * @return false|resource
-     */
-    protected function createCurlSimple(RequestInterface $request)
+    /** @throws \RuntimeException */
+    protected function createCurlSimple(RequestInterface $request): \CurlHandle
     {
         $curlHandle = \curl_init();
+
+        // @codeCoverageIgnoreStart
+        // Not possible to arrive here
+        if ($curlHandle === false) {
+            throw new \RuntimeException();
+        }
+        // @codeCoverageIgnoreEnd
 
         \curl_setopt($curlHandle, \CURLOPT_RETURNTRANSFER, true);
         \curl_setopt($curlHandle, \CURLOPT_HEADER, true);
@@ -84,8 +87,7 @@ class Client implements ClientInterface
         return $curlHandle;
     }
 
-    /** @param resource $curlHandle */
-    protected function setProtocolVersion($curlHandle, RequestInterface $request): self
+    protected function setProtocolVersion(\CurlHandle $curlHandle, RequestInterface $request): self
     {
         $version = $request->getProtocolVersion();
 
@@ -97,8 +99,7 @@ class Client implements ClientInterface
         return $this;
     }
 
-    /** @param resource $curlHandle */
-    protected function setMethod($curlHandle, RequestInterface $request): self
+    protected function setMethod(\CurlHandle $curlHandle, RequestInterface $request): self
     {
         $method = $request->getMethod();
         if ($method === 'HEAD') {
@@ -112,20 +113,15 @@ class Client implements ClientInterface
         return $this;
     }
 
-    /** @param resource $curlHandle */
-    protected function setUrl($curlHandle, RequestInterface $request): self
+    protected function setUrl(\CurlHandle $curlHandle, RequestInterface $request): self
     {
         \curl_setopt($curlHandle, \CURLOPT_URL, $request->getUri()->__toString());
 
         return $this;
     }
 
-    /**
-     * @param resource $curlHandle
-     *
-     * @throws \RuntimeException
-     */
-    protected function setBody($curlHandle, RequestInterface $request): self
+    /** @throws \RuntimeException */
+    protected function setBody(\CurlHandle $curlHandle, RequestInterface $request): self
     {
         $body = $request->getBody();
         $bodySize = $body->getSize();
@@ -150,8 +146,7 @@ class Client implements ClientInterface
         return $this;
     }
 
-    /** @param resource $curlHandle */
-    protected function setHeaders($curlHandle, RequestInterface $request): self
+    protected function setHeaders(\CurlHandle $curlHandle, RequestInterface $request): self
     {
         $headersCurl = [];
 
@@ -167,8 +162,7 @@ class Client implements ClientInterface
         return $this;
     }
 
-    /** @param resource $curlHandle */
-    protected function setSsl($curlHandle, RequestInterface $request): self
+    protected function setSsl(\CurlHandle $curlHandle, RequestInterface $request): self
     {
         if ($request->getUri()->getScheme() === 'https') {
             if ($this->CAInfosPath['info'] !== null) {
@@ -189,12 +183,10 @@ class Client implements ClientInterface
     }
 
     /**
-     * @param resource $curlHandle
-     *
      * @throws NetworkException
      * @throws RequestException
      */
-    protected function sendCurlSimple($curlHandle, RequestInterface $request): array
+    protected function sendCurlSimple(\CurlHandle $curlHandle, RequestInterface $request): array
     {
         $data = \curl_exec($curlHandle);
 
@@ -212,12 +204,10 @@ class Client implements ClientInterface
     }
 
     /**
-     * @param resource $curlHandle
-     *
      * @throws NetworkException
      * @throws RequestException
      */
-    protected function parseCurlSimpleError($curlHandle, RequestInterface $request): void
+    protected function parseCurlSimpleError(\CurlHandle $curlHandle, RequestInterface $request): void
     {
         $errno = \curl_errno($curlHandle);
 

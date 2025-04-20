@@ -8,13 +8,10 @@ namespace Rancoud\Http\Message;
 
 use Psr\Http\Message\StreamInterface;
 
-/**
- * Class Stream.
- */
 class Stream implements StreamInterface
 {
     /** @var array */
-    protected const READ_WRITE_HASH = [
+    protected const array READ_WRITE_HASH = [
         'read' => [
             'r'   => true, 'w+' => true, 'r+' => true, 'x+' => true, 'c+' => true,
             'rb'  => true, 'w+b' => true, 'r+b' => true, 'x+b' => true,
@@ -284,7 +281,7 @@ class Stream implements StreamInterface
      *
      * @throws \InvalidArgumentException
      */
-    public static function create($content = ''): StreamInterface
+    public static function create(mixed $content = ''): StreamInterface
     {
         if ($content instanceof StreamInterface) {
             return $content;
@@ -336,7 +333,7 @@ class Stream implements StreamInterface
         try {
             $resource = \fopen($filename, $mode);
             // @codeCoverageIgnoreStart
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             // Could not reach this statement without mocking the filesystem
             throw new \RuntimeException(\sprintf('The file %s cannot be opened.', $filename));
             // @codeCoverageIgnoreEnd

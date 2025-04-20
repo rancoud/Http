@@ -9,9 +9,6 @@ use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
 
-/**
- * Class ServerRequest.
- */
 class ServerRequest implements ServerRequestInterface
 {
     use MessageTrait;
@@ -21,8 +18,7 @@ class ServerRequest implements ServerRequestInterface
 
     protected array $cookieParams = [];
 
-    /** @var array|object|null */
-    protected $parsedBody;
+    protected array|object|null $parsedBody = null;
 
     protected array $queryParams = [];
 
@@ -32,16 +28,15 @@ class ServerRequest implements ServerRequestInterface
     protected array $uploadedFiles = [];
 
     /**
-     * @param string|UriInterface                  $uri
      * @param resource|StreamInterface|string|null $body
      *
      * @throws \InvalidArgumentException
      */
     public function __construct(
         string $method,
-        $uri,
+        string|UriInterface $uri,
         array $headers = [],
-        $body = null,
+        mixed $body = null,
         string $version = '1.1',
         array $serverParams = []
     ) {
@@ -150,9 +145,7 @@ class ServerRequest implements ServerRequestInterface
         return $this->attributes[$name];
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     public function withAttribute(string $name, $value): self
     {
         $new = clone $this;
@@ -174,9 +167,7 @@ class ServerRequest implements ServerRequestInterface
         return $new;
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     protected function validateData($data): void
     {
         if (!\is_array($data) && !\is_object($data) && $data !== null) {

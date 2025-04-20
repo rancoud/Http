@@ -11,9 +11,7 @@ use Rancoud\Http\Message\ServerRequest;
 use Rancoud\Http\Message\UploadedFile;
 use Rancoud\Http\Message\Uri;
 
-/**
- * @internal
- */
+/** @internal */
 class ServerRequestTest extends TestCase
 {
     public function testConstruct(): void
