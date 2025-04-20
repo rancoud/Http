@@ -92,9 +92,7 @@ trait RequestTrait
         return $target;
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     public function withRequestTarget(string $requestTarget): self
     {
         if (\preg_match('#\s#', $requestTarget)) {
@@ -112,9 +110,7 @@ trait RequestTrait
         return $this->method;
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     public function withMethod(string $method): self
     {
         $method = $this->filterMethod($method);
@@ -130,9 +126,7 @@ trait RequestTrait
         return $this->uri;
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     public function withUri(UriInterface $uri, bool $preserveHost = false): self
     {
         if ($this->uri === $uri) {
@@ -149,9 +143,7 @@ trait RequestTrait
         return $new;
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     protected function filterMethod(string $method): string
     {
         if (!\in_array($method, static::$methods, true)) {

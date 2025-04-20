@@ -18,7 +18,7 @@ class Request implements RequestInterface
 
     /**
      * @param string|UriInterface                  $uri
-     * @param string|resource|StreamInterface|null $body
+     * @param resource|StreamInterface|string|null $body
      *
      * @throws \InvalidArgumentException
      */

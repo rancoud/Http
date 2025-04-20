@@ -37,9 +37,7 @@ class Uri implements UriInterface
 
     protected string $fragment = '';
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     public function __construct(string $uri = '')
     {
         if ($uri !== '') {
@@ -50,6 +48,17 @@ class Uri implements UriInterface
 
             $this->applyParts($parts);
         }
+    }
+
+    public function __toString(): string
+    {
+        return static::createUriString(
+            $this->scheme,
+            $this->getAuthority(),
+            $this->path,
+            $this->query,
+            $this->fragment
+        );
     }
 
     public function getScheme(): string
@@ -106,9 +115,7 @@ class Uri implements UriInterface
         return $this->fragment;
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     public function withScheme(string $scheme): self
     {
         $scheme = $this->filterScheme($scheme);
@@ -124,9 +131,7 @@ class Uri implements UriInterface
         return $new;
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     public function withUserInfo(string $user, ?string $password = null): self
     {
         $info = $this->filterUser($user);
@@ -146,9 +151,7 @@ class Uri implements UriInterface
         return $new;
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     public function withHost(string $host): self
     {
         $host = $this->filterHost($host);
@@ -163,9 +166,7 @@ class Uri implements UriInterface
         return $new;
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     public function withPort(?int $port): self
     {
         $port = $this->filterPort($port);
@@ -180,9 +181,7 @@ class Uri implements UriInterface
         return $new;
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     public function withPath(string $path): self
     {
         $path = $this->filterPath($path);
@@ -197,9 +196,7 @@ class Uri implements UriInterface
         return $new;
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     public function withQuery(string $query): self
     {
         $query = $this->filterQueryAndFragment($query);
@@ -214,9 +211,7 @@ class Uri implements UriInterface
         return $new;
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     public function withFragment(string $fragment): self
     {
         $fragment = $this->filterQueryAndFragment($fragment);
@@ -231,20 +226,7 @@ class Uri implements UriInterface
         return $new;
     }
 
-    public function __toString(): string
-    {
-        return static::createUriString(
-            $this->scheme,
-            $this->getAuthority(),
-            $this->path,
-            $this->query,
-            $this->fragment
-        );
-    }
-
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     protected function applyParts(array $parts): void
     {
         $this->scheme = '';
@@ -314,7 +296,7 @@ class Uri implements UriInterface
                 }
             } elseif (isset($charAtPosOne) && $charAtPosOne === '/') {
                 if ($authority === '') {
-                    $path = '/' . static::ltrim($path, '/');
+                    $path = '/' . \mb_ltrim($path, '/');
                 }
             }
 
@@ -337,41 +319,31 @@ class Uri implements UriInterface
         return !isset(static::SCHEMES[$scheme]) || $port !== static::SCHEMES[$scheme];
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     protected function filterScheme(string $scheme): string
     {
         return \mb_strtolower($scheme);
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     protected function filterUser(string $user): string
     {
         return $user;
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     protected function filterPass(?string $pass): ?string
     {
         return $pass;
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     protected function filterHost(string $host): string
     {
         return \mb_strtolower($host);
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     protected function filterPort(?int $port): ?int
     {
         if ($port === null) {
@@ -389,9 +361,7 @@ class Uri implements UriInterface
         return $port;
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     protected function filterPath(string $path): string
     {
         return \preg_replace_callback(
@@ -401,9 +371,7 @@ class Uri implements UriInterface
         );
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     protected function filterQueryAndFragment(string $str): string
     {
         return \preg_replace_callback(
@@ -426,17 +394,5 @@ class Uri implements UriInterface
     protected static function getPatternForFilteringQueryAndFragment(): string
     {
         return '/(?:[^' . static::CHAR_UNRESERVED . static::CHAR_SUB_DELIMS . '%:@\/\?]++|%(?![A-Fa-f0-9]{2}))/';
-    }
-
-    /**
-     * Because of PHP 8.4.
-     */
-    protected static function ltrim($string, string $characters = " \n\r\t\v\0"): string
-    {
-        if (\PHP_MAJOR_VERSION >= 8 && \PHP_MINOR_VERSION >= 4) {
-            return \mb_ltrim((string) $string, $characters);
-        }
-
-        return \ltrim((string) $string, $characters);
     }
 }

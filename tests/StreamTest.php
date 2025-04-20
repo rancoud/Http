@@ -7,6 +7,9 @@ namespace tests;
 use PHPUnit\Framework\TestCase;
 use Rancoud\Http\Message\Stream;
 
+/**
+ * @internal
+ */
 class StreamTest extends TestCase
 {
     public function testConstructorInitializesProperties(): void
@@ -129,7 +132,7 @@ class StreamTest extends TestCase
         static::assertFalse($stream->isWritable());
         static::assertFalse($stream->isSeekable());
 
-        $throws = static function (callable $fn) use ($stream) {
+        $throws = static function (callable $fn) use ($stream): void {
             try {
                 $fn($stream);
                 static::fail();
@@ -137,25 +140,25 @@ class StreamTest extends TestCase
             }
         };
 
-        $throws(static function ($stream) {
+        $throws(static function ($stream): void {
             $stream->read(10);
         });
-        $throws(static function ($stream) {
+        $throws(static function ($stream): void {
             $stream->write('bar');
         });
-        $throws(static function ($stream) {
+        $throws(static function ($stream): void {
             $stream->seek(10);
         });
-        $throws(static function ($stream) {
+        $throws(static function ($stream): void {
             $stream->tell();
         });
-        $throws(static function ($stream) {
+        $throws(static function ($stream): void {
             $stream->eof();
         });
-        $throws(static function ($stream) {
+        $throws(static function ($stream): void {
             $stream->getSize();
         });
-        $throws(static function ($stream) {
+        $throws(static function ($stream): void {
             $stream->getContents();
         });
 

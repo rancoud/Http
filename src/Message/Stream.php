@@ -13,20 +13,6 @@ use Psr\Http\Message\StreamInterface;
  */
 class Stream implements StreamInterface
 {
-    /** @var resource|null */
-    protected $stream;
-
-    protected bool $seekable;
-
-    protected bool $readable;
-
-    protected bool $writable;
-
-    /** @var array|mixed|void|bool|null */
-    protected $uri;
-
-    protected ?int $size = null;
-
     /** @var array */
     protected const READ_WRITE_HASH = [
         'read' => [
@@ -43,13 +29,28 @@ class Stream implements StreamInterface
         ],
     ];
 
-    private function __construct()
+    /** @var resource|null */
+    protected $stream;
+
+    protected bool $seekable;
+
+    protected bool $readable;
+
+    protected bool $writable;
+
+    /** @var array|bool|mixed|void|null */
+    protected $uri;
+
+    protected ?int $size = null;
+
+    private function __construct() {}
+
+    public function __destruct()
     {
+        $this->close();
     }
 
-    /**
-     * @throws \Throwable
-     */
+    /** @throws \Throwable */
     public function __toString(): string
     {
         if ($this->isSeekable()) {
@@ -69,17 +70,15 @@ class Stream implements StreamInterface
         }
     }
 
-    /**
-     * @return resource|null
-     */
+    /** @return resource|null */
     public function detach()
     {
         if (!isset($this->stream)) {
-            return null;
+            return;
         }
 
         $result = $this->stream;
-        unset($this->stream);
+        $this->stream = null;
         $this->size = $this->uri = null;
         $this->readable = $this->writable = $this->seekable = false;
 
@@ -108,23 +107,19 @@ class Stream implements StreamInterface
         }
 
         // @codeCoverageIgnoreStart
-        /* Could not reach this statement without mocking the filesystem
-         */
+        // Could not reach this statement without mocking the filesystem
         return null;
         // @codeCoverageIgnoreEnd
     }
 
-    /**
-     * @throws \RuntimeException
-     */
+    /** @throws \RuntimeException */
     public function tell(): int
     {
         $positionInFile = \ftell($this->stream);
 
         if ($positionInFile === false) {
             // @codeCoverageIgnoreStart
-            /* Could not reach this statement without mocking the filesystem
-             */
+            // Could not reach this statement without mocking the filesystem
             throw new \RuntimeException('Unable to determine stream position');
             // @codeCoverageIgnoreEnd
         }
@@ -155,6 +150,7 @@ class Stream implements StreamInterface
         if (\fseek($this->stream, $offset, $whence) === -1) {
             $whenceStr = \var_export($whence, true);
             $message = \sprintf('Unable to seek to stream position %d with whence %d', $offset, $whenceStr);
+
             throw new \RuntimeException($message);
         }
     }
@@ -188,8 +184,7 @@ class Stream implements StreamInterface
 
         if ($bytesWritten === false) {
             // @codeCoverageIgnoreStart
-            /* Could not reach this statement without mocking the filesystem
-             */
+            // Could not reach this statement without mocking the filesystem
             throw new \RuntimeException('Unable to write to stream');
             // @codeCoverageIgnoreEnd
         }
@@ -216,8 +211,7 @@ class Stream implements StreamInterface
 
         if ($contents === false) {
             // @codeCoverageIgnoreStart
-            /* Could not reach this statement without mocking the filesystem
-             */
+            // Could not reach this statement without mocking the filesystem
             throw new \RuntimeException('Unable to read from stream');
             // @codeCoverageIgnoreEnd
         }
@@ -237,7 +231,7 @@ class Stream implements StreamInterface
 
         $exception = null;
 
-        \set_error_handler(static function ($type, $message) use (&$exception) {
+        \set_error_handler(static function ($type, $message) use (&$exception): void {
             throw $exception = new \RuntimeException('Unable to read stream contents: ' . $message);
         });
 
@@ -245,7 +239,7 @@ class Stream implements StreamInterface
             $contents = \stream_get_contents($this->stream);
 
             if ($contents === false) {
-                // @codeCoverageIgnoreStart
+                /** @codeCoverageIgnoreStart */
                 /* Could not reach this statement without changing php-src
                  * @info: https://github.com/php/php-src/blob/311cae03e730c76aed343312319ed8cf1c37ade0/main/streams/streams.c#L1512
                  */
@@ -286,7 +280,7 @@ class Stream implements StreamInterface
     }
 
     /**
-     * @param string|resource|StreamInterface $content
+     * @param resource|StreamInterface|string $content
      *
      * @throws \InvalidArgumentException
      */
@@ -300,16 +294,14 @@ class Stream implements StreamInterface
             $resource = \fopen('php://temp', 'rw+');
             if ($resource === false) {
                 // @codeCoverageIgnoreStart
-                /* Could not reach this statement without mocking the filesystem
-                 */
+                // Could not reach this statement without mocking the filesystem
                 throw new \InvalidArgumentException('Error fopen in php://temp');
                 // @codeCoverageIgnoreEnd
             }
             $bytesWritten = \fwrite($resource, $content);
             if ($bytesWritten === false) {
                 // @codeCoverageIgnoreStart
-                /* Could not reach this statement without mocking the filesystem
-                 */
+                // Could not reach this statement without mocking the filesystem
                 throw new \InvalidArgumentException('Error fwrite in php://temp');
                 // @codeCoverageIgnoreEnd
             }
@@ -345,25 +337,18 @@ class Stream implements StreamInterface
             $resource = \fopen($filename, $mode);
             // @codeCoverageIgnoreStart
         } catch (\Throwable $e) {
-            /* Could not reach this statement without mocking the filesystem
-             */
+            // Could not reach this statement without mocking the filesystem
             throw new \RuntimeException(\sprintf('The file %s cannot be opened.', $filename));
             // @codeCoverageIgnoreEnd
         }
 
         if ($resource === false) {
             // @codeCoverageIgnoreStart
-            /* Could not reach this statement without mocking the filesystem
-             */
+            // Could not reach this statement without mocking the filesystem
             throw new \RuntimeException(\sprintf('The file %s cannot be opened.', $filename));
             // @codeCoverageIgnoreEnd
         }
 
         return static::create($resource);
-    }
-
-    public function __destruct()
-    {
-        $this->close();
     }
 }

@@ -33,7 +33,7 @@ class ServerRequest implements ServerRequestInterface
 
     /**
      * @param string|UriInterface                  $uri
-     * @param string|resource|StreamInterface|null $body
+     * @param resource|StreamInterface|string|null $body
      *
      * @throws \InvalidArgumentException
      */
@@ -110,9 +110,7 @@ class ServerRequest implements ServerRequestInterface
         return $new;
     }
 
-    /**
-     * @return array|object|null
-     */
+    /** @return array|object|null */
     public function getParsedBody()
     {
         return $this->parsedBody;
@@ -139,8 +137,8 @@ class ServerRequest implements ServerRequestInterface
     }
 
     /**
+     * @param  mixed|null                $default
      * @throws \InvalidArgumentException
-     *
      * @return mixed|null
      */
     public function getAttribute(string $name, $default = null)
@@ -163,9 +161,7 @@ class ServerRequest implements ServerRequestInterface
         return $new;
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     public function withoutAttribute(string $name): self
     {
         if (!\array_key_exists($name, $this->attributes)) {

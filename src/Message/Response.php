@@ -181,7 +181,7 @@ class Response implements ResponseInterface
     protected int $statusCode = 200;
 
     /**
-     * @param string|resource|StreamInterface|null $body
+     * @param resource|StreamInterface|string|null $body
      *
      * @throws \InvalidArgumentException
      */
@@ -218,9 +218,7 @@ class Response implements ResponseInterface
         return $this->statusCode;
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     public function withStatus(int $code, string $reasonPhrase = ''): self
     {
         if (!isset(static::PHRASES[$code])) {
@@ -261,7 +259,7 @@ class Response implements ResponseInterface
 
         foreach ($this->getHeaders() as $name => $values) {
             foreach ($values as $value) {
-                \header("$name: $value", false);
+                \header("{$name}: {$value}", false);
             }
         }
 

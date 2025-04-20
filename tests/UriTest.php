@@ -8,6 +8,9 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Rancoud\Http\Message\Uri;
 
+/**
+ * @internal
+ */
 class UriTest extends TestCase
 {
     public const RFC3986_BASE = 'https://a/b/c/d;p?q';
@@ -49,12 +52,49 @@ class UriTest extends TestCase
         static::assertSame('https://user:pass@example.com:8080/path/123?q=abc#test', (string) $uri);
     }
 
-    /**
-     * @dataProvider getValidUris
-     *
-     * @param $input
-     */
-    #[DataProvider('getValidUris')]
+    public static function provideValidUrisStayValidDataCases(): iterable
+    {
+        yield ['urn:path-rootless'];
+
+        yield ['urn:path:with:colon'];
+
+        yield ['urn:/path-absolute'];
+
+        yield ['urn:/'];
+
+        // only scheme with empty path
+        yield ['urn:'];
+
+        // only path
+        yield ['/'];
+
+        yield ['relative/'];
+
+        yield ['0'];
+
+        // same document reference
+        yield [''];
+
+        // network path without scheme
+        yield ['//example.org'];
+
+        yield ['//example.org/'];
+
+        yield ['//example.org?q#h'];
+
+        // only query
+        yield ['?q'];
+
+        yield ['?q=abc&foo=bar'];
+
+        // only fragment
+        yield ['#fragment'];
+
+        // dot segments are not removed automatically
+        yield ['./foo/../bar'];
+    }
+
+    #[DataProvider('provideValidUrisStayValidDataCases')]
     public function testValidUrisStayValid($input): void
     {
         $uri = new Uri($input);
@@ -62,58 +102,23 @@ class UriTest extends TestCase
         static::assertSame($input, (string) $uri);
     }
 
-    public static function getValidUris(): array
+    public static function provideInvalidUrisDataCases(): iterable
     {
-        return [
-            ['urn:path-rootless'],
-            ['urn:path:with:colon'],
-            ['urn:/path-absolute'],
-            ['urn:/'],
-            // only scheme with empty path
-            ['urn:'],
-            // only path
-            ['/'],
-            ['relative/'],
-            ['0'],
-            // same document reference
-            [''],
-            // network path without scheme
-            ['//example.org'],
-            ['//example.org/'],
-            ['//example.org?q#h'],
-            // only query
-            ['?q'],
-            ['?q=abc&foo=bar'],
-            // only fragment
-            ['#fragment'],
-            // dot segments are not removed automatically
-            ['./foo/../bar'],
-        ];
+        // parse_url() requires the host component which makes sense for http(s)
+        // but not when the scheme is not known or different. So '//' or '///' is
+        // currently invalid as well but should not according to RFC 3986.
+        yield ['http://'];
+
+        yield ['urn://host:with:colon']; // host cannot contain ":"
     }
 
-    /**
-     * @dataProvider getInvalidUris
-     *
-     * @param $invalidUri
-     */
-    #[DataProvider('getInvalidUris')]
+    #[DataProvider('provideInvalidUrisDataCases')]
     public function testInvalidUrisThrowException($invalidUri): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Unable to parse URI');
 
         new Uri($invalidUri);
-    }
-
-    public static function getInvalidUris(): array
-    {
-        return [
-            // parse_url() requires the host component which makes sense for http(s)
-            // but not when the scheme is not known or different. So '//' or '///' is
-            // currently invalid as well but should not according to RFC 3986.
-            ['http://'],
-            ['urn://host:with:colon'], // host cannot contain ":"
-        ];
     }
 
     public function testPortMustBeValid(): void
@@ -177,61 +182,61 @@ class UriTest extends TestCase
     public function getResolveTestCases(): array
     {
         return [
-            [self::RFC3986_BASE, 'g:h',           'g:h'],
-            [self::RFC3986_BASE, 'g',             'https://a/b/c/g'],
-            [self::RFC3986_BASE, './g',           'https://a/b/c/g'],
-            [self::RFC3986_BASE, 'g/',            'https://a/b/c/g/'],
-            [self::RFC3986_BASE, '/g',            'https://a/g'],
-            [self::RFC3986_BASE, '//g',           'https://g'],
-            [self::RFC3986_BASE, '?y',            'https://a/b/c/d;p?y'],
-            [self::RFC3986_BASE, 'g?y',           'https://a/b/c/g?y'],
-            [self::RFC3986_BASE, '#s',            'https://a/b/c/d;p?q#s'],
-            [self::RFC3986_BASE, 'g#s',           'https://a/b/c/g#s'],
-            [self::RFC3986_BASE, 'g?y#s',         'https://a/b/c/g?y#s'],
-            [self::RFC3986_BASE, ';x',            'https://a/b/c/;x'],
-            [self::RFC3986_BASE, 'g;x',           'https://a/b/c/g;x'],
-            [self::RFC3986_BASE, 'g;x?y#s',       'https://a/b/c/g;x?y#s'],
-            [self::RFC3986_BASE, '',              self::RFC3986_BASE],
-            [self::RFC3986_BASE, '.',             'https://a/b/c/'],
-            [self::RFC3986_BASE, './',            'https://a/b/c/'],
-            [self::RFC3986_BASE, '..',            'https://a/b/'],
-            [self::RFC3986_BASE, '../',           'https://a/b/'],
-            [self::RFC3986_BASE, '../g',          'https://a/b/g'],
-            [self::RFC3986_BASE, '../..',         'https://a/'],
-            [self::RFC3986_BASE, '../../',        'https://a/'],
-            [self::RFC3986_BASE, '../../g',       'https://a/g'],
-            [self::RFC3986_BASE, '../../../g',    'https://a/g'],
+            [self::RFC3986_BASE, 'g:h', 'g:h'],
+            [self::RFC3986_BASE, 'g', 'https://a/b/c/g'],
+            [self::RFC3986_BASE, './g', 'https://a/b/c/g'],
+            [self::RFC3986_BASE, 'g/', 'https://a/b/c/g/'],
+            [self::RFC3986_BASE, '/g', 'https://a/g'],
+            [self::RFC3986_BASE, '//g', 'https://g'],
+            [self::RFC3986_BASE, '?y', 'https://a/b/c/d;p?y'],
+            [self::RFC3986_BASE, 'g?y', 'https://a/b/c/g?y'],
+            [self::RFC3986_BASE, '#s', 'https://a/b/c/d;p?q#s'],
+            [self::RFC3986_BASE, 'g#s', 'https://a/b/c/g#s'],
+            [self::RFC3986_BASE, 'g?y#s', 'https://a/b/c/g?y#s'],
+            [self::RFC3986_BASE, ';x', 'https://a/b/c/;x'],
+            [self::RFC3986_BASE, 'g;x', 'https://a/b/c/g;x'],
+            [self::RFC3986_BASE, 'g;x?y#s', 'https://a/b/c/g;x?y#s'],
+            [self::RFC3986_BASE, '', self::RFC3986_BASE],
+            [self::RFC3986_BASE, '.', 'https://a/b/c/'],
+            [self::RFC3986_BASE, './', 'https://a/b/c/'],
+            [self::RFC3986_BASE, '..', 'https://a/b/'],
+            [self::RFC3986_BASE, '../', 'https://a/b/'],
+            [self::RFC3986_BASE, '../g', 'https://a/b/g'],
+            [self::RFC3986_BASE, '../..', 'https://a/'],
+            [self::RFC3986_BASE, '../../', 'https://a/'],
+            [self::RFC3986_BASE, '../../g', 'https://a/g'],
+            [self::RFC3986_BASE, '../../../g', 'https://a/g'],
             [self::RFC3986_BASE, '../../../../g', 'https://a/g'],
-            [self::RFC3986_BASE, '/./g',          'https://a/g'],
-            [self::RFC3986_BASE, '/../g',         'https://a/g'],
-            [self::RFC3986_BASE, 'g.',            'https://a/b/c/g.'],
-            [self::RFC3986_BASE, '.g',            'https://a/b/c/.g'],
-            [self::RFC3986_BASE, 'g..',           'https://a/b/c/g..'],
-            [self::RFC3986_BASE, '..g',           'https://a/b/c/..g'],
-            [self::RFC3986_BASE, './../g',        'https://a/b/g'],
-            [self::RFC3986_BASE, 'foo////g',      'https://a/b/c/foo////g'],
-            [self::RFC3986_BASE, './g/.',         'https://a/b/c/g/'],
-            [self::RFC3986_BASE, 'g/./h',         'https://a/b/c/g/h'],
-            [self::RFC3986_BASE, 'g/../h',        'https://a/b/c/h'],
-            [self::RFC3986_BASE, 'g;x=1/./y',     'https://a/b/c/g;x=1/y'],
-            [self::RFC3986_BASE, 'g;x=1/../y',    'https://a/b/c/y'],
+            [self::RFC3986_BASE, '/./g', 'https://a/g'],
+            [self::RFC3986_BASE, '/../g', 'https://a/g'],
+            [self::RFC3986_BASE, 'g.', 'https://a/b/c/g.'],
+            [self::RFC3986_BASE, '.g', 'https://a/b/c/.g'],
+            [self::RFC3986_BASE, 'g..', 'https://a/b/c/g..'],
+            [self::RFC3986_BASE, '..g', 'https://a/b/c/..g'],
+            [self::RFC3986_BASE, './../g', 'https://a/b/g'],
+            [self::RFC3986_BASE, 'foo////g', 'https://a/b/c/foo////g'],
+            [self::RFC3986_BASE, './g/.', 'https://a/b/c/g/'],
+            [self::RFC3986_BASE, 'g/./h', 'https://a/b/c/g/h'],
+            [self::RFC3986_BASE, 'g/../h', 'https://a/b/c/h'],
+            [self::RFC3986_BASE, 'g;x=1/./y', 'https://a/b/c/g;x=1/y'],
+            [self::RFC3986_BASE, 'g;x=1/../y', 'https://a/b/c/y'],
             // dot-segments in the query or fragment
-            [self::RFC3986_BASE, 'g?y/./x',       'https://a/b/c/g?y/./x'],
-            [self::RFC3986_BASE, 'g?y/../x',      'https://a/b/c/g?y/../x'],
-            [self::RFC3986_BASE, 'g#s/./x',       'https://a/b/c/g#s/./x'],
-            [self::RFC3986_BASE, 'g#s/../x',      'https://a/b/c/g#s/../x'],
-            [self::RFC3986_BASE, 'g#s/../x',      'https://a/b/c/g#s/../x'],
-            [self::RFC3986_BASE, '?y#s',          'https://a/b/c/d;p?y#s'],
-            ['https://a/b/c/d;p?q#s', '?y',       'https://a/b/c/d;p?y'],
-            ['https://u@a/b/c/d;p?q', '.',        'https://u@a/b/c/'],
-            ['https://u:p@a/b/c/d;p?q', '.',      'https://u:p@a/b/c/'],
-            ['https://a/b/c/d/', 'e',             'https://a/b/c/d/e'],
-            ['urn:no-slash', 'e',                 'urn:e'],
+            [self::RFC3986_BASE, 'g?y/./x', 'https://a/b/c/g?y/./x'],
+            [self::RFC3986_BASE, 'g?y/../x', 'https://a/b/c/g?y/../x'],
+            [self::RFC3986_BASE, 'g#s/./x', 'https://a/b/c/g#s/./x'],
+            [self::RFC3986_BASE, 'g#s/../x', 'https://a/b/c/g#s/../x'],
+            [self::RFC3986_BASE, 'g#s/../x', 'https://a/b/c/g#s/../x'],
+            [self::RFC3986_BASE, '?y#s', 'https://a/b/c/d;p?y#s'],
+            ['https://a/b/c/d;p?q#s', '?y', 'https://a/b/c/d;p?y'],
+            ['https://u@a/b/c/d;p?q', '.', 'https://u@a/b/c/'],
+            ['https://u:p@a/b/c/d;p?q', '.', 'https://u:p@a/b/c/'],
+            ['https://a/b/c/d/', 'e', 'https://a/b/c/d/e'],
+            ['urn:no-slash', 'e', 'urn:e'],
             // falsey relative parts
-            [self::RFC3986_BASE, '//0',           'https://0'],
-            [self::RFC3986_BASE, '0',             'https://a/b/c/0'],
-            [self::RFC3986_BASE, '?0',            'https://a/b/c/d;p?0'],
-            [self::RFC3986_BASE, '#0',            'https://a/b/c/d;p?q#0'],
+            [self::RFC3986_BASE, '//0', 'https://0'],
+            [self::RFC3986_BASE, '0', 'https://a/b/c/0'],
+            [self::RFC3986_BASE, '?0', 'https://a/b/c/d;p?0'],
+            [self::RFC3986_BASE, '#0', 'https://a/b/c/d;p?q#0'],
         ];
     }
 
@@ -316,38 +321,33 @@ class UriTest extends TestCase
         static::assertSame('', $uri->getAuthority());
     }
 
-    public static function uriComponentsEncodingProvider(): array
+    public static function provideUriComponentsGetEncodedProperlyDataCases(): iterable
     {
         $unreserved = 'a-zA-Z0-9.-_~!$&\'()*+,;=:@';
 
-        return [
-            // Percent encode spaces
-            ['/pa th?q=va lue#frag ment', '/pa%20th', 'q=va%20lue', 'frag%20ment', '/pa%20th?q=va%20lue#frag%20ment'],
-            // Percent encode multibyte
-            ['/€?€#€', '/%E2%82%AC', '%E2%82%AC', '%E2%82%AC', '/%E2%82%AC?%E2%82%AC#%E2%82%AC'],
-            // Don't encode something that's already encoded
-            ['/pa%20th?q=va%20lue#frag%20ment', '/pa%20th', 'q=va%20lue', 'frag%20ment', '/pa%20th?q=va%20lue#frag%20ment'],
-            // Percent encode invalid percent encodings
-            ['/pa%2-th?q=va%2-lue#frag%2-ment', '/pa%252-th', 'q=va%252-lue', 'frag%252-ment', '/pa%252-th?q=va%252-lue#frag%252-ment'],
-            // Don't encode path segments
-            ['/pa/th//two?q=va/lue#frag/ment', '/pa/th//two', 'q=va/lue', 'frag/ment', '/pa/th//two?q=va/lue#frag/ment'],
-            // Don't encode unreserved chars or sub-delimiters
-            ["/$unreserved?$unreserved#$unreserved", "/$unreserved", $unreserved, $unreserved, "/$unreserved?$unreserved#$unreserved"],
-            // Encoded unreserved chars are not decoded
-            ['/p%61th?q=v%61lue#fr%61gment', '/p%61th', 'q=v%61lue', 'fr%61gment', '/p%61th?q=v%61lue#fr%61gment'],
-        ];
+        // Percent encode spaces
+        yield ['/pa th?q=va lue#frag ment', '/pa%20th', 'q=va%20lue', 'frag%20ment', '/pa%20th?q=va%20lue#frag%20ment'];
+
+        // Percent encode multibyte
+        yield ['/€?€#€', '/%E2%82%AC', '%E2%82%AC', '%E2%82%AC', '/%E2%82%AC?%E2%82%AC#%E2%82%AC'];
+
+        // Don't encode something that's already encoded
+        yield ['/pa%20th?q=va%20lue#frag%20ment', '/pa%20th', 'q=va%20lue', 'frag%20ment', '/pa%20th?q=va%20lue#frag%20ment'];
+
+        // Percent encode invalid percent encodings
+        yield ['/pa%2-th?q=va%2-lue#frag%2-ment', '/pa%252-th', 'q=va%252-lue', 'frag%252-ment', '/pa%252-th?q=va%252-lue#frag%252-ment'];
+
+        // Don't encode path segments
+        yield ['/pa/th//two?q=va/lue#frag/ment', '/pa/th//two', 'q=va/lue', 'frag/ment', '/pa/th//two?q=va/lue#frag/ment'];
+
+        // Don't encode unreserved chars or sub-delimiters
+        yield ["/{$unreserved}?{$unreserved}#{$unreserved}", "/{$unreserved}", $unreserved, $unreserved, "/{$unreserved}?{$unreserved}#{$unreserved}"];
+
+        // Encoded unreserved chars are not decoded
+        yield ['/p%61th?q=v%61lue#fr%61gment', '/p%61th', 'q=v%61lue', 'fr%61gment', '/p%61th?q=v%61lue#fr%61gment'];
     }
 
-    /**
-     * @dataProvider uriComponentsEncodingProvider
-     *
-     * @param $input
-     * @param $path
-     * @param $query
-     * @param $fragment
-     * @param $output
-     */
-    #[DataProvider('uriComponentsEncodingProvider')]
+    #[DataProvider('provideUriComponentsGetEncodedProperlyDataCases')]
     public function testUriComponentsGetEncodedProperly($input, $path, $query, $fragment, $output): void
     {
         $uri = new Uri($input);

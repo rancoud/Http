@@ -13,13 +13,19 @@ use Rancoud\Http\Message\Request;
 use Rancoud\Http\Message\Stream;
 use Symfony\Component\Process\Process;
 
+/**
+ * @internal
+ */
 class ClientTest extends TestCase
 {
     protected static Process $process;
 
     protected static string $localPHPServer = 'localhost:9877';
+
     protected string $goodURL = 'https://example.com';
+
     protected string $badURL = 'https://wrong.bad.invalid.example.com';
+
     protected string $localURL = 'http://localhost:9877/';
 
     public static function setUpBeforeClass(): void
@@ -28,7 +34,7 @@ class ClientTest extends TestCase
 
         static::$process->disableOutput();
 
-        static::$process->start(function ($type, $data) {
+        static::$process->start(static function ($type, $data): void {
             \sleep(1);
 
             if (\mb_stripos($data, 'started') === false) {
@@ -118,12 +124,14 @@ class ClientTest extends TestCase
         $client = new Client();
         $client->setCAInfosPath('/', '/');
         $request = new Request('GET', $this->goodURL);
+
         try {
             $client->sendRequest(new Request('GET', $this->goodURL));
         } catch (RequestException $e) {
             $req = $e->getRequest();
             static::assertSame($request->getMethod(), $req->getMethod());
             static::assertSame((string) $request->getUri(), (string) $req->getUri());
+
             throw $e;
         }
     }
@@ -169,7 +177,7 @@ class ClientTest extends TestCase
         try {
             $client->sendRequest($request);
         } catch (\Exception $e) {
-            static::assertSame(RequestException::class, \get_class($e));
+            static::assertSame(RequestException::class, $e::class);
             static::assertSame('SSL certificate problem: unable to get local issuer certificate', $e->getMessage());
         }
 
@@ -181,7 +189,7 @@ class ClientTest extends TestCase
             $client->enableSSLVerification();
             $client->sendRequest($request);
         } catch (\Exception $e) {
-            static::assertSame(RequestException::class, \get_class($e));
+            static::assertSame(RequestException::class, $e::class);
             static::assertSame('SSL certificate problem: unable to get local issuer certificate', $e->getMessage());
         }
     }

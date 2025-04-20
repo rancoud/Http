@@ -9,6 +9,9 @@ use Psr\Http\Message\StreamInterface;
 use Rancoud\Http\Message\Request;
 use Rancoud\Http\Message\Uri;
 
+/**
+ * @internal
+ */
 class RequestTest extends TestCase
 {
     public function testRequestUriMayBeString(): void

@@ -6,6 +6,4 @@ namespace Rancoud\Http\Client\Exception;
 
 use Psr\Http\Client\NetworkExceptionInterface;
 
-class NetworkException extends ClientException implements NetworkExceptionInterface
-{
-}
+class NetworkException extends ClientException implements NetworkExceptionInterface {}
