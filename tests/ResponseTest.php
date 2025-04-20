@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace tests;
 
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -11,8 +13,9 @@ use Rancoud\Http\Message\Factory\Factory;
 use Rancoud\Http\Message\Response;
 
 /**
- * @backupGlobals disabled
+ * @internal
  */
+#[\PHPUnit\Framework\Attributes\BackupGlobals(false)]
 #[PreserveGlobalState(false)]
 class ResponseTest extends TestCase
 {
@@ -40,14 +43,6 @@ class ResponseTest extends TestCase
 
         $r = new Response(200, [], $body);
         static::assertSame($body, $r->getBody());
-    }
-
-    public function testConstructStatusCantBeNumericString(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Status code has to be an integer');
-
-        new Response('-404.4');
     }
 
     public function testCanConstructWithHeaders(): void
@@ -262,15 +257,6 @@ class ResponseTest extends TestCase
         static::assertSame($r, $r->withoutHeader('foo'));
     }
 
-    public static function trimmedHeaderValues(): array
-    {
-        return [
-            [new Response(200, ['OWS' => " \t \tFoo\t \t "])],
-            [(new Response())->withHeader('OWS', " \t \tFoo\t \t ")],
-            [(new Response())->withAddedHeader('OWS', " \t \tFoo\t \t ")],
-        ];
-    }
-
     public function testWithHeaderNameMustHaveCorrectType(): void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -352,12 +338,16 @@ class ResponseTest extends TestCase
         static::assertSame($r, $r->withoutHeader(''));
     }
 
-    /**
-     * @dataProvider trimmedHeaderValues
-     *
-     * @param Response $r
-     */
-    #[DataProvider('trimmedHeaderValues')]
+    public static function provideHeaderValuesAreTrimmedDataCases(): iterable
+    {
+        yield [new Response(200, ['OWS' => " \t \tFoo\t \t "])];
+
+        yield [new Response()->withHeader('OWS', " \t \tFoo\t \t ")];
+
+        yield [new Response()->withAddedHeader('OWS', " \t \tFoo\t \t ")];
+    }
+
+    #[DataProvider('provideHeaderValuesAreTrimmedDataCases')]
     public function testHeaderValuesAreTrimmed(Response $r): void
     {
         static::assertSame(['OWS' => ['Foo']], $r->getHeaders());
@@ -365,9 +355,6 @@ class ResponseTest extends TestCase
         static::assertSame(['Foo'], $r->getHeader('OWS'));
     }
 
-    /**
-     * @runInSeparateProcess
-     */
     #[RunInSeparateProcess]
     public function testSend(): void
     {
@@ -394,6 +381,6 @@ class ResponseTest extends TestCase
         $response->send();
         $output = \ob_get_clean();
 
-        return ['headers' => xdebug_get_headers(), 'body' => $output];
+        return ['headers' => \xdebug_get_headers(), 'body' => $output];
     }
 }

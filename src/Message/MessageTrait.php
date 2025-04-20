@@ -30,9 +30,7 @@ trait MessageTrait
         return $this->protocol;
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     public function withProtocolVersion(string $version): self
     {
         $this->validateProtocolVersion($version);
@@ -52,17 +50,13 @@ trait MessageTrait
         return $this->headers;
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     public function hasHeader(string $name): bool
     {
         return isset($this->headerNames[\mb_strtolower($name)]);
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     public function getHeader(string $name): array
     {
         $name = \mb_strtolower($name);
@@ -76,16 +70,14 @@ trait MessageTrait
         return $this->headers[$name];
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     public function getHeaderLine(string $name): string
     {
         return \implode(', ', $this->getHeader($name));
     }
 
     /**
-     * @param string|int|float|array $value
+     * @param array|float|int|string $value
      *
      * @throws \InvalidArgumentException
      */
@@ -109,7 +101,7 @@ trait MessageTrait
     }
 
     /**
-     * @param string|int|float|array $value
+     * @param array|float|int|string $value
      *
      * @throws \InvalidArgumentException
      */
@@ -125,9 +117,7 @@ trait MessageTrait
         return $new;
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     public function withoutHeader(string $name): self
     {
         if ($name === '') {
@@ -148,9 +138,7 @@ trait MessageTrait
         return $new;
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     public function getBody(): StreamInterface
     {
         if ($this->stream === null) {
@@ -172,9 +160,7 @@ trait MessageTrait
         return $new;
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     protected function setHeaders(array $headers): void
     {
         foreach ($headers as $header => $value) {
@@ -191,7 +177,7 @@ trait MessageTrait
     }
 
     /**
-     * @param string|array $header
+     * @param array|string $header
      *
      * @throws \InvalidArgumentException
      */
@@ -206,7 +192,7 @@ trait MessageTrait
                 throw new \InvalidArgumentException('Header value must be RFC 7230 compatible string.');
             }
 
-            return [$this->trim((string) $values, " \t")];
+            return [\mb_trim((string) $values, " \t")];
         }
 
         if (empty($values)) {
@@ -219,15 +205,13 @@ trait MessageTrait
                 throw new \InvalidArgumentException('Header values must be RFC 7230 compatible strings.');
             }
 
-            $returnValues[] = $this->trim((string) $v, " \t");
+            $returnValues[] = \mb_trim((string) $v, " \t");
         }
 
         return $returnValues;
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     protected function validateProtocolVersion(string $protocolVersion): string
     {
         if (!\in_array($protocolVersion, static::$validProtocols, true)) {
@@ -235,17 +219,5 @@ trait MessageTrait
         }
 
         return $protocolVersion;
-    }
-
-    /**
-     * Because of PHP 8.4.
-     */
-    protected function trim($string, string $characters = " \n\r\t\v\0"): string
-    {
-        if (\PHP_MAJOR_VERSION >= 8 && \PHP_MINOR_VERSION >= 4) {
-            return \mb_trim((string) $string, $characters);
-        }
-
-        return \trim((string) $string, $characters);
     }
 }

@@ -38,16 +38,14 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
         return new Request($method, $uri);
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     public function createResponse(int $code = 200, string $reasonPhrase = ''): ResponseInterface
     {
         return new Response($code, [], null, '1.1', $reasonPhrase);
     }
 
     /**
-     * @param string|resource|StreamInterface|null $body
+     * @param resource|StreamInterface|string|null $body
      *
      * @throws \InvalidArgumentException
      */
@@ -56,17 +54,13 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
         return new Response($code, [], $body, '1.1');
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     public function createRedirection(string $location): Response
     {
         return new Response(301, ['Location' => $location], null, '1.1');
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     public function createStream(string $content = ''): StreamInterface
     {
         return Stream::create($content);
@@ -91,9 +85,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
         return Stream::create($resource);
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     public function createUploadedFile(
         StreamInterface $stream,
         ?int $size = null,
@@ -108,17 +100,13 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
         return new UploadedFile($stream, $size, $error, $clientFilename, $clientMediaType);
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     public function createUri(string $uri = ''): UriInterface
     {
         return new Uri($uri);
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     public function createUriFromArray(array $server): Uri
     {
         $uri = new Uri('');
@@ -165,9 +153,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
         return new ServerRequest($method, $uri, [], null, '1.1', $serverParams);
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     public function createServerRequestFromArray(array $server): ServerRequest
     {
         return new ServerRequest(
@@ -210,20 +196,17 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
             ->withUploadedFiles(static::normalizeFiles($files));
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     public function createServerRequestFromGlobals(): ServerRequest
     {
         $server = $_SERVER;
-        $server['REQUEST_METHOD'] = $server['REQUEST_METHOD'] ?? 'GET';
+        $server['REQUEST_METHOD'] ??= 'GET';
 
         if (\function_exists('\getallheaders')) {
-            // @codeCoverageIgnoreStart
-            /* Could not reach this statement without mocking the function
-             */
+            /** @codeCoverageIgnoreStart */
+            // Could not reach this statement without mocking the function
             $headers = \getallheaders();
-        // @codeCoverageIgnoreEnd
+            // @codeCoverageIgnoreEnd
         } else {
             $headers = $this->getAllHeaders();
         }
@@ -231,9 +214,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
         return $this->createServerRequestFromArrays($server, $headers, $_COOKIE, $_GET, $_POST, $_FILES);
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     protected function getMethodFromEnvironment(array $environment): string
     {
         if (!isset($environment['REQUEST_METHOD'])) {
@@ -243,9 +224,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
         return $environment['REQUEST_METHOD'];
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     protected function getUriFromEnvironmentWithHTTP(array $environment): UriInterface
     {
         $uri = $this->createUriFromArray($environment);
@@ -256,9 +235,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
         return $uri;
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     protected static function normalizeFiles(array $files): array
     {
         $normalized = [];
@@ -298,9 +275,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
         );
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     protected static function normalizeNestedFileSpec(array $files = []): array
     {
         $normalizedFiles = [];

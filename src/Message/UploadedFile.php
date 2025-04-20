@@ -42,7 +42,7 @@ class UploadedFile implements UploadedFileInterface
     protected ?StreamInterface $stream = null;
 
     /**
-     * @param StreamInterface|string|resource $streamOrFile
+     * @param resource|StreamInterface|string $streamOrFile
      *
      * @throws \InvalidArgumentException
      */
@@ -109,8 +109,7 @@ class UploadedFile implements UploadedFileInterface
 
         if (!$this->moved) {
             // @codeCoverageIgnoreStart
-            /* Could not reach this statement without mocking the filesystem
-             */
+            // Could not reach this statement without mocking the filesystem
             throw new \RuntimeException(\sprintf('Uploaded file could not be moved to %s', $targetPath));
             // @codeCoverageIgnoreEnd
         }
@@ -157,9 +156,7 @@ class UploadedFile implements UploadedFileInterface
         }
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     protected function setError(int $error): void
     {
         if (!isset(static::ERRORS[$error])) {
@@ -169,9 +166,7 @@ class UploadedFile implements UploadedFileInterface
         $this->error = $error;
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     protected function setSize(?int $size): void
     {
         $this->size = $size;
@@ -182,17 +177,13 @@ class UploadedFile implements UploadedFileInterface
         return \is_string($param) === true && $param !== '';
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     protected function setClientFilename(?string $clientFilename): void
     {
         $this->clientFilename = $clientFilename;
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     protected function setClientMediaType(?string $clientMediaType): void
     {
         $this->clientMediaType = $clientMediaType;
@@ -203,9 +194,7 @@ class UploadedFile implements UploadedFileInterface
         return $this->error === \UPLOAD_ERR_OK;
     }
 
-    /**
-     * @throws \RuntimeException
-     */
+    /** @throws \RuntimeException */
     protected function validateActive(): void
     {
         if (!$this->isUploadSuccess()) {
@@ -217,16 +206,13 @@ class UploadedFile implements UploadedFileInterface
         }
     }
 
-    /**
-     * @throws \RuntimeException
-     */
+    /** @throws \RuntimeException */
     protected function copyToStream(StreamInterface $source, StreamInterface $dest): void
     {
         while (!$source->eof()) {
             if (!$dest->write($source->read(static::DEFAULT_MAX_BYTES_LENGTH))) {
                 // @codeCoverageIgnoreStart
-                /* Could not reach this statement without mocking the filesystem
-                 */
+                // Could not reach this statement without mocking the filesystem
                 break;
                 // @codeCoverageIgnoreEnd
             }

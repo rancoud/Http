@@ -14,7 +14,9 @@ use Rancoud\Http\Message\Response;
 class Client implements ClientInterface
 {
     protected array $CAInfosPath = ['info' => null, 'path' => null];
+
     protected bool $hasSSLVerification = true;
+
     protected static array $curlHTTPVersionMap = [
         '1.0' => \CURL_HTTP_VERSION_1_0,
         '1.1' => \CURL_HTTP_VERSION_1_1,
@@ -46,11 +48,11 @@ class Client implements ClientInterface
     /**
      * Sends a PSR-7 request and returns a PSR-7 response.
      *
-     * @throws \Psr\Http\Client\ClientExceptionInterface
-     * @throws RequestException
-     * @throws NetworkException
      * @throws \InvalidArgumentException
+     * @throws \Psr\Http\Client\ClientExceptionInterface
      * @throws \RuntimeException
+     * @throws NetworkException
+     * @throws RequestException
      */
     public function sendRequest(RequestInterface $request): ResponseInterface
     {
@@ -82,9 +84,7 @@ class Client implements ClientInterface
         return $curlHandle;
     }
 
-    /**
-     * @param resource $curlHandle
-     */
+    /** @param resource $curlHandle */
     protected function setProtocolVersion($curlHandle, RequestInterface $request): self
     {
         $version = $request->getProtocolVersion();
@@ -97,9 +97,7 @@ class Client implements ClientInterface
         return $this;
     }
 
-    /**
-     * @param resource $curlHandle
-     */
+    /** @param resource $curlHandle */
     protected function setMethod($curlHandle, RequestInterface $request): self
     {
         $method = $request->getMethod();
@@ -114,9 +112,7 @@ class Client implements ClientInterface
         return $this;
     }
 
-    /**
-     * @param resource $curlHandle
-     */
+    /** @param resource $curlHandle */
     protected function setUrl($curlHandle, RequestInterface $request): self
     {
         \curl_setopt($curlHandle, \CURLOPT_URL, $request->getUri()->__toString());
@@ -154,9 +150,7 @@ class Client implements ClientInterface
         return $this;
     }
 
-    /**
-     * @param resource $curlHandle
-     */
+    /** @param resource $curlHandle */
     protected function setHeaders($curlHandle, RequestInterface $request): self
     {
         $headersCurl = [];
@@ -173,9 +167,7 @@ class Client implements ClientInterface
         return $this;
     }
 
-    /**
-     * @param resource $curlHandle
-     */
+    /** @param resource $curlHandle */
     protected function setSsl($curlHandle, RequestInterface $request): self
     {
         if ($request->getUri()->getScheme() === 'https') {
@@ -188,7 +180,7 @@ class Client implements ClientInterface
             }
 
             if (!$this->hasSSLVerification) {
-                /* @noinspection CurlSslServerSpoofingInspection */
+                // @noinspection CurlSslServerSpoofingInspection
                 \curl_setopt($curlHandle, \CURLOPT_SSL_VERIFYPEER, false);
             }
         }
@@ -266,9 +258,7 @@ class Client implements ClientInterface
         return \mb_substr($data, $headerSize);
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
+    /** @throws \InvalidArgumentException */
     protected function convertCurlSimpleResponse(array $infos): Response
     {
         return new Response($infos['status'], $infos['headers'], $infos['body']);
