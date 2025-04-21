@@ -236,7 +236,7 @@ class Stream implements StreamInterface
             $contents = \stream_get_contents($this->stream);
 
             if ($contents === false) {
-                /** @codeCoverageIgnoreStart */
+                // @codeCoverageIgnoreStart
                 /* Could not reach this statement without changing php-src
                  * @info: https://github.com/php/php-src/blob/311cae03e730c76aed343312319ed8cf1c37ade0/main/streams/streams.c#L1512
                  */

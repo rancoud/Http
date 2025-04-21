@@ -200,7 +200,7 @@ class Factory implements RequestFactoryInterface, ResponseFactoryInterface, Serv
         $server['REQUEST_METHOD'] ??= 'GET';
 
         if (\function_exists('\getallheaders')) {
-            /** @codeCoverageIgnoreStart */
+            // @codeCoverageIgnoreStart
             // Could not reach this statement without mocking the function
             $headers = \getallheaders();
             // @codeCoverageIgnoreEnd
