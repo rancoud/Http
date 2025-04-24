@@ -174,7 +174,7 @@ class Client implements ClientInterface
             }
 
             if (!$this->hasSSLVerification) {
-                // @noinspection CurlSslServerSpoofingInspection
+                /* @noinspection CurlSslServerSpoofingInspection */
                 \curl_setopt($curlHandle, \CURLOPT_SSL_VERIFYPEER, false);
             }
         }
