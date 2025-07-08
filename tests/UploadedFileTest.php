@@ -28,7 +28,7 @@ class UploadedFileTest extends TestCase
         }
     }
 
-    public static function provideInvalidStreamsDataCases(): iterable
+    public static function provideRaisesExceptionOnInvalidStreamOrFileDataCases(): iterable
     {
         yield 'null'   => [null];
 
@@ -45,7 +45,7 @@ class UploadedFileTest extends TestCase
         yield 'object' => [(object) ['filename']];
     }
 
-    #[DataProvider('provideInvalidStreamsDataCases')]
+    #[DataProvider('provideRaisesExceptionOnInvalidStreamOrFileDataCases')]
     public function testRaisesExceptionOnInvalidStreamOrFile($streamOrFile): void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -54,14 +54,14 @@ class UploadedFileTest extends TestCase
         new UploadedFile($streamOrFile, 0, \UPLOAD_ERR_OK);
     }
 
-    public static function provideInvalidErrorStatusesDataCases(): iterable
+    public static function provideRaisesExceptionOnInvalidErrorStatusDataCases(): iterable
     {
         yield 'negative' => [-1];
 
         yield 'too-big'  => [9];
     }
 
-    #[DataProvider('provideInvalidErrorStatusesDataCases')]
+    #[DataProvider('provideRaisesExceptionOnInvalidErrorStatusDataCases')]
     public function testRaisesExceptionOnInvalidErrorStatus($status): void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -112,12 +112,12 @@ class UploadedFileTest extends TestCase
         static::assertSame($stream->__toString(), \file_get_contents($to));
     }
 
-    public static function provideInvalidMovePathsDataCases(): iterable
+    public static function provideMoveRaisesExceptionForInvalidPathDataCases(): iterable
     {
         yield 'empty'  => [''];
     }
 
-    #[DataProvider('provideInvalidMovePathsDataCases')]
+    #[DataProvider('provideMoveRaisesExceptionForInvalidPathDataCases')]
     public function testMoveRaisesExceptionForInvalidPath($path): void
     {
         $stream = Stream::create('Foo bar!');
