@@ -100,7 +100,7 @@ class UriTest extends TestCase
         static::assertSame($input, (string) $uri);
     }
 
-    public static function provideInvalidUrisDataCases(): iterable
+    public static function provideInvalidUrisThrowExceptionDataCases(): iterable
     {
         // parse_url() requires the host component which makes sense for http(s)
         // but not when the scheme is not known or different. So '//' or '///' is
@@ -110,7 +110,7 @@ class UriTest extends TestCase
         yield ['urn://host:with:colon']; // host cannot contain ":"
     }
 
-    #[DataProvider('provideInvalidUrisDataCases')]
+    #[DataProvider('provideInvalidUrisThrowExceptionDataCases')]
     public function testInvalidUrisThrowException($invalidUri): void
     {
         $this->expectException(\InvalidArgumentException::class);
