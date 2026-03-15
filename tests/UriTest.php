@@ -8,7 +8,9 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Rancoud\Http\Message\Uri;
 
-/** @internal */
+/**
+ * @internal
+ */
 class UriTest extends TestCase
 {
     public const string RFC3986_BASE = 'https://a/b/c/d;p?q';

@@ -13,7 +13,9 @@ use Rancoud\Http\Message\Request;
 use Rancoud\Http\Message\Stream;
 use Symfony\Component\Process\Process;
 
-/** @internal */
+/**
+ * @internal
+ */
 class ClientTest extends TestCase
 {
     protected static Process $process;
