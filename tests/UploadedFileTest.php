@@ -9,7 +9,9 @@ use PHPUnit\Framework\TestCase;
 use Rancoud\Http\Message\Stream;
 use Rancoud\Http\Message\UploadedFile;
 
-/** @internal */
+/**
+ * @internal
+ */
 class UploadedFileTest extends TestCase
 {
     protected array $cleanup;

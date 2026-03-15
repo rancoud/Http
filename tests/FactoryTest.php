@@ -10,7 +10,9 @@ use Psr\Http\Message\StreamInterface;
 use Rancoud\Http\Message\Factory\Factory;
 use Rancoud\Http\Message\Uri;
 
-/** @internal */
+/**
+ * @internal
+ */
 class FactoryTest extends TestCase
 {
     public function testCreateRequest(): void
