@@ -198,8 +198,6 @@ class Client implements ClientInterface
         $headers = $this->extractHeaders($data, $infos['header_size']);
         $body = $this->extractBody($data, $infos['header_size']);
 
-        \curl_close($curlHandle);
-
         return ['body' => $body, 'status' => $status, 'headers' => $headers];
     }
 
