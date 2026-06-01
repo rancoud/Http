@@ -27,9 +27,9 @@
         "ext-mbstring": "*"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^3.0",
-        "phpunit/phpunit": "^12.0",
-        "symfony/process": "^8.0"
+        "friendsofphp/php-cs-fixer": "3.95.1",
+        "phpunit/phpunit": "12.5.22",
+        "symfony/process": "8.0.8"
     },
     "provide": {
         "psr/http-message-implementation": "2.0",
