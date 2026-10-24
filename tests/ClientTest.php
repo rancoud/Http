@@ -119,7 +119,7 @@ class ClientTest extends TestCase
     public function testRequestExceptionBadCAInfos(): void
     {
         $this->expectException(RequestException::class);
-        $this->expectExceptionMessage('error setting');
+        $this->expectExceptionMessage('error adding trust anchors from file: /');
 
         $client = new Client();
         $client->setCAInfosPath('/', '/');
