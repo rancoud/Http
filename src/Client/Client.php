@@ -23,6 +23,7 @@ class Client implements ClientInterface
         '2'   => \CURL_HTTP_VERSION_2_0,
         '2.0' => \CURL_HTTP_VERSION_2_0,
         '3'   => \CURL_HTTP_VERSION_3,
+        '3.0' => \CURL_HTTP_VERSION_3,
     ];
 
     public function disableSSLVerification(): self
